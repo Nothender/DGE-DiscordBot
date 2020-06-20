@@ -1,7 +1,10 @@
 # REPOSOIRE
+C'est un reposoire
 
 # Discord "Game Engine"
-C'est un reposoire
+A game engine using discord's Unofficial .NET API to make bots
+
+will contain multiple features to be explained later
 
 # Releases/Updates :
 V0.0.0 :
