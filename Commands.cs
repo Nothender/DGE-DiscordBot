@@ -1,15 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net.NetworkInformation;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 using Discord.Commands;
 using DiscordGameEngine.Core;
+using DiscordGameEngine.Rendering;
 
 namespace DiscordGameEngine
 {
     public class Commands : ModuleBase<SocketCommandContext>
     {
+
+        internal static FrameBuffer frameBuffer;
+
         /// <summary>
         /// Returns a string which is the result of the concatenation from args[beginIndex] to args[args.Length-1] with a space in between each elements
         /// </summary>
@@ -32,6 +37,49 @@ namespace DiscordGameEngine
         public async Task Ping()
         {
             await ReplyAsync("Pong");
+        }
+
+        [Command("initFB")]
+        public async Task CreateFrameBuffer()
+        {
+            if (frameBuffer != null)
+            {
+                await ReplyAsync(LogManager.DGE_WARN + "Couldn't initialize the Frame Buffer because it is already initialized.");
+                return;
+            }
+            frameBuffer = new FrameBuffer(10, 10, ":black_large_square: ");
+            await ReplyAsync(LogManager.DGE_LOG + "Succesfully initialized the Frame Buffer.");
+        }
+
+        [Command("displayFB")]
+#pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
+        public async Task DisplayFrameBuffer()
+#pragma warning restore CS1998 // Async method lacks 'await' operators and will run synchronously
+        {
+            frameBuffer.Display(Context);
+            // await ReplyAsync("");
+        }
+
+        [Command("drawToFB")]
+        public async Task DisplayFrameBuffer(params string[] pixelInfo)
+        {
+            if (pixelInfo.Length < 3)
+                await ReplyAsync(LogManager.DGE_WARN + "The 3 following arguments are required : int xPos, int yPos, string pixelInfo.");
+            else
+            {
+                string px = pixelInfo[2] + ' ';
+                int x = int.Parse(pixelInfo[0]);
+                int y = int.Parse(pixelInfo[1]);
+                frameBuffer.Draw(x, y, px);
+                await ReplyAsync(LogManager.DGE_LOG + "Succesfuly drew a px " + px + "at x=" + x + " y=" + y + '.');
+            }
+        }
+
+        [Command("clearFB")]
+        public async Task ClearFrameBuffer()
+        {
+            frameBuffer.Clear();
+            await ReplyAsync(LogManager.DGE_LOG + "Succesfuly cleared the Frame Buffer.");
         }
 
         [Command("logTest")]
