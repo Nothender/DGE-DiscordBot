@@ -10,3 +10,4 @@ will contain multiple features to be explained later
 Command string prefix = "//"
 The bot currently has one feature :
 -when entering the command `ping` the bot replies with `pong`
+-when entering the command `logTest` with argument 1 : the logMode, and other arguments the logInfo the bot will reply with the DGE logMode + Concatenation of logInfos

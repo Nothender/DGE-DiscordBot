@@ -1,6 +1,7 @@
 ﻿using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
+using DiscordGameEngine.Core;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.IO;
@@ -50,7 +51,7 @@ namespace DiscordGameEngine
         private async Task RegisterMethodsAsync()
         {
             //Client method registry
-            _client.Log += LogDebug;
+            _client.Log += LogManager.LogDebug;
             //Commands method registry
             _client.MessageReceived += HandleMessagesAsync;
             await _commands.AddModulesAsync(Assembly.GetEntryAssembly(), _services);
@@ -66,18 +67,11 @@ namespace DiscordGameEngine
 
             var execution = await _commands.ExecuteAsync(context, argPos, _services);
             if (!execution.IsSuccess)
-                await LogDebug(new LogMessage(LogSeverity.Warning, "Commands", execution.ErrorReason));
+            {
+                await LogManager.LogDebug(new LogMessage(LogSeverity.Warning, "Commands", execution.ErrorReason));
+                await context.Channel.SendMessageAsync(LogManager.DGE_ERROR + "Command execution failed : " + execution.ErrorReason);
+            }
         }
 
-        /// <summary>
-        /// Called at each log event from discord : used to debug
-        /// </summary>
-        /// <param name="msg"></param>
-        /// <returns></returns>
-        private Task LogDebug(LogMessage msg)
-        {
-            Console.WriteLine(msg.ToString());
-            return Task.CompletedTask;
-        }
     }
 }
