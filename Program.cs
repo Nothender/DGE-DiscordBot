@@ -1,22 +1,23 @@
 ﻿using Discord;
-using Discord.API;
+using Discord.Commands;
 using Discord.WebSocket;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.IO;
+using System.Reflection;
 using System.Threading.Tasks;
 
-namespace Bot207
+namespace DiscordGameEngine
 {
     public class Program
     {
-
         private DiscordSocketClient _client;
+        private CommandService _commands;
         private IServiceProvider _services;
 
-        public static SocketGuild server;
+        private static string commandPrefix = "//";
 
-        static void Main(string[] args) => new Program().MainAsync().GetAwaiter().GetResult();
+        private static void Main(string[] args) => new Program().MainAsync().GetAwaiter().GetResult();
 
         /// <summary>
         /// Main function executed
@@ -28,10 +29,14 @@ namespace Bot207
             {
                 AlwaysDownloadUsers = true
             });
-            _services = new ServiceCollection().AddSingleton(_client).BuildServiceProvider();
+            _commands = new CommandService();
+            _services = new ServiceCollection()
+                .AddSingleton(_client)
+                .AddSingleton(_commands)
+                .BuildServiceProvider();
 
             await RegisterMethodsAsync();
-            
+
             //Gets all the infos for the bot to run
             //index { 0 : Token }
             string[] infos = File.ReadAllLines("../../../infos.txt"); // CHANGE ACCESS PATH FOR RELEASE
@@ -39,23 +44,29 @@ namespace Bot207
             await _client.LoginAsync(TokenType.Bot, infos[0]);
             await _client.StartAsync();
 
-            //await server.GetUser(638408938727014458).AddRoleAsync(server.GetRole(585555863373217930));
-            //await (server.GetUser(638408938727014458) as IGuildUser).AddRoleAsync(server.GetRole(585555863373217930));
-
             await Task.Delay(-1);
         }
 
-        private Task RegisterMethodsAsync()
+        private async Task RegisterMethodsAsync()
         {
+            //Client method registry
             _client.Log += LogDebug;
-            _client.UserVoiceStateUpdated += VoiceChannelsManager.UserVoiceStateChange;
-            return Task.CompletedTask;
+            //Commands method registry
+            _client.MessageReceived += HandleMessagesAsync;
+            await _commands.AddModulesAsync(Assembly.GetEntryAssembly(), _services);
         }
 
-        private Task AssignServer(SocketGuild guild)
+        private async Task HandleMessagesAsync(SocketMessage message)
         {
-            server = guild;
-            return Task.CompletedTask;
+            SocketUserMessage uMessage = message as SocketUserMessage;
+            int argPos = 0;
+            if (!uMessage.HasStringPrefix(commandPrefix, ref argPos) || uMessage.Author.IsBot)
+                return;
+            SocketCommandContext context = new SocketCommandContext(_client, uMessage);
+
+            var execution = await _commands.ExecuteAsync(context, argPos, _services);
+            if (!execution.IsSuccess)
+                await LogDebug(new LogMessage(LogSeverity.Warning, "Commands", execution.ErrorReason));
         }
 
         /// <summary>
@@ -68,6 +79,5 @@ namespace Bot207
             Console.WriteLine(msg.ToString());
             return Task.CompletedTask;
         }
-
     }
 }

@@ -6,6 +6,7 @@ A game engine using discord's Unofficial .NET API to make bots
 
 will contain multiple features to be explained later
 
-# Releases/Updates :
-V0.0.0 :
-Bot base, nothing more
+# Documentation :
+Command string prefix = "//"
+The bot currently has one feature :
+-when entering the command `ping` the bot replies with `pong`
