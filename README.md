@@ -1,6 +1,5 @@
 # REPOSOIRE
 C'est un reposoire
-test 42
 
 # Discord "Game Engine"
 A game engine using discord's Unofficial .NET API to make bots
