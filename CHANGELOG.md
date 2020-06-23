@@ -1,4 +1,8 @@
-﻿#V0.2.2 :
+﻿#V0.3.0 :
+-Created `StringFrameBuffer` a frame buffer of that can be displayed as messages within strings containing strings/emojis as pixels
+-Added commands to use the SFB, like Init, Display, Draw and Clear
+
+#V0.2.2 :
 - Created `LogManager` : contains LogPrefixes (WARN, LOG, ERROR, DEBUG) and has the `LogDebug` method moved from Program
 - Created `ProgramsInstance` and `ProgramsManager` which will Serve as holders for programs made with the engine
 - Added the Method `GetArgsAsSingleStringFrom` read the documention in the XML file after building/code summary for more information

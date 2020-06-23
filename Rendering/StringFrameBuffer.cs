@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace DiscordGameEngine.Rendering
 {
-    public class FrameBuffer
+    public class StringFrameBuffer
     {
 
         private int width;
@@ -19,7 +19,7 @@ namespace DiscordGameEngine.Rendering
         public string clearColor;
         public string[,] buffer;
 
-        public FrameBuffer(int width, int height, string clear_color)
+        public StringFrameBuffer(int width, int height, string clear_color)
         {
             this.width = width;
             this.height = height;

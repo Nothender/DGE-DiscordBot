@@ -13,7 +13,7 @@ namespace DiscordGameEngine
     public class Commands : ModuleBase<SocketCommandContext>
     {
 
-        internal static FrameBuffer frameBuffer;
+        internal static StringFrameBuffer frameBuffer;
 
         /// <summary>
         /// Returns a string which is the result of the concatenation from args[beginIndex] to args[args.Length-1] with a space in between each elements
@@ -39,7 +39,7 @@ namespace DiscordGameEngine
             await ReplyAsync("Pong");
         }
 
-        [Command("initFB")]
+        [Command("initSFB")]
         public async Task CreateFrameBuffer()
         {
             if (frameBuffer != null)
@@ -47,11 +47,11 @@ namespace DiscordGameEngine
                 await ReplyAsync(LogManager.DGE_WARN + "Couldn't initialize the Frame Buffer because it is already initialized.");
                 return;
             }
-            frameBuffer = new FrameBuffer(10, 10, ":black_large_square: ");
+            frameBuffer = new StringFrameBuffer(16, 16, "-   ");
             await ReplyAsync(LogManager.DGE_LOG + "Succesfully initialized the Frame Buffer.");
         }
 
-        [Command("displayFB")]
+        [Command("displaySFB")]
 #pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
         public async Task DisplayFrameBuffer()
 #pragma warning restore CS1998 // Async method lacks 'await' operators and will run synchronously
@@ -60,14 +60,14 @@ namespace DiscordGameEngine
             // await ReplyAsync("");
         }
 
-        [Command("drawToFB")]
+        [Command("drawToSFB")]
         public async Task DisplayFrameBuffer(params string[] pixelInfo)
         {
             if (pixelInfo.Length < 3)
                 await ReplyAsync(LogManager.DGE_WARN + "The 3 following arguments are required : int xPos, int yPos, string pixelInfo.");
             else
             {
-                string px = pixelInfo[2] + ' ';
+                string px = pixelInfo[2] + "  ";
                 int x = int.Parse(pixelInfo[0]);
                 int y = int.Parse(pixelInfo[1]);
                 frameBuffer.Draw(x, y, px);
@@ -75,7 +75,7 @@ namespace DiscordGameEngine
             }
         }
 
-        [Command("clearFB")]
+        [Command("clearSFB")]
         public async Task ClearFrameBuffer()
         {
             frameBuffer.Clear();
