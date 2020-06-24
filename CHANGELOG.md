@@ -1,9 +1,10 @@
-﻿#V0.4.0
-/// TO DOCUMENT (FrameBuffer)
+#V0.4.0
+- Created `FrameBuffer` a real frame buffers which uses/contains pixels, and can be saved to disk, to be displayed as a discord message
+- Added specifics commands to the use the FrameBuffer like Init, Display, Clear, Draw and DrawRect
 
 #V0.3.0 :
--Created `StringFrameBuffer` a frame buffer of that can be displayed as messages within strings containing strings/emojis as pixels
--Added commands to use the SFB, like Init, Display, Draw and Clear
+- Created `StringFrameBuffer` a frame buffer of that can be displayed as messages within strings containing strings/emojis as pixels
+- Added commands to use the SFB, like Init, Display, Draw and Clear
 
 #V0.2.2 :
 - Created `LogManager` : contains LogPrefixes (WARN, LOG, ERROR, DEBUG) and has the `LogDebug` method moved from Program
