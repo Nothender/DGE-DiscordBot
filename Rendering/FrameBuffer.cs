@@ -46,8 +46,11 @@ namespace DiscordGameEngine.Rendering
 
         private Color AlphaBlend(Color c1, Color c2)
         {
-            Color res = Color.FromArgb(c1.A + c2.A, c1.R * c1.A + c2.R * c2.A, c1.G * c1.A + c2.G * c2.A, c1.B * c1.A + c2.B * c2.A);
-            return res;
+            float a1 = c1.A / 255;
+            float a2 = c2.A / 255;
+            c1 = Color.FromArgb((int)(c1.R * a1), (int)(c1.G * a1), (int)(c1.B * a1));
+            c2 = Color.FromArgb((int)(c2.R * a2), (int)(c2.G * a2), (int)(c2.B * a2));
+            return Color.FromArgb(Math.Min(255, (int) ((c1.A + c2.A) * (1 - a1))), Math.Min(255, (int) ((c1.R + c2.R) * (1 - a1))), Math.Min(255, (int) ((c1.G + c2.G) * (1 - a1))), Math.Min(255, (int) ((c1.B + c2.B) * (1 - a1))));
         }
 
         public void Clear()
@@ -63,6 +66,8 @@ namespace DiscordGameEngine.Rendering
 
         public void Draw(int x, int y, Color color)
         {
+            if (pixelRenderMode == PixelRenderMode.ALPHA_BLENDING)
+                color = AlphaBlend(color, buffer.GetPixel(x, y));
             buffer.SetPixel(x, y, color);
         }
 
@@ -70,11 +75,24 @@ namespace DiscordGameEngine.Rendering
         {
             int x1 = x + sizeX;
             int y1 = y + sizeY;
-            for (int i = x; i < x1; i++)
+            if (pixelRenderMode == PixelRenderMode.ALPHA_BLENDING)
             {
-                for (int j = y; j < y1; j++)
+                for (int i = x; i < x1; i++)
                 {
-                    buffer.SetPixel(i, j, color);
+                    for (int j = y; j < y1; j++)
+                    {
+                        buffer.SetPixel(i, j, AlphaBlend(color, buffer.GetPixel(i, j)));
+                    }
+                }
+            }
+            else
+            {
+                for (int i = x; i < x1; i++)
+                {
+                    for (int j = y; j < y1; j++)
+                    {
+                        buffer.SetPixel(i, j, color);
+                    }
                 }
             }
         }

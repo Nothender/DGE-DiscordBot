@@ -1,6 +1,9 @@
+#V0.4.1
+- Alpha blending can now be used to draw to the `FrameBuffer` -> always returns background value when trying to blend a color1 to a color2
+
 #V0.4.0
 - Created `FrameBuffer` a real frame buffers which uses/contains pixels, and can be saved to disk, to be displayed as a discord message
-- Added specifics commands to the use the FrameBuffer like Init, Display, Clear, Draw and DrawRect
+- Added specifics commands to the use the `FrameBuffer` like Init, Display, Clear, Draw and DrawRect
 
 #V0.3.0 :
 - Created `StringFrameBuffer` a frame buffer of that can be displayed as messages within strings containing strings/emojis as pixels

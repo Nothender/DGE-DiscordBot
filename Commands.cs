@@ -74,10 +74,13 @@ namespace DiscordGameEngine
         public async Task DrawToFrameBuffer(params string[] pixelInfo)
         {
             if (pixelInfo.Length < 5)
-                await ReplyAsync(LogManager.DGE_WARN + "The 5 following arguments are required : int xPos, int yPos, int r, int g, int b.");
+                await ReplyAsync(LogManager.DGE_WARN + "The 5-6 following arguments are required : int xPos, int yPos, int r, int g, int b, (optional) int a.");
             else
             {
-                System.Drawing.Color color = System.Drawing.Color.FromArgb(int.Parse(pixelInfo[2]), int.Parse(pixelInfo[3]), int.Parse(pixelInfo[4]));
+                int a = 255;
+                if (pixelInfo.Length > 5)
+                    a = int.Parse(pixelInfo[5]);
+                System.Drawing.Color color = System.Drawing.Color.FromArgb(a, int.Parse(pixelInfo[2]), int.Parse(pixelInfo[3]), int.Parse(pixelInfo[4]));
                 int x = int.Parse(pixelInfo[0]);
                 int y = int.Parse(pixelInfo[1]);
                 frameBuffer.Draw(x, y, color);
@@ -89,10 +92,13 @@ namespace DiscordGameEngine
         public async Task DrawRectToFrameBuffer(params string[] rectInfo)
         {
             if (rectInfo.Length < 7)
-                await ReplyAsync(LogManager.DGE_WARN + "The 7 following arguments are required : int xPos, int yPos, int xSize, int ySize, int r, int g, int b.");
+                await ReplyAsync(LogManager.DGE_WARN + "The 7-8 following arguments are required : int xPos, int yPos, int xSize, int ySize, int r, int g, int b, (optional) int a.");
             else
             {
-                System.Drawing.Color color = System.Drawing.Color.FromArgb(int.Parse(rectInfo[4]), int.Parse(rectInfo[5]), int.Parse(rectInfo[6]));
+                int a = 255;
+                if (rectInfo.Length > 7)
+                    a = int.Parse(rectInfo[7]);
+                System.Drawing.Color color = System.Drawing.Color.FromArgb(a, int.Parse(rectInfo[4]), int.Parse(rectInfo[5]), int.Parse(rectInfo[6]));
                 int x = int.Parse(rectInfo[0]);
                 int y = int.Parse(rectInfo[1]);
                 int xSize = int.Parse(rectInfo[2]);
@@ -107,6 +113,30 @@ namespace DiscordGameEngine
         {
             frameBuffer.Clear();
             await ReplyAsync(LogManager.DGE_LOG + "Succesfuly cleared the Frame Buffer.");
+        }
+
+        [Command("setFBPixelRenderMode")]
+        public async Task SetFrameBufferPixelRenderMode(params string[] mode)
+        {
+            mode[0] = mode[0].ToLower();
+            switch (mode[0])
+            {
+                case "replace":
+                    frameBuffer.pixelRenderMode = PixelRenderMode.REPLACE;
+                    break;
+                case "alpha_blending":
+                    frameBuffer.pixelRenderMode = PixelRenderMode.ALPHA_BLENDING;
+                    break;
+                case "alphablending":
+                    frameBuffer.pixelRenderMode = PixelRenderMode.ALPHA_BLENDING;
+                    mode[0] = "alpha_blending";
+                    break;
+                default:
+                    mode[0] = "normal";
+                    frameBuffer.pixelRenderMode = PixelRenderMode.NORMAL;
+                    break;
+            }
+            await ReplyAsync(LogManager.DGE_LOG + "Succesfuly set the Frame Buffer PixelRenderMode to " + mode[0].ToUpper() + ".");
         }
 
         [Command("initSFB")]
