@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 
 namespace DiscordGameEngine.Rendering
 {
+    //The StringFrameBuffer will not be updated after V0.3.0 + the StringFrameBuffer has rendering issues -> now using the EmbedFrameBuffer is recommended
     public class StringFrameBuffer
     {
 
@@ -51,6 +52,35 @@ namespace DiscordGameEngine.Rendering
             buffer[y, x] = px;
         }
 
+        public string BufferToString()
+        {
+            string res = "";
+            for (int i = 0; i < height; i++)
+            {
+                for (int j = 0; j < width; j++)
+                {
+                    res += buffer[i, j];
+                }
+                res += '\n';
+            }
+            return res;
+        }
+
+        public string BufferToStringAndClear()
+        {
+            string res = "";
+            for (int i = 0; i < height; i++)
+            {
+                for (int j = 0; j < width; j++)
+                {
+                    res += buffer[i, j];
+                    buffer[i, j] = clearColor;
+                }
+                res += '\n';
+            }
+            return res;
+        }
+
         public string[] BufferToStringArray()
         {
             List<string> res = new List<string>();
@@ -79,7 +109,7 @@ namespace DiscordGameEngine.Rendering
             int pointer = 0;
             for (int i = 0; i < height; i++)
             {
-                if (res[pointer].Length + width * buffer[i, 0].Length > 2000)
+                if (res[pointer].Length + width * buffer[i, 0].Length > 1500)
                 {
                     res.Add("");
                     pointer++;

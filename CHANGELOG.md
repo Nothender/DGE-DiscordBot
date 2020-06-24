@@ -1,4 +1,7 @@
-﻿#V0.3.0 :
+﻿#V0.4.0
+/// TO DOCUMENT (FrameBuffer)
+
+#V0.3.0 :
 -Created `StringFrameBuffer` a frame buffer of that can be displayed as messages within strings containing strings/emojis as pixels
 -Added commands to use the SFB, like Init, Display, Draw and Clear
 
