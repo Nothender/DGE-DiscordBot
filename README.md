@@ -1,6 +1,3 @@
-# REPOSOIRE
-C'est un reposoire
-
 # Discord "Game Engine"
 A game engine using discord's Unofficial .NET API to make bots
 
@@ -13,7 +10,7 @@ Debug/Test Methods :
 - when entering the command `ping` the bot replies with `pong`
 - when entering the command `logTest` with argument 1 : the logMode, and other arguments the logInfo the bot will reply with the DGE logMode + Concatenation of logInfos
 
-FrameBuffers manipulations (2 FrameBuffers) :
+FrameBuffers manipulations (2 FrameBuffers - Each frame buffer runs on a single instance for the whole bot) :
 
 The `StringFrameBuffer`<FBType => SFB> using stringSymbols for each pixels, though limited to 2000 chars per message so multiple message buffering is required.
 and the `FrameBuffer`<FBType => FB> using real pixels drawing onto a Bitmap then saving it to send it to discord -> really useful for pixelBlending, spriteDrawing, high res, etc... n.b. the frameBuffers will not work in Frames per second because of buffering/drawing speed (CPU Driven) and is recommend to be used in a turn-based/with great rendering delays;
