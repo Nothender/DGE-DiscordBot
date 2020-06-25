@@ -1,3 +1,7 @@
+#V0.4.4
+- Created the `PixelBuffer` which works like a surface we can draw onto, `FrameBuffer` now extends from it and so will sprites.
+- Put the `PixelRenderMode` into the `RenderingCore` with the method `AlphaBlend` and `ToOpaqueColor` (which work per pixel)
+
 #V0.4.2
 - Fixed alpha blending now works correctly, fix for supported imageBuffers file formats
 
