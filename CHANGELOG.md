@@ -1,3 +1,6 @@
+#V0.4.2
+- Fixed alpha blending now works correctly, fix for supported imageBuffers file formats
+
 #V0.4.1
 - Alpha blending can now be used to draw to the `FrameBuffer` -> always returns background value when trying to blend a color1 to a color2
 

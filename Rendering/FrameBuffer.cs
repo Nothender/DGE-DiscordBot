@@ -18,7 +18,7 @@ namespace DiscordGameEngine.Rendering
     public class FrameBuffer
     {
         private static string imageBuffersPath = System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly().Location) + "\\imageBuffers\\";
-        private static System.Drawing.Imaging.ImageFormat imageBufferSaveFormat = System.Drawing.Imaging.ImageFormat.Jpeg;
+        private static System.Drawing.Imaging.ImageFormat imageBufferSaveFormat = System.Drawing.Imaging.ImageFormat.Png;
         private static Random randomGen = new Random();
         private static List<string> imageBufferIDs = new List<string>();
 
@@ -46,11 +46,16 @@ namespace DiscordGameEngine.Rendering
 
         private Color AlphaBlend(Color c1, Color c2)
         {
-            float a1 = c1.A / 255;
-            float a2 = c2.A / 255;
+            float a1 = c1.A / 255f;
+            float a2 = c2.A / 255f;
             c1 = Color.FromArgb((int)(c1.R * a1), (int)(c1.G * a1), (int)(c1.B * a1));
             c2 = Color.FromArgb((int)(c2.R * a2), (int)(c2.G * a2), (int)(c2.B * a2));
             return Color.FromArgb(Math.Min(255, (int) ((c1.A + c2.A) * (1 - a1))), Math.Min(255, (int) ((c1.R + c2.R) * (1 - a1))), Math.Min(255, (int) ((c1.G + c2.G) * (1 - a1))), Math.Min(255, (int) ((c1.B + c2.B) * (1 - a1))));
+        }
+
+        private Color ToOpaqueColor(Color color)
+        {
+            return Color.FromArgb(color.R, color.G, color.B);
         }
 
         public void Clear()
@@ -67,7 +72,11 @@ namespace DiscordGameEngine.Rendering
         public void Draw(int x, int y, Color color)
         {
             if (pixelRenderMode == PixelRenderMode.ALPHA_BLENDING)
+            {
                 color = AlphaBlend(color, buffer.GetPixel(x, y));
+                return; 
+            }
+            color = ToOpaqueColor(color);
             buffer.SetPixel(x, y, color);
         }
 
@@ -87,6 +96,7 @@ namespace DiscordGameEngine.Rendering
             }
             else
             {
+                color = ToOpaqueColor(color);
                 for (int i = x; i < x1; i++)
                 {
                     for (int j = y; j < y1; j++)
@@ -123,7 +133,7 @@ namespace DiscordGameEngine.Rendering
 
         private void SaveBufferToDisk()
         {
-            buffer.Save(imageBuffersPath + imageBufferID, System.Drawing.Imaging.ImageFormat.Jpeg);
+            buffer.Save(imageBuffersPath + imageBufferID, imageBufferSaveFormat);
         }
 
         private void CreateBuffer()
