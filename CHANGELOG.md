@@ -1,4 +1,8 @@
-#V0.4.4
+#V0.5.3
+- Added scaling methods : `NEAREST` and `CLEAR`, method : `RenderingCore.ResizeBuffer(originalBuffer, targetBuffer, imageScalingMethod)`
+- The frame buffers can now have a draw size and a display size which means you can have a 16x16 px buffer to draw onto, and then display it as 2048x2048 px, the scaling method cannot be `CLEAR`
+
+#V0.5.0
 - Created the `PixelBuffer` which works like a surface we can draw onto, `FrameBuffer` now extends from it and so will sprites.
 - Put the `PixelRenderMode` into the `RenderingCore` with the method `AlphaBlend` and `ToOpaqueColor` (which work per pixel)
 

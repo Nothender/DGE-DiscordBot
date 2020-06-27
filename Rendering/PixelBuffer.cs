@@ -15,15 +15,32 @@ namespace DiscordGameEngine.Rendering
         private Size _size;
         public Color clearColor;
         public Bitmap buffer;
-        public PixelRenderMode pixelRenderMode;
+        public PixelDrawMode pixelDrawMode;
 
-        public PixelBuffer(Size size, Color clearColor)
+        public PixelBuffer(Size size, Color color)
         {
             _size = size;
-            this.clearColor = clearColor;
-            pixelRenderMode = PixelRenderMode.NORMAL;
-            CreateBuffer();
+            Construct();
+            this.clearColor = color;
             Clear();
+        }
+        public PixelBuffer(string pathToImage)
+        {
+            Construct(pathToImage);
+            _size = buffer.Size;
+            this.clearColor = Color.FromArgb(0, 0, 0);
+        }
+        public PixelBuffer(string pathToImage, Color clearColor)
+        {
+            Construct(pathToImage);
+            _size = buffer.Size;
+            this.clearColor = clearColor;
+        }
+
+        private void Construct(string pathToImage=null)
+        {
+            CreateBuffer(pathToImage);
+            pixelDrawMode = PixelDrawMode.NORMAL;
         }
 
         public void Clear()
@@ -39,9 +56,9 @@ namespace DiscordGameEngine.Rendering
 
         public void Draw(int x, int y, Color color)
         {
-            if (pixelRenderMode == PixelRenderMode.ALPHA_BLENDING)
+            if (pixelDrawMode == PixelDrawMode.ALPHA_BLENDING)
                 color = RenderingCore.AlphaBlend(color, buffer.GetPixel(x, y));
-            else if (pixelRenderMode == PixelRenderMode.NORMAL)
+            else if (pixelDrawMode == PixelDrawMode.NORMAL)
                 color = RenderingCore.ToOpaqueColor(color);
             buffer.SetPixel(x, y, color);
         }
@@ -50,7 +67,7 @@ namespace DiscordGameEngine.Rendering
         {
             int x1 = x + sizeX;
             int y1 = y + sizeY;
-            if (pixelRenderMode == PixelRenderMode.ALPHA_BLENDING)
+            if (pixelDrawMode == PixelDrawMode.ALPHA_BLENDING)
             {
                 for (int i = x; i < x1; i++)
                 {
@@ -62,7 +79,7 @@ namespace DiscordGameEngine.Rendering
             }
             else
             {
-                if (pixelRenderMode == PixelRenderMode.NORMAL)
+                if (pixelDrawMode == PixelDrawMode.NORMAL)
                     color = RenderingCore.ToOpaqueColor(color);
                 for (int i = x; i < x1; i++)
                 {
@@ -74,24 +91,32 @@ namespace DiscordGameEngine.Rendering
             }
         }
 
-        public void DrawLine()
+        public void DrawLine(int x1, int y1, int x2, int y2, Color color, int width=1)
         {
         }
 
-        public virtual void SetSize(Size newSize)
+        public virtual void Resize(Size newSize, ImageScalingMethod scalingMethod = ImageScalingMethod.CLEAR)
         {
             _size = newSize;
-            ResizeBuffer();
+            ResizeBuffer(scalingMethod);
         }
 
-        private void CreateBuffer()
+        private void CreateBuffer(string filePath=null)
         {
-            buffer = new Bitmap(_size.Width, _size.Height);
+            if (filePath == null)
+                buffer = new Bitmap(_size.Width, _size.Height);
+            else
+            {
+
+            }
         }
 
-        private void ResizeBuffer()
+        private void ResizeBuffer(ImageScalingMethod scalingMethod=ImageScalingMethod.CLEAR)
         {
-            buffer = new Bitmap(buffer, size);
+            Bitmap targetBuffer = new Bitmap(size.Width, size.Height);
+            RenderingCore.ResizeBuffer(buffer, targetBuffer, scalingMethod);
+            buffer.Dispose();
+            buffer = targetBuffer;
         }
 
         /// <summary>

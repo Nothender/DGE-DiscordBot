@@ -6,11 +6,17 @@ using System.Text;
 namespace DiscordGameEngine.Rendering
 {
 
-    public enum PixelRenderMode
+    public enum PixelDrawMode
     {
         ALPHA_BLENDING = 0,
         NORMAL = 1,
         REPLACE = 2
+    }
+
+    public enum ImageScalingMethod 
+    {
+        CLEAR=0, //Clears the buffer when resizing
+        NEAREST=1 //Nearest neighbor per pixel scaling method
     }
 
     public static class RenderingCore
@@ -30,6 +36,38 @@ namespace DiscordGameEngine.Rendering
             return Color.FromArgb(color.R, color.G, color.B);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sourceBuffer"></param>
+        /// <param name="targetBuffer">/!\ Warning the target buffer must not be the same as the source buffer</param>
+        /// <param name="scalingMethod"></param>
+        public static void ResizeBuffer(Bitmap sourceBuffer, Bitmap targetBuffer, ImageScalingMethod scalingMethod=ImageScalingMethod.NEAREST)
+        {
+            if (scalingMethod == ImageScalingMethod.CLEAR)
+            {
+                Color color = Color.FromArgb(0, 0, 0);
+                for (int x = 0; x < targetBuffer.Size.Width; x++)
+                {
+                    for (int y = 0; y < targetBuffer.Size.Height; y++)
+                    {
+                        targetBuffer.SetPixel(x, y, color);
+                    }
+                }
+            }
+            else if (scalingMethod == ImageScalingMethod.NEAREST)
+            {
+                float xR = sourceBuffer.Size.Width / (float)targetBuffer.Size.Width;
+                float yR = sourceBuffer.Size.Height / (float)targetBuffer.Size.Height;
+                for (int x = 0; x < targetBuffer.Size.Width; x++)
+                {
+                    for (int y = 0; y < targetBuffer.Size.Height; y++)
+                    {
+                        targetBuffer.SetPixel(x, y, sourceBuffer.GetPixel((int) (x * xR), (int)(y * yR)));
+                    }
+                }
+            }
+        }
 
     }
 }

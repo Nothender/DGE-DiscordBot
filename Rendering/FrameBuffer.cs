@@ -1,27 +1,59 @@
-﻿using Discord.Commands;
+﻿using Discord;
+using Discord.Commands;
+using DiscordGameEngine.Core;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Reflection;
 
+using Color = System.Drawing.Color;
+
 namespace DiscordGameEngine.Rendering
 {
     public class FrameBuffer : PixelBuffer
     {
-        private static string imageBuffersPath = System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly().Location) + "\\imageBuffers\\";
-        private static System.Drawing.Imaging.ImageFormat imageBufferSaveFormat = System.Drawing.Imaging.ImageFormat.Png;
-        private static Random randomGen = new Random();
-        private static List<string> imageBufferIDs = new List<string>();
+        private static readonly Random random = new Random();
+        private static readonly string imageBuffersPath = System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly().Location) + "\\imageBuffers\\";
+        private static readonly System.Drawing.Imaging.ImageFormat imageBufferSaveFormat = System.Drawing.Imaging.ImageFormat.Png;
+        private static readonly List<string> imageBufferIDs = new List<string>();
 
         public event EventHandler OnResize;
+
+        public ImageScalingMethod scalingMethod //Scaling method used when rendering to a different displaySize than the PixelBuffer's size
+        {
+            get { return _scalingMethod; }
+            set
+            {
+                if (value == ImageScalingMethod.CLEAR)
+                {
+                    value = ImageScalingMethod.NEAREST;
+                    Console.WriteLine(LogManager.DGE_WARN + "scalingMethod in FrameBuffer cannot be ImageScalingMethod.CLEAR -> will be set by default to nearest");
+                }
+                _scalingMethod = value;
+            }
+        }
+
+        private ImageScalingMethod _scalingMethod;
+        public bool scaleOnRender { get { return _scaleOnRender; } }
+        private bool _scaleOnRender;
+        public Size displaySize { get { return _displaySize; } }
+        private Size _displaySize; //To render the buffer at display size scaleOnRender must be true
+        private Bitmap displayBuffer;
         private string imageBufferID;
 
-        public FrameBuffer(Size size, Color clearColor) : base(size, clearColor)
+        public FrameBuffer(Size size, Color clearColor, bool scaleOnRender = false, Size displaySize = new Size(), ImageScalingMethod scalingMethod = ImageScalingMethod.NEAREST) : base(size, clearColor)
         {
             CheckForImageBuffersDir();
             this.imageBufferID = GetNewImageBufferID();
+            this.scalingMethod = scalingMethod;
+            SetScaleOnRender(displaySize, scaleOnRender);
             Render();
+        }
+
+        private void RenderToDisplayBuffer() //Renders the buffer onto the displayBuffer at displaySize
+        {
+            RenderingCore.ResizeBuffer(buffer, displayBuffer, scalingMethod);
         }
 
         /// <summary>
@@ -29,6 +61,8 @@ namespace DiscordGameEngine.Rendering
         /// </summary>
         public void Render()
         {
+            if (scaleOnRender)
+                RenderToDisplayBuffer();
             SaveBufferToDisk();
         }
 
@@ -39,18 +73,29 @@ namespace DiscordGameEngine.Rendering
 
         private void SaveBufferToDisk()
         {
-            buffer.Save(imageBuffersPath + imageBufferID, imageBufferSaveFormat);
+            if (scaleOnRender)
+                displayBuffer.Save(imageBuffersPath + imageBufferID, imageBufferSaveFormat);
+            else
+                buffer.Save(imageBuffersPath + imageBufferID, imageBufferSaveFormat);
         }
 
-        private void CreateBuffer()
+        public override void Resize(Size newSize, ImageScalingMethod scalingMethod = ImageScalingMethod.CLEAR)
         {
-            buffer = new Bitmap(size.Width, size.Height);
-        }
-
-        public override void SetSize(Size newSize)
-        {
-            base.SetSize(newSize);
+            base.Resize(newSize, scalingMethod);
             OnResize?.Invoke(this, new EventArgs());
+        }
+
+        public void SetScaleOnRender(Size displaySize, bool scaleOnRender)
+        {
+            this._scaleOnRender = scaleOnRender;
+            if (displaySize.Width == 0)
+                displaySize.Width = 1;
+            if (displaySize.Height == 0)
+                displaySize.Height = 1;
+            this._displaySize = displaySize;
+            if (displayBuffer != null)
+                displayBuffer.Dispose();
+            this.displayBuffer = new Bitmap(displaySize.Width, displaySize.Height);
         }
 
         /// <summary>
@@ -76,7 +121,7 @@ namespace DiscordGameEngine.Rendering
             string res;
             do
             {
-                res = "imageBuffer" + randomGen.Next(1000000, 10000000 - 1) + '.' + imageBufferSaveFormat.ToString().ToLower();
+                res = "imageBuffer" + random.Next(1000000, 10000000 - 1) + '.' + imageBufferSaveFormat.ToString().ToLower();
             } while (imageBufferIDs.Contains(res));
             imageBufferIDs.Add(res);
             return res;
@@ -94,6 +139,5 @@ namespace DiscordGameEngine.Rendering
             Directory.Delete(imageBuffersPath, true);
             CheckForImageBuffersDir();
         }
-
     }
 }

@@ -57,7 +57,7 @@ namespace DiscordGameEngine
                 await ReplyAsync(LogManager.DGE_WARN + "Couldn't initialize the Frame Buffer because it is already initialized.");
                 return;
             }
-            frameBuffer = new FrameBuffer(new Size(480 * 2, 270 * 2), System.Drawing.Color.FromArgb(42, 42, 42));
+            frameBuffer = new FrameBuffer(new Size(8, 8), System.Drawing.Color.FromArgb(42, 42, 42), true, new Size(800, 800));
             await ReplyAsync(LogManager.DGE_LOG + "Succesfully initialized the Frame Buffer.");
         }
 
@@ -115,25 +115,25 @@ namespace DiscordGameEngine
             await ReplyAsync(LogManager.DGE_LOG + "Succesfuly cleared the Frame Buffer.");
         }
 
-        [Command("setFBPixelRenderMode")]
-        public async Task SetFrameBufferPixelRenderMode(params string[] mode)
+        [Command("setFBPixelDrawMode")]
+        public async Task SetFrameBufferPixelDrawMode(params string[] mode)
         {
             mode[0] = mode[0].ToLower();
             switch (mode[0])
             {
                 case "replace":
-                    frameBuffer.pixelRenderMode = PixelRenderMode.REPLACE;
+                    frameBuffer.pixelDrawMode = PixelDrawMode.REPLACE;
                     break;
                 case "alpha_blending":
-                    frameBuffer.pixelRenderMode = PixelRenderMode.ALPHA_BLENDING;
+                    frameBuffer.pixelDrawMode = PixelDrawMode.ALPHA_BLENDING;
                     break;
                 case "alphablending":
-                    frameBuffer.pixelRenderMode = PixelRenderMode.ALPHA_BLENDING;
+                    frameBuffer.pixelDrawMode = PixelDrawMode.ALPHA_BLENDING;
                     mode[0] = "alpha_blending";
                     break;
                 default:
                     mode[0] = "normal";
-                    frameBuffer.pixelRenderMode = PixelRenderMode.NORMAL;
+                    frameBuffer.pixelDrawMode = PixelDrawMode.NORMAL;
                     break;
             }
             await ReplyAsync(LogManager.DGE_LOG + "Succesfuly set the Frame Buffer PixelRenderMode to " + mode[0].ToUpper() + ".");
