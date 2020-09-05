@@ -1,6 +1,8 @@
 # Discord "Game Engine"
 A game engine using discord's Unofficial .NET API to make bots
 
+This project was inspired by a video from someone on Reddit and or Youtube : https://youtu.be/0fWdU8JCT6Y
+
 will contain multiple features to be explained later
 
 # Documentation :
