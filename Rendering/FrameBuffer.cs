@@ -1,11 +1,9 @@
-﻿using Discord;
-using Discord.Commands;
+﻿using Discord.Commands;
 using DiscordGameEngine.Core;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
-using System.Reflection;
 
 using Color = System.Drawing.Color;
 
@@ -14,7 +12,6 @@ namespace DiscordGameEngine.Rendering
     public class FrameBuffer : PixelBuffer
     {
         private static readonly Random random = new Random();
-        private static readonly string imageBuffersPath = System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly().Location) + "\\imageBuffers\\";
         private static readonly System.Drawing.Imaging.ImageFormat imageBufferSaveFormat = System.Drawing.Imaging.ImageFormat.Png;
         private static readonly List<string> imageBufferIDs = new List<string>();
 
@@ -44,7 +41,7 @@ namespace DiscordGameEngine.Rendering
 
         public FrameBuffer(Size size, Color clearColor, bool scaleOnRender = false, Size displaySize = new Size(), ImageScalingMethod scalingMethod = ImageScalingMethod.NEAREST) : base(size, clearColor)
         {
-            CheckForImageBuffersDir();
+            Core.Core.CheckForDir(Core.Core.pathToImageFrameBuffers);
             this.imageBufferID = GetNewImageBufferID();
             this.scalingMethod = scalingMethod;
             SetScaleOnRender(displaySize, scaleOnRender);
@@ -68,15 +65,15 @@ namespace DiscordGameEngine.Rendering
 
         public void Display(SocketCommandContext context)
         {
-            context.Channel.SendFileAsync(imageBuffersPath + imageBufferID);
+            context.Channel.SendFileAsync(Core.Core.pathToImageFrameBuffers + imageBufferID);
         }
 
         private void SaveBufferToDisk()
         {
             if (scaleOnRender)
-                displayBuffer.Save(imageBuffersPath + imageBufferID, imageBufferSaveFormat);
+                displayBuffer.Save(Core.Core.pathToImageFrameBuffers + imageBufferID, imageBufferSaveFormat);
             else
-                buffer.Save(imageBuffersPath + imageBufferID, imageBufferSaveFormat);
+                buffer.Save(Core.Core.pathToImageFrameBuffers + imageBufferID, imageBufferSaveFormat);
         }
 
         public override void Resize(Size newSize, ImageScalingMethod scalingMethod = ImageScalingMethod.CLEAR)
@@ -111,7 +108,7 @@ namespace DiscordGameEngine.Rendering
 
         public void ClearStoredImageBuffer()
         {
-            string path = imageBuffersPath + imageBufferID;
+            string path = Core.Core.pathToImageFrameBuffers + imageBufferID;
             if (File.Exists(path))
                 File.Delete(path);
         }
@@ -127,17 +124,10 @@ namespace DiscordGameEngine.Rendering
             return res;
         }
 
-        private static void CheckForImageBuffersDir()
-        {
-            if (Directory.Exists(imageBuffersPath))
-                return;
-            Directory.CreateDirectory(imageBuffersPath);
-        }
-
         public static void ClearStoredImageBuffers()
         {
-            Directory.Delete(imageBuffersPath, true);
-            CheckForImageBuffersDir();
+            Directory.Delete(Core.Core.pathToImageFrameBuffers, true); 
+            Core.Core.CheckForDir(Core.Core.pathToImageFrameBuffers);
         }
     }
 }

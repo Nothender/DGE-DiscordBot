@@ -28,7 +28,12 @@ namespace DiscordGameEngine.Rendering
             float a2 = c2.A / 255f;
             c1 = Color.FromArgb((int)(c1.R * a1), (int)(c1.G * a1), (int)(c1.B * a1));
             c2 = Color.FromArgb((int)(c2.R * a2), (int)(c2.G * a2), (int)(c2.B * a2));
-            return Color.FromArgb(Math.Min(255, (int)((c1.A + c2.A) * (1 - a1))), Math.Min(255, (int)((c1.R + c2.R) * (1 - a1))), Math.Min(255, (int)((c1.G + c2.G) * (1 - a1))), Math.Min(255, (int)((c1.B + c2.B) * (1 - a1))));
+            return Color.FromArgb(
+                Math.Min(255, (int)(c1.A + (c2.A * (1 - a1)))), 
+                Math.Min(255, (int)(c1.R + (c2.R * (1 - a1)))), 
+                Math.Min(255, (int)(c1.G + (c2.G * (1 - a1)))), 
+                Math.Min(255, (int)(c1.B + (c2.B * (1 - a1))))
+            );
         }
 
         public static Color ToOpaqueColor(Color color)

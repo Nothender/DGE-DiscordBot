@@ -93,6 +93,56 @@ namespace DiscordGameEngine.Rendering
 
         public void DrawLine(int x1, int y1, int x2, int y2, Color color, int width=1)
         {
+            //If the line is Horizontal
+            if (y1 == y2)
+            {
+                int diff = Math.Abs(x1 - x2);
+                if (pixelDrawMode == PixelDrawMode.ALPHA_BLENDING)
+                {
+                    for (int i = Math.Min(x1, x2); i < diff; i++)
+                    {
+                        buffer.SetPixel(i, y1, RenderingCore.AlphaBlend(color, buffer.GetPixel(i, y1)));
+                    }
+                }
+                else
+                {
+                    if (pixelDrawMode == PixelDrawMode.NORMAL)
+                        color = RenderingCore.ToOpaqueColor(color);
+                    for (int i = Math.Min(x1, x2); i < diff; i++)
+                    {
+
+                        buffer.SetPixel(i, y1, color);
+                    }
+                }
+            }
+
+            //If the line is Vertical
+            else if (x1 == x2)
+            {
+                int diff = Math.Abs(y1 - y2);
+                if (pixelDrawMode == PixelDrawMode.ALPHA_BLENDING)
+                {
+                    for (int i = Math.Min(y1, y2); i < diff; i++)
+                    {
+                        buffer.SetPixel(i, x1, RenderingCore.AlphaBlend(color, buffer.GetPixel(i, x1)));
+                    }
+                }
+                else
+                {
+                    if (pixelDrawMode == PixelDrawMode.NORMAL)
+                        color = RenderingCore.ToOpaqueColor(color);
+                    for (int i = Math.Min(y1, y2); i < diff; i++)
+                    {
+
+                        buffer.SetPixel(i, x1, color);
+                    }
+                }
+            }
+
+            else
+            {
+
+            }
         }
 
         public virtual void Resize(Size newSize, ImageScalingMethod scalingMethod = ImageScalingMethod.CLEAR)
@@ -107,7 +157,7 @@ namespace DiscordGameEngine.Rendering
                 buffer = new Bitmap(_size.Width, _size.Height);
             else
             {
-
+                buffer = new Bitmap(filePath);
             }
         }
 
