@@ -25,3 +25,6 @@ to execute the following commands use <the_command> + <FBType\> e.g. //initFBS
 - the command `setFBPixelRenderingMode` will allow for transparency or not depending on the mode set : AlphaBlending, Normal, Replace // /!\ Alpha blending is really slow, and must be used only when needed
 
 Color can take a 4th argument when using the FrameBuffer which is alpha (by default 255)
+
+
+// test 42
