@@ -7,6 +7,7 @@ will contain multiple features to be explained later
 
 # Documentation :
 > The documentation is deprecated, and will be updated in a wiki once the repository is set to public
+
 Command string prefix = "//"
 
 Debug/Test Methods :
