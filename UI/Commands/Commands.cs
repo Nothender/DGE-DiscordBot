@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Linq;
 using System.Net.NetworkInformation;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
@@ -54,7 +55,7 @@ namespace DiscordGameEngine.UI.Commands
                 return;
             }
             string prefix;
-            switch (logInfo[0])
+            switch (logInfo[0].ToUpper())
             {
                 case "ERROR":
                     prefix = LogManager.DGE_ERROR;

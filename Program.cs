@@ -2,29 +2,33 @@
 using Discord.Commands;
 using Discord.WebSocket;
 using DiscordGameEngine.Core;
+using DiscordGameEngine.Misc;
 using Microsoft.Extensions.DependencyInjection;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Threading.Tasks;
 
 namespace DiscordGameEngine
 {
-    public class Program
+    public static class Program
     {
-        private DiscordSocketClient _client;
-        private CommandService _commands;
-        private IServiceProvider _services;
+        internal static DiscordSocketClient _client;
+        private static CommandService _commands;
+        private static IServiceProvider _services;
 
         private static string commandPrefix = "//";
 
-        private static void Main(string[] args) => new Program().MainAsync().GetAwaiter().GetResult();
+        public static EventHandler OnShutdown;
+
+        private static void Main(string[] args) => Program.MainAsync().GetAwaiter().GetResult();
 
         /// <summary>
         /// Main function executed
         /// </summary>
         /// <returns></returns>
-        public async Task MainAsync()
+        public static async Task MainAsync()
         {
             _client = new DiscordSocketClient(new DiscordSocketConfig()
             {
@@ -44,11 +48,14 @@ namespace DiscordGameEngine
 
             await _client.LoginAsync(TokenType.Bot, infos[0]);
             await _client.StartAsync();
+            await Startups();
 
-            await Task.Delay(-1);
+            while (Console.ReadLine().ToLower() != "stop");
+            OnShutdown?.Invoke(null, null);
+            await _client.LogoutAsync();
         }
 
-        private async Task RegisterMethodsAsync()
+        private static async Task RegisterMethodsAsync()
         {
             //Client method registry
             _client.Log += LogManager.LogDebug;
@@ -57,20 +64,42 @@ namespace DiscordGameEngine
             await _commands.AddModulesAsync(Assembly.GetEntryAssembly(), _services);
         }
 
-        private async Task HandleMessagesAsync(SocketMessage message)
+        private static async Task HandleMessagesAsync(SocketMessage message)
         {
             SocketUserMessage uMessage = message as SocketUserMessage;
             int argPos = 0;
-            if (!uMessage.HasStringPrefix(commandPrefix, ref argPos) || uMessage.Author.IsBot)
-                return;
-            SocketCommandContext context = new SocketCommandContext(_client, uMessage);
-
-            var execution = await _commands.ExecuteAsync(context, argPos, _services);
-            if (!execution.IsSuccess)
+            if (uMessage.HasStringPrefix(commandPrefix, ref argPos) && !uMessage.Author.IsBot)
             {
-                await LogManager.LogDebug(new LogMessage(LogSeverity.Warning, "Commands", execution.ErrorReason));
-                await context.Channel.SendMessageAsync(LogManager.DGE_ERROR + "Command execution failed : " + execution.ErrorReason);
+                SocketCommandContext context = new SocketCommandContext(_client, uMessage);
+
+                var execution = await _commands.ExecuteAsync(context, argPos, _services);
+                if (!execution.IsSuccess)
+                {
+                    await LogManager.LogDebug(new LogMessage(LogSeverity.Warning, "Commands", execution.ErrorReason));
+                    await context.Channel.SendMessageAsync(LogManager.DGE_ERROR + "Command execution failed : " + execution.ErrorReason);
+                }
             }
+            else
+            {
+                _ = Task.Run(() =>
+                {
+                    if (!uMessage.HasStringPrefix(commandPrefix, ref argPos) && uMessage.Author.Id != _client.CurrentUser.Id)
+                    {
+                        if (ChannelListener.IsChannelListened(uMessage.Channel.Id))
+                            ChannelListener.MessageRecieved(uMessage.Channel.Id, uMessage);
+                    }
+                });
+            }
+        }
+
+        private static Task Startups()
+        {
+            // Note : An event handler is not used here, every class is started individually, allowing them to subscribe to other events
+            Console.WriteLine("Starting up...");
+            Core.Core.Start();
+            Counting.Start();
+            Console.WriteLine("Startup complete");
+            return Task.CompletedTask;
         }
 
     }

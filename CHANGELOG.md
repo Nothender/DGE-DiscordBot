@@ -1,18 +1,25 @@
-#V0.5.3
+#V0.6.0 :
+- Added EventHandler for shutdown (An event system might be created in the future to enable easier event subscribing)
+- Added ChannelListener, adds ability to listen to channels, when a message is sent in a listened channel, and that it isn't a command it will be sent as a SocketUserMessage var through the callback method
+- Added user Counting commands, `beginCounting` begins the counting in a specified channel, and or give the current count of a channel, regex expressions can be recognized by using the '=' operator at the beginning of the message
+- Created `Counting` a cs file to handle the counting throughout the channels, can save and load current counts for channels to and from JSON
+- Fixed and improved `count` command
+
+#V0.5.3 :
 - Added scaling methods : `NEAREST` and `CLEAR`, method : `RenderingCore.ResizeBuffer(originalBuffer, targetBuffer, imageScalingMethod)`
 - The frame buffers can now have a draw size and a display size which means you can have a 16x16 px buffer to draw onto, and then display it as 2048x2048 px, the scaling method cannot be `CLEAR`
 
-#V0.5.0
+#V0.5.0 :
 - Created the `PixelBuffer` which works like a surface we can draw onto, `FrameBuffer` now extends from it and so will sprites.
 - Put the `PixelRenderMode` into the `RenderingCore` with the method `AlphaBlend` and `ToOpaqueColor` (which work per pixel)
 
-#V0.4.2
+#V0.4.2 :
 - Fixed alpha blending now works correctly, fix for supported imageBuffers file formats
 
-#V0.4.1
+#V0.4.1 :
 - Alpha blending can now be used to draw to the `FrameBuffer` -> always returns background value when trying to blend a color1 to a color2
 
-#V0.4.0
+#V0.4.0 :
 - Created `FrameBuffer` a real frame buffers which uses/contains pixels, and can be saved to disk, to be displayed as a discord message
 - Added specifics commands to the use the `FrameBuffer` like Init, Display, Clear, Draw and DrawRect
 

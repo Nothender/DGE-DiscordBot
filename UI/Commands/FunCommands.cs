@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
 using DiscordGameEngine.Core;
+using DiscordGameEngine.Misc;
 using DiscordGameEngine.Rendering;
 
 namespace DiscordGameEngine.UI.Commands
@@ -40,23 +41,49 @@ namespace DiscordGameEngine.UI.Commands
 
             Stopwatch watch = new Stopwatch();
 
-            int maxCount = int.Parse(args[0]);
-            int step = int.Parse(args[1]);
+            int maxCount = args.Length > 0 ? int.Parse(args[0]) : 42;
+            int step = Math.Abs(args.Length > 1 ? int.Parse(args[1]) : 1) * (maxCount != 0 ? maxCount/Math.Abs(maxCount) : 1);
+            step = step != 0 ? step : 1;
 
-            while (number < maxCount)
+            //TODO: improve counting speed (CPU usage)
+            while (Math.Abs(number) <= Math.Abs(maxCount))
             {
-                watch.Start();
-                while ((message + number + '\n').Length < 2000 && !(number > maxCount))
+                watch.Restart();
+                while ((message + number + '\n').Length < 2000 && !(Math.Abs(number) > Math.Abs(maxCount)))
                 {
                     message += number.ToString() + "\n";
                     number += step;
                 }
+                await Context.Channel.SendMessageAsync(message);
                 watch.Stop();
 
-                await Context.Channel.SendMessageAsync(message);
-                System.Threading.Thread.Sleep(200 - (int) watch.ElapsedMilliseconds);
+                System.Threading.Thread.Sleep(Math.Max(210 - (int)watch.ElapsedMilliseconds, 0));
                 message = new string("");
             }
         }
+
+        [Command("beginCounting")]
+        public async Task BeginCounting()
+        {
+            if (await Counting.AddCountingChannel(Context.Channel))
+                await ReplyAsync("Began counting in this channel, starting count is 0");
+            else
+                await ReplyAsync("This channel already is a counting channel, current count : " + Counting.GetCurrentChannelCount(Context.Channel.Id));
+        }
+
+        [Command("getCurrentCount")]
+        public async Task GetCurrentCount()
+        {
+            await ReplyAsync("The current count in this channel is : " + Counting.GetCurrentChannelCount(Context.Channel.Id));
+        }
+
+        [Command("saveChannel")]
+        public async Task SaveChannel()
+        {
+            Counting.SaveToJSON();
+            await ReplyAsync("saved");
+        }
+
+
     }
 }

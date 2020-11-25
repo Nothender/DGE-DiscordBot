@@ -40,8 +40,11 @@ namespace DiscordGameEngine.UI.Commands
         [Command("displayFB")]
         public async Task DisplayFrameBuffer()
         {
-            frameBuffer.Render();
-            frameBuffer.Display(Context);
+            await Task.Run(() =>
+            {
+                frameBuffer.Render();
+                frameBuffer.Display(Context);
+            });
         }
 
         [Command("drawToFB")]
