@@ -64,7 +64,7 @@ namespace DiscordGameEngine.Misc
             }
             catch (Exception e)
             {
-                Console.WriteLine(LogManager.DGE_ERROR + " " + e);
+                Program.DGELogger.Log(e.Message, EnderEngine.Logger.LogLevel.ERROR);
             }
         }
 
@@ -72,7 +72,7 @@ namespace DiscordGameEngine.Misc
         {
             if (!File.Exists(Core.Core.pathToSavedData + "\\" + JSONFileName + ".json"))
             {
-                Console.WriteLine(LogManager.DGE_WARN + "The file \""+ Core.Core.pathToSavedData + "\\" + JSONFileName + ".json" + "\" doesn't not exist, loading info from file failed");
+                Program.DGELogger.Log("The file \"" + Core.Core.pathToSavedData + "\\" + JSONFileName + ".json" + "\" doesn't not exist, loading info from file failed", EnderEngine.Logger.LogLevel.WARN);
                 return;
             }
             StreamReader stream = new StreamReader(Core.Core.pathToSavedData + "\\" + JSONFileName + ".json");
@@ -82,8 +82,7 @@ namespace DiscordGameEngine.Misc
             }
             catch (Exception e)
             {
-                Console.WriteLine(LogManager.DGE_ERROR + " " + e);
-                
+                Program.DGELogger.Log(e.Message, EnderEngine.Logger.LogLevel.ERROR);
             }
             if (stream != null) stream.Close();
         }

@@ -7,7 +7,11 @@ Though this bot will add games and enable people to create their own discord int
 
 ## Main features
 
+> Will be documented later
+
 # How to use :
+
+> Will be documented later
 
 ## Dependencies (included in the release Folder, if you want to compile it by yourself, you need to add the references to the project) :
 - [Discord.NET](https://github.com/discord-net/Discord.Net)

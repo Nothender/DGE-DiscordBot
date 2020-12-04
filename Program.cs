@@ -3,6 +3,7 @@ using Discord.Commands;
 using Discord.WebSocket;
 using DiscordGameEngine.Core;
 using DiscordGameEngine.Misc;
+using EnderEngine;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
@@ -19,6 +20,8 @@ namespace DiscordGameEngine
         private static IServiceProvider _services;
 
         private static string commandPrefix = "//";
+
+        internal static Logger DGELogger = new Logger("DGE");
 
         public static EventHandler OnShutdown;
 
@@ -96,6 +99,9 @@ namespace DiscordGameEngine
         {
             // Note : An event handler is not used here, every class is started individually, allowing them to subscribe to other events
             Console.WriteLine("Starting up...");
+
+            Logger.SetDefaultLoggingMethod(Logger.LogMethod.TO_CONSOLE);
+
             Core.Core.Start();
             Counting.Start();
             Console.WriteLine("Startup complete");

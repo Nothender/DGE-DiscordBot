@@ -25,7 +25,7 @@ namespace DiscordGameEngine.Rendering
                 if (value == ImageScalingMethod.CLEAR)
                 {
                     value = ImageScalingMethod.NEAREST;
-                    Console.WriteLine(LogManager.DGE_WARN + "scalingMethod in FrameBuffer cannot be ImageScalingMethod.CLEAR -> will be set by default to nearest");
+                    Program.DGELogger.Log("scalingMethod in FrameBuffer cannot be ImageScalingMethod.CLEAR -> will be set by default to nearest", EnderEngine.Logger.LogLevel.WARN);
                 }
                 _scalingMethod = value;
             }
