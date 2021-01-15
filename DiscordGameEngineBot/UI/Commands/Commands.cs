@@ -40,6 +40,13 @@ namespace DiscordGameEngine.UI.Commands
             await ReplyAsync("Pong");
         }
 
+        [Command("stop")]
+        public async Task Stop()
+        {
+            await ReplyAsync("Shutting DiscordGameEngine down...");
+            DGEMain.Shutdown();
+        }
+
         [Command("pong")]
         public async Task Pong()
         {

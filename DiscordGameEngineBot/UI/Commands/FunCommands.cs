@@ -6,6 +6,7 @@ using System.Net.NetworkInformation;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
+using System.Linq;
 using Discord;
 using Discord.Commands;
 using DiscordGameEngine.Core;
@@ -16,6 +17,8 @@ namespace DiscordGameEngine.UI.Commands
 {
     public class FunCommands : ModuleBase<SocketCommandContext>
     {
+
+        private static Random random = new Random();
 
         [Command("sendMsgsFast")]
         public async Task SendMsgsFast()
@@ -84,6 +87,11 @@ namespace DiscordGameEngine.UI.Commands
             await ReplyAsync("saved");
         }
 
+        [Command("PingRandom")]
+        public async Task PingRandomPerson()
+        {
+            await ReplyAsync("Haha ping " + Context.Guild.Users.ElementAt(random.Next(0, Context.Guild.Users.Count)).Mention);
+        }
 
     }
 }

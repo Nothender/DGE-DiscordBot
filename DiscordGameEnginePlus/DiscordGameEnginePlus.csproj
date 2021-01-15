@@ -1,16 +1,12 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <OutputType>Exe</OutputType>
+    <OutputType>Library</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
-    <RootNamespace>Discord_Game_Engine</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Discord.Net" Version="2.2.0" />
-    <PackageReference Include="Discord.Net.Core" Version="2.2.0" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="3.1.8" />
-    <PackageReference Include="System.Drawing.Common" Version="4.7.0" />
+    <ProjectReference Include="..\DiscordGameEngine Bot\DiscordGameEngine.csproj" />
   </ItemGroup>
 
   <ItemGroup>
