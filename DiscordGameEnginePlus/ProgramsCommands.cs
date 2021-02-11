@@ -15,7 +15,8 @@ namespace DiscordGameEnginePlus.Commands
         {
             { "interaction", typeof(InteractionProgram) },
             { "counting", typeof(CountingProgram) },
-            { "bonapio", typeof(BonapioProgram) }
+            { "bonapio", typeof(BonapioProgram) },
+            { "confusionrename", typeof(RenameConfusionProgram) }
         };
 
         [Command("CreateProgram")]

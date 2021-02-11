@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
+using Discord.WebSocket;
 using DiscordGameEngine.Core;
 using DiscordGameEngine.Rendering;
 
@@ -81,6 +82,13 @@ namespace DiscordGameEngine.UI.Commands
                     break;
             }
             await ReplyAsync(prefix + GetArgsAsSingleStringFrom(logInfo, 1));
+        }
+
+        [Command("ban")]
+        [RequireUserPermission(GuildPermission.BanMembers)]
+        public async Task Ban(SocketGuildUser user = null)
+        {
+            user?.BanAsync();
         }
 
     }

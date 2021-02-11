@@ -6,7 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\DiscordGameEngine Bot\DiscordGameEngine.csproj" />
+    <ProjectReference Include="..\DiscordGameEngineBot\DiscordGameEngine.csproj" />
     <ProjectReference Include="..\DiscordGameEnginePlus\DiscordGameEnginePlus.csproj" />
   </ItemGroup>
 

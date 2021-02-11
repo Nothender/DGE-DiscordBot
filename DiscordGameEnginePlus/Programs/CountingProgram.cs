@@ -2,28 +2,66 @@
 using DiscordGameEngine.Core;
 using System;
 using System.Collections.Generic;
-using System.Text;
 using EnderEngine;
 using Discord.WebSocket;
-using System.Threading.Tasks;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Xml.XPath;
 using Discord.Commands;
-using System.Globalization;
+using System.Linq;
 
 namespace DiscordGameEnginePlus.Programs
 {
     public class CountingProgram : ProgramModule
     {
-        private int currentCount = 0;
-        private int countingDirection = 1;
+        private class CountAndDirection
+        {
+            public int currentCount;
+            public int countingDirection;
+
+            public CountAndDirection(int count, int countDirection) 
+            {
+                currentCount = count;
+                countingDirection = countDirection;
+            }
+
+            public void Increment(int value)
+            {
+                currentCount = currentCount + value;
+            }
+
+            public void SetDirection(int value)
+            {
+                countingDirection = value;
+            }
+
+            public void SetCount(int value)
+            {
+                currentCount = value;
+            }
+
+        }
+
+        private static Dictionary<ulong, CountAndDirection> channelsCount = new Dictionary<ulong, CountAndDirection>();
+        private static bool loaded = false;
+
+        private ulong mainChannelId;
         private static string JSONFileName = "ChannelsCountingCounts";
 
         public CountingProgram(SocketCommandContext context) : base(context)
         {
+            mainChannelId = context.Channel.Id;
+
             DGEMain.OnShutdown += Shutdown;
-            LoadFromJSON();
+            if (!loaded)
+            {
+                LoadFromJSON();
+                loaded = true;
+            }
+
+            if (!channelsCount.ContainsKey(mainChannelId))
+                channelsCount.Add(mainChannelId, new CountAndDirection(0, 1));
+
 
             AddChannel(context.Channel.Id);
             AddInteraction("SetDirection", SetDirectionCallback);
@@ -32,20 +70,20 @@ namespace DiscordGameEnginePlus.Programs
 
         private void GetCurrentCountCallback(SocketUserMessage umessage)
         {
-            umessage.Channel.SendMessageAsync($"The current count is : {currentCount} and the direction is {countingDirection}");
+            umessage.Channel.SendMessageAsync($"The current count is : {channelsCount[mainChannelId].currentCount} and the direction is {channelsCount[mainChannelId].countingDirection}");
         }
 
         private void SetDirectionCallback(SocketUserMessage umessage)
         {
             char dirChar = umessage.Content.Split()[1][0];
             if (dirChar == '-')
-                countingDirection = -1;
+                channelsCount[mainChannelId].SetDirection(-1);
             else if (dirChar == '+')
-                countingDirection = 1;
+                channelsCount[mainChannelId].SetDirection(1);
             else
                 umessage.Channel.SendMessageAsync("This is no valid sign");
             foreach (ISocketMessageChannel channel in interactionChannels)
-                channel.SendMessageAsync("The sign counting direction is " + countingDirection);
+                channel.SendMessageAsync("The sign counting direction is " + channelsCount[mainChannelId].countingDirection);
         }
 
         private static void Shutdown(object sender, EventArgs e)
@@ -55,9 +93,9 @@ namespace DiscordGameEnginePlus.Programs
 
         private class ChannelsCountJSONFormat
         {
-            public Dictionary<ulong, int> channelsCount;
+            public Dictionary<ulong, CountAndDirection> channelsCount;
 
-            public ChannelsCountJSONFormat(Dictionary<ulong, int> channelsCount)
+            public ChannelsCountJSONFormat(Dictionary<ulong, CountAndDirection> channelsCount)
             {
                 this.channelsCount = channelsCount;
             }
@@ -69,19 +107,19 @@ namespace DiscordGameEnginePlus.Programs
         /// </summary>
         public static void SaveToJSON()
         {
-            /*try
+            try
             {
-                File.WriteAllText(Core.pathToSavedData + "\\" + JSONFileName + ".json", Newtonsoft.Json.JsonConvert.SerializeObject(new ChannelsCountJSONFormat(ChannelsCount)));
+                File.WriteAllText(Core.pathToSavedData + "\\" + JSONFileName + ".json", Newtonsoft.Json.JsonConvert.SerializeObject(new ChannelsCountJSONFormat(channelsCount)));
             }
             catch (Exception e)
             {
                 DGEMain.DGELoggerProgram.Log(e.Message, Logger.LogLevel.ERROR);
-            }*/
+            }
         }
 
         private static void LoadFromJSON()
         {
-            /*if (!File.Exists(Core.pathToSavedData + "\\" + JSONFileName + ".json"))
+            if (!File.Exists(Core.pathToSavedData + "\\" + JSONFileName + ".json"))
             {
                 DGEMain.DGELoggerProgram.Log("The file \"" + Core.pathToSavedData + "\\" + JSONFileName + ".json" + "\" doesn't not exist, loading info from file failed", EnderEngine.Logger.LogLevel.WARN);
                 return;
@@ -89,13 +127,13 @@ namespace DiscordGameEnginePlus.Programs
             StreamReader stream = new StreamReader(Core.pathToSavedData + "\\" + JSONFileName + ".json");
             try
             {
-                ChannelsCount = Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<ulong, int>>(stream.ReadToEnd());
+                channelsCount = Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<ulong, CountAndDirection>>(stream.ReadToEnd());
             }
             catch (Exception e)
             {
                 DGEMain.DGELoggerProgram.Log(e.Message, EnderEngine.Logger.LogLevel.ERROR);
             }
-            if (stream != null) stream.Close();*/
+            if (stream != null) stream.Close();
         }
 
         private static double Evaluate(string expression)
@@ -150,9 +188,9 @@ namespace DiscordGameEnginePlus.Programs
             else
                 return;
 
-            if (evaluatedNumber == currentCount + countingDirection)
+            if (evaluatedNumber == channelsCount[mainChannelId].currentCount + channelsCount[mainChannelId].countingDirection)
             {
-                currentCount += countingDirection;
+                channelsCount[mainChannelId].Increment(channelsCount[mainChannelId].countingDirection);
                 umessage.AddReactionAsync(new Discord.Emoji("✔️"));
                 foreach (ISocketMessageChannel channel in interactionChannels)
                 {
@@ -163,13 +201,13 @@ namespace DiscordGameEnginePlus.Programs
             else
             {
                 umessage.AddReactionAsync(new Discord.Emoji("❌"));
-                umessage.Channel.SendMessageAsync($"Wrong number {evaluatedNumber}, the correct number was : {currentCount + countingDirection}. Starting back from  0");
+                umessage.Channel.SendMessageAsync($"Wrong number {evaluatedNumber}, the correct number was : {channelsCount[mainChannelId].currentCount + channelsCount[mainChannelId].countingDirection}. Starting back from  0");
                 foreach (ISocketMessageChannel channel in interactionChannels)
                 {
                     if (channel.Id != umessage.Channel.Id)
-                        channel.SendMessageAsync($"❌ The user {umessage.Author.Username}#{umessage.Author.Discriminator} in another channel broke the record with the number : {evaluatedNumber}, the correct number was : {currentCount + countingDirection}. Starting back from  0");
+                        channel.SendMessageAsync($"❌ The user {umessage.Author.Username}#{umessage.Author.Discriminator} in another channel broke the record with the number : {evaluatedNumber}, the correct number was : {channelsCount[mainChannelId].currentCount + channelsCount[mainChannelId].countingDirection}. Starting back from  0");
                 }
-                currentCount = 0;
+                channelsCount[mainChannelId].SetCount(0);
             }
 
         }

@@ -18,7 +18,24 @@ namespace DiscordGameEnginePlus.Programs
         {
             AddChannel(context.Channel.Id);
             AddInteraction("ConfusionRename", ConfusionRename);
+            AddInteraction("Ban", Ban);
             code = NextCode();
+        }
+
+        public async void Ban(SocketUserMessage message)
+        {
+            if (!message.Content.Contains(code))
+                return;
+            code = NextCode();
+
+            if (message.MentionedUsers.Count == 1)
+            {
+                SocketGuildChannel channel = message.Channel as SocketGuildChannel;
+                IEnumerator<SocketUser> userIterator = message.MentionedUsers.GetEnumerator();
+                userIterator.Reset();
+                while(userIterator.MoveNext())
+                    await channel.Guild.AddBanAsync(userIterator.Current.Id);
+            }
         }
 
         public async void ConfusionRename(SocketUserMessage message)
