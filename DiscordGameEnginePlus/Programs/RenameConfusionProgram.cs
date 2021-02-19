@@ -12,6 +12,8 @@ namespace DiscordGameEnginePlus.Programs
 
         //This is a simple and stupid program, that was really badly programmed, and will not be improved
 
+        public RenameConfusionProgram(ProgramData programData) : base(programData) { }
+
         public static string code;
 
         public RenameConfusionProgram(SocketCommandContext context) : base(context)
@@ -81,6 +83,15 @@ namespace DiscordGameEnginePlus.Programs
         }
 
         protected override void CallbackNoTriggerMessageRecieved(SocketUserMessage umessage)
+        {
+        }
+
+        protected override List<object> GetData()
+        {
+            return new List<object>();
+        }
+
+        protected override void LoadData(List<object> data)
         {
         }
     }

@@ -11,18 +11,19 @@ namespace DiscordGameEnginePlus.Commands
     public class ProgramsCommands : ModuleBase<SocketCommandContext>
     {
 
-        Dictionary<string, Type> programTypes = new Dictionary<string, Type>()
+        private static Dictionary<string, Type> programTypes = new Dictionary<string, Type>()
         {
             { "interaction", typeof(InteractionProgram) },
             { "counting", typeof(CountingProgram) },
             { "bonapio", typeof(BonapioProgram) },
-            { "confusionrename", typeof(RenameConfusionProgram) }
+            { "confusionrename", typeof(RenameConfusionProgram) },
+            { "void", typeof(TestVoidProgram) }
         };
 
         [Command("CreateProgram")]
-        public async Task CreateProgram(params string[] args)
+        public async Task CreateProgram(string programKey)
         {
-            ProgramModule program = (ProgramModule)Activator.CreateInstance(programTypes[args[0].ToLower()], Context);
+            ProgramModule program = (ProgramModule)Activator.CreateInstance(programTypes[programKey.ToLower()], Context);
             await ReplyAsync($"{program.Id}");
         }
 
@@ -33,5 +34,14 @@ namespace DiscordGameEnginePlus.Commands
             await ReplyAsync($"This channel is now listend by the program {id}");
         }
 
+        [Command("DeleteProgram")]
+        public async Task DeleteProgram(int id)
+        {
+        }
+
+        [Command("ClearPrograms")]
+        public async Task ClearPrograms()
+        {
+        }
     }
 }

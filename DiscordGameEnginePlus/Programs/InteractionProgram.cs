@@ -9,6 +9,8 @@ namespace DiscordGameEnginePlus.Programs
 {
     public class InteractionProgram : ProgramModule
     {
+        public InteractionProgram(ProgramData programData) : base(programData) { }
+
         public Dictionary<string, string> actionAnswer = new Dictionary<string, string>();
 
         public InteractionProgram(SocketCommandContext context) : base(context)
@@ -40,11 +42,21 @@ namespace DiscordGameEnginePlus.Programs
 
         public void Broadcast(SocketUserMessage umessage)
         {
+            string message = "42 " + umessage.Content.Remove(0, 10);
             foreach (ISocketMessageChannel channel in interactionChannels)
-                channel.SendMessageAsync("42");
+                channel.SendMessageAsync(message);
         }
 
         protected override void CallbackNoTriggerMessageRecieved(SocketUserMessage umessage)
+        {
+        }
+
+        protected override List<object> GetData()
+        {
+            return new List<object>();
+        }
+
+        protected override void LoadData(List<object> data)
         {
         }
     }

@@ -27,7 +27,7 @@ namespace DiscordGameEngine
         internal static Logger DGELogger = new Logger("DGE");
         public static Logger DGELoggerProgram = new Logger("DGEProgram");
 
-        public static EventHandler OnShutdown;
+        public static event EventHandler OnShutdown;
 
         /// <summary>
         /// Main function executed
@@ -35,6 +35,8 @@ namespace DiscordGameEngine
         /// <returns></returns>
         public static async Task MainAsync()
         {
+            Engine.Init();
+
             _client = new DiscordSocketClient(new DiscordSocketConfig()
             {
                 AlwaysDownloadUsers = true
@@ -52,9 +54,10 @@ namespace DiscordGameEngine
             //index { 0 : Token }
             string[] infos = File.ReadAllLines("../../../infos.txt"); // CHANGE ACCESS PATH FOR RELEASE
 
+            _client.Ready += Startups;
+
             await _client.LoginAsync(TokenType.Bot, infos[0]);
             await _client.StartAsync();
-            await Startups();
 
             while (!isShutDown)
                 await Task.Delay(100);
@@ -65,7 +68,14 @@ namespace DiscordGameEngine
         /// </summary>
         public static void Shutdown()
         {
-            OnShutdown?.Invoke(null, null);
+            try
+            {
+                OnShutdown?.Invoke(null, null);
+            }
+            catch (Exception e)
+            {
+                DGELogger.Log(e.Message, Logger.LogLevel.ERROR);
+            }
             _client.LogoutAsync();
             isShutDown = true;
         }
@@ -82,6 +92,7 @@ namespace DiscordGameEngine
         private static async Task HandleMessagesAsync(SocketMessage message)
         {
             SocketUserMessage uMessage = message as SocketUserMessage;
+            string msg = message.Content.ToLower();
             int argPos = 0;
             if (uMessage.HasStringPrefix(commandPrefix, ref argPos) && !uMessage.Author.IsBot)
             {
@@ -119,10 +130,17 @@ namespace DiscordGameEngine
             // Note : An event handler is not used here, every class is started individually, allowing them to subscribe to other events
             Console.WriteLine("Starting up...");
 
-            Logger.SetDefaultLoggingMethod(Logger.LogMethod.TO_CONSOLE);
             ConsoleCommands().ConfigureAwait(false);
 
             Core.Core.Start();
+            try
+            {
+                ProgramModule.RestoreSavedPrograms();
+            }
+            catch (Exception e)
+            {
+                DGELogger.Log(e.Message, Logger.LogLevel.ERROR);
+            }
 
             Console.WriteLine("Startup complete");
             return Task.CompletedTask;
@@ -138,6 +156,7 @@ namespace DiscordGameEngine
             AddCommandModule(typeof(Commands));
             AddCommandModule(typeof(FrameBufferCommands));
             AddCommandModule(typeof(FunCommands));
+            AddCommandModule(typeof(ModerationCommands));
         }
 
         /// <summary>

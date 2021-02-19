@@ -14,6 +14,9 @@ namespace DiscordGameEnginePlus.Programs
 {
     public class CountingProgram : ProgramModule
     {
+
+        public CountingProgram(ProgramData programData) : base(programData) { }
+
         private class CountAndDirection
         {
             public int currentCount;
@@ -43,21 +46,12 @@ namespace DiscordGameEnginePlus.Programs
         }
 
         private static Dictionary<ulong, CountAndDirection> channelsCount = new Dictionary<ulong, CountAndDirection>();
-        private static bool loaded = false;
 
         private ulong mainChannelId;
-        private static string JSONFileName = "ChannelsCountingCounts";
 
         public CountingProgram(SocketCommandContext context) : base(context)
         {
             mainChannelId = context.Channel.Id;
-
-            DGEMain.OnShutdown += Shutdown;
-            if (!loaded)
-            {
-                LoadFromJSON();
-                loaded = true;
-            }
 
             if (!channelsCount.ContainsKey(mainChannelId))
                 channelsCount.Add(mainChannelId, new CountAndDirection(0, 1));
@@ -86,11 +80,6 @@ namespace DiscordGameEnginePlus.Programs
                 channel.SendMessageAsync("The sign counting direction is " + channelsCount[mainChannelId].countingDirection);
         }
 
-        private static void Shutdown(object sender, EventArgs e)
-        {
-            SaveToJSON();
-        }
-
         private class ChannelsCountJSONFormat
         {
             public Dictionary<ulong, CountAndDirection> channelsCount;
@@ -99,41 +88,6 @@ namespace DiscordGameEnginePlus.Programs
             {
                 this.channelsCount = channelsCount;
             }
-        }
-
-
-        /// <summary>
-        /// Saves the current count associated to channels in a json file
-        /// </summary>
-        public static void SaveToJSON()
-        {
-            try
-            {
-                File.WriteAllText(Core.pathToSavedData + "\\" + JSONFileName + ".json", Newtonsoft.Json.JsonConvert.SerializeObject(new ChannelsCountJSONFormat(channelsCount)));
-            }
-            catch (Exception e)
-            {
-                DGEMain.DGELoggerProgram.Log(e.Message, Logger.LogLevel.ERROR);
-            }
-        }
-
-        private static void LoadFromJSON()
-        {
-            if (!File.Exists(Core.pathToSavedData + "\\" + JSONFileName + ".json"))
-            {
-                DGEMain.DGELoggerProgram.Log("The file \"" + Core.pathToSavedData + "\\" + JSONFileName + ".json" + "\" doesn't not exist, loading info from file failed", EnderEngine.Logger.LogLevel.WARN);
-                return;
-            }
-            StreamReader stream = new StreamReader(Core.pathToSavedData + "\\" + JSONFileName + ".json");
-            try
-            {
-                channelsCount = Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<ulong, CountAndDirection>>(stream.ReadToEnd());
-            }
-            catch (Exception e)
-            {
-                DGEMain.DGELoggerProgram.Log(e.Message, EnderEngine.Logger.LogLevel.ERROR);
-            }
-            if (stream != null) stream.Close();
         }
 
         private static double Evaluate(string expression)
@@ -210,6 +164,15 @@ namespace DiscordGameEnginePlus.Programs
                 channelsCount[mainChannelId].SetCount(0);
             }
 
+        }
+
+        protected override List<object> GetData()
+        {
+            return new List<object>();
+        }
+
+        protected override void LoadData(List<object> data)
+        {
         }
     }
 }

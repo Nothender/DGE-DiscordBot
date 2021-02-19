@@ -9,10 +9,10 @@ namespace DiscordGameEngine.Core
     public static class Core
     {
 
-        public static readonly string pathToDataStorage = System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
-        public static readonly string pathToAssets = pathToDataStorage + "\\Assets\\";
-        public static readonly string pathToImageFrameBuffers = pathToDataStorage + "\\ImageBuffers\\";
-        public static readonly string pathToSavedData = pathToDataStorage + "\\SavedData\\";
+        public static readonly string pathToDataStorage = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + '\\';
+        public static readonly string pathToAssets = pathToDataStorage + "Assets\\";
+        public static readonly string pathToImageFrameBuffers = pathToDataStorage + "ImageBuffers\\";
+        public static readonly string pathToSavedData = pathToDataStorage + "SavedData\\";
 
         internal static void Start()
         {

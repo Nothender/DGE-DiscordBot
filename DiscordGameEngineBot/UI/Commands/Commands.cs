@@ -41,6 +41,13 @@ namespace DiscordGameEngine.UI.Commands
             await ReplyAsync("Pong");
         }
 
+        [Command("42")]
+        public async Task C42()
+        {
+            await ReplyAsync("42");
+        }
+
+
         [Command("stop")]
         public async Task Stop()
         {
@@ -86,9 +93,10 @@ namespace DiscordGameEngine.UI.Commands
 
         [Command("ban")]
         [RequireUserPermission(GuildPermission.BanMembers)]
-        public async Task Ban(SocketGuildUser user = null)
+        public async Task Ban(IGuildUser user, [Remainder] string reason = null)
         {
-            user?.BanAsync();
+            //await user?.BanAsync();
+            await ReplyAsync(user.Nickname + " 42 " + (reason != null ? reason : "no reason"));
         }
 
     }
