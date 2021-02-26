@@ -43,8 +43,22 @@ namespace DiscordGameEngine.Core
 
         private static void AddProgram(ProgramModule program)
         {
-            program.Id = nextId++;
+            nextId++;
+            program.Id = nextId;
             programs.Add(program.Id, program);
+        }
+        
+        public static void DeleteProgram(int id)
+        {
+            programs[id].Broadcast($"{LogManager.DGE_LOG} The program {id} ({programs[id].GetType().Name}) has been deleted");
+            programs.Remove(id);
+
+        }
+
+        public static void ClearPrograms()
+        {
+            foreach (int i in programs.Keys)
+                DeleteProgram(i);
         }
 
         protected void AddInteraction(string trigger, Action<SocketUserMessage> callback)
@@ -78,6 +92,12 @@ namespace DiscordGameEngine.Core
                 CallbackNoTriggerMessageRecieved(umessage);
         }
 
+        protected void Broadcast(string message)
+        {
+            foreach (ISocketMessageChannel channel in interactionChannels)
+                channel.SendMessageAsync(message);
+        }
+
         //TODO: Loading data fails at json deserialization (deserialized to List<JsonElement> instead of List<object> being the elements saved)
 
         protected abstract List<object> GetData();
@@ -97,7 +117,6 @@ namespace DiscordGameEngine.Core
         {
             if (loaded)
                 return;
-            //DGEMain._client.Ready
             InstantiatePrograms(LoadProgramsData());
             loaded = true;
         }
@@ -109,11 +128,17 @@ namespace DiscordGameEngine.Core
             return new List<ProgramData>();
         }
 
+        internal static void DeleteProgramsSaveFile()
+        {
+            File.Delete(Core.pathToSavedData + SaveFileName);
+        }
+
         private static void InstantiatePrograms(List<ProgramData> programsData)
         {
             foreach (ProgramData programData in programsData)
             {
-                AddProgram((ProgramModule)Activator.CreateInstance(Type.GetType(programData.typeName), new object[] { programData }));
+                ProgramModule program = (ProgramModule)Activator.CreateInstance(Type.GetType(programData.typeName), new object[] { programData });
+                program.Broadcast($"Restored saved program {program.GetType().Name} with the new Id {program.Id}");
             }
         }
 

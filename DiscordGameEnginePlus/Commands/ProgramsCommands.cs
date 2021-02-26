@@ -37,11 +37,13 @@ namespace DiscordGameEnginePlus.Commands
         [Command("DeleteProgram")]
         public async Task DeleteProgram(int id)
         {
+            ProgramModule.DeleteProgram(id);
         }
 
         [Command("ClearPrograms")]
         public async Task ClearPrograms()
         {
+            ProgramModule.ClearPrograms();
         }
     }
 }

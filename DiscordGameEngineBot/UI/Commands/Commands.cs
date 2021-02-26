@@ -19,6 +19,7 @@ namespace DiscordGameEngine.UI.Commands
 
         /// <summary>
         /// Returns a string which is the result of the concatenation from args[beginIndex] to args[args.Length-1] with a space in between each elements
+        /// (Similar to the [Reminder] attribute)
         /// </summary>
         /// <param name="args"></param>
         /// <param name="beginIndex"></param>
@@ -62,15 +63,10 @@ namespace DiscordGameEngine.UI.Commands
         }
 
         [Command("logTest")]
-        public async Task LogTest(params string[] logInfo)
+        public async Task LogTest(string logLevel, [Remainder] string message)
         {
-            if (logInfo.Length < 1)
-            {
-                await ReplyAsync(LogManager.DGE_ERROR + "No logmode/msg has been provided.");
-                return;
-            }
             string prefix;
-            switch (logInfo[0].ToUpper())
+            switch (logLevel.ToUpper())
             {
                 case "ERROR":
                     prefix = LogManager.DGE_ERROR;
@@ -88,16 +84,16 @@ namespace DiscordGameEngine.UI.Commands
                     prefix = "nope : ";
                     break;
             }
-            await ReplyAsync(prefix + GetArgsAsSingleStringFrom(logInfo, 1));
+            await ReplyAsync(prefix + message);
         }
 
-        [Command("ban")]
+        /*[Command("ban")]
         [RequireUserPermission(GuildPermission.BanMembers)]
         public async Task Ban(IGuildUser user, [Remainder] string reason = null)
         {
             //await user?.BanAsync();
             await ReplyAsync(user.Nickname + " 42 " + (reason != null ? reason : "no reason"));
-        }
+        }*/
 
     }
 }

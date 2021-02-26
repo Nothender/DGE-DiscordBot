@@ -122,7 +122,7 @@ namespace DiscordGameEngine.Rendering
                 int diff = Math.Abs(y1 - y2);
                 if (pixelDrawMode == PixelDrawMode.ALPHA_BLENDING)
                 {
-                    for (int i = Math.Min(y1, y2); i < diff; i++)
+                    for (int i = Math.Min(y1, y2); i < diff + Math.Min(y1, y2); i++)
                     {
                         buffer.SetPixel(i, x1, RenderingCore.AlphaBlend(color, buffer.GetPixel(i, x1)));
                     }
@@ -141,7 +141,25 @@ namespace DiscordGameEngine.Rendering
 
             else
             {
-
+                int step; //Copied from wikipedia : https://en.wikipedia.org/wiki/Digital_differential_analyzer_(graphics_algorithm)
+                int dx = (x2 - x1);
+                int dy = (y2 - y1);
+                if (Math.Abs(dx) >= Math.Abs(dy))
+                    step = Math.Abs(dx);
+                else
+                    step = Math.Abs(dy);
+                dx = dx / step;
+                dy = dy / step;
+                int x = x1;
+                int y = y1;
+                int i = 1;
+                while (i <= step)
+                {
+                    buffer.SetPixel(x, y, color);
+                    x = x + dx;
+                    y = y + dy;
+                    i = i + 1;
+                }
             }
         }
 

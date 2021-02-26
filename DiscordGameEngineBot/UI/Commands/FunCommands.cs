@@ -37,16 +37,15 @@ namespace DiscordGameEngine.UI.Commands
         }
 
         [Command("count")]
-        public async Task Count(params string[] args)
+        public async Task Count(int maxCount = 42, int step = 1)
         {
             int number = 0;
             string message = new string("");
 
             Stopwatch watch = new Stopwatch();
-
-            int maxCount = args.Length > 0 ? int.Parse(args[0]) : 42;
-            int step = Math.Abs(args.Length > 1 ? int.Parse(args[1]) : 1) * (maxCount != 0 ? maxCount/Math.Abs(maxCount) : 1);
-            step = step != 0 ? step : 1;
+            
+            step = Math.Abs(step) * (maxCount != 0 ? maxCount/Math.Abs(maxCount) : 1); //Checking the step to know if we will fall into an infinite loop by having step and maxCount of different signs, then fixing it
+            step = step != 0 ? step : maxCount / Math.Abs(maxCount); //If the step is 0, then we put it (sign of maxcount) * 1
 
             //TODO: improve counting speed (CPU usage)
             while (Math.Abs(number) <= Math.Abs(maxCount))

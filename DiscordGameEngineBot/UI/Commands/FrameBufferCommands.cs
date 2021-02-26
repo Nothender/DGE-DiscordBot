@@ -48,41 +48,30 @@ namespace DiscordGameEngine.UI.Commands
         }
 
         [Command("drawToFB")]
-        public async Task DrawToFrameBuffer(params string[] pixelInfo)
+        public async Task DrawToFrameBuffer(int x, int y, int r, int g, int b, int? a)
         {
-            if (pixelInfo.Length < 5)
-                await ReplyAsync(LogManager.DGE_WARN + "The 5-6 following arguments are required : int xPos, int yPos, int r, int g, int b, (optional) int a.");
-            else
-            {
-                int a = 255;
-                if (pixelInfo.Length > 5)
-                    a = int.Parse(pixelInfo[5]);
-                System.Drawing.Color color = System.Drawing.Color.FromArgb(a, int.Parse(pixelInfo[2]), int.Parse(pixelInfo[3]), int.Parse(pixelInfo[4]));
-                int x = int.Parse(pixelInfo[0]);
-                int y = int.Parse(pixelInfo[1]);
-                frameBuffer.Draw(x, y, color);
-                await ReplyAsync(LogManager.DGE_LOG + "Succesfuly drew a px " + color.ToString() + " at x=" + x + " y=" + y + '.');
-            }
+            System.Drawing.Color color = System.Drawing.Color.FromArgb(a ?? 255, r, g, b);
+            frameBuffer.Draw(x, y, color);
+            await ReplyAsync($"{LogManager.DGE_LOG}Succesfuly drew a px {color.ToString()} at x={x} y={y}.");
+
+        }
+
+        [Command("drawLineToFB")]
+        public async Task DrawLineToFrameBuffer(int x1, int y1, int x2, int y2, int r, int g, int b, int? a)
+        {
+
+            System.Drawing.Color color = System.Drawing.Color.FromArgb(a ?? 255, r, g, b);
+            frameBuffer.DrawLine(x1, y1, x2, y2, color);
+            await ReplyAsync($"{LogManager.DGE_LOG}Succesfuly drew a line of {color.ToString()} from x1={x1} y1={y1} to x2={x2} y2={y2}.");
         }
 
         [Command("drawRectToFB")]
-        public async Task DrawRectToFrameBuffer(params string[] rectInfo)
+        public async Task DrawRectToFrameBuffer(int x, int y, int sizeX, int sizeY, int r, int g, int b, int? a)
         {
-            if (rectInfo.Length < 7)
-                await ReplyAsync(LogManager.DGE_WARN + "The 7-8 following arguments are required : int xPos, int yPos, int xSize, int ySize, int r, int g, int b, (optional) int a.");
-            else
-            {
-                int a = 255;
-                if (rectInfo.Length > 7)
-                    a = int.Parse(rectInfo[7]);
-                System.Drawing.Color color = System.Drawing.Color.FromArgb(a, int.Parse(rectInfo[4]), int.Parse(rectInfo[5]), int.Parse(rectInfo[6]));
-                int x = int.Parse(rectInfo[0]);
-                int y = int.Parse(rectInfo[1]);
-                int xSize = int.Parse(rectInfo[2]);
-                int ySize = int.Parse(rectInfo[3]);
-                frameBuffer.DrawRect(x, y, xSize, ySize, color);
-                await ReplyAsync(LogManager.DGE_LOG + "Succesfuly drew a rectangle of " + color.ToString() + " from x=" + x + " y=" + y + " to x=" + (x + xSize) + " y=" + (y + ySize) + '.');
-            }
+
+            System.Drawing.Color color = System.Drawing.Color.FromArgb(a ?? 255, r, g, b);
+            frameBuffer.DrawRect(x, y, sizeX, sizeY, color);
+            await ReplyAsync($"{LogManager.DGE_LOG}Succesfuly drew a rectangle of {color.ToString()} from x={x} y={y} to x={x + sizeX} y={y + sizeY}.");
         }
 
         [Command("clearFB")]
@@ -93,10 +82,9 @@ namespace DiscordGameEngine.UI.Commands
         }
 
         [Command("setFBPixelDrawMode")]
-        public async Task SetFrameBufferPixelDrawMode(params string[] mode)
+        public async Task SetFrameBufferPixelDrawMode(string mode)
         {
-            mode[0] = mode[0].ToLower();
-            switch (mode[0])
+            switch (mode.ToLower())
             {
                 case "replace":
                     frameBuffer.pixelDrawMode = PixelDrawMode.REPLACE;
@@ -106,14 +94,14 @@ namespace DiscordGameEngine.UI.Commands
                     break;
                 case "alphablending":
                     frameBuffer.pixelDrawMode = PixelDrawMode.ALPHA_BLENDING;
-                    mode[0] = "alpha_blending";
+                    mode = "alpha_blending";
                     break;
                 default:
-                    mode[0] = "normal";
+                    mode = "normal";
                     frameBuffer.pixelDrawMode = PixelDrawMode.NORMAL;
                     break;
             }
-            await ReplyAsync(LogManager.DGE_LOG + "Succesfuly set the Frame Buffer PixelRenderMode to " + mode[0].ToUpper() + ".");
+            await ReplyAsync("{LogManager.DGE_LOG}Succesfuly set the Frame Buffer PixelRenderMode to {mode.ToUpper()}.");
         }
 
         [Command("initSFB")]
@@ -138,18 +126,12 @@ namespace DiscordGameEngine.UI.Commands
         }
 
         [Command("drawToSFB")]
-        public async Task DrawToStringFrameBuffer(params string[] pixelInfo)
+        public async Task DrawToStringFrameBuffer(int x, int y, string pixelInfo)
         {
-            if (pixelInfo.Length < 3)
-                await ReplyAsync(LogManager.DGE_WARN + "The 3 following arguments are required : int xPos, int yPos, string pixelInfo.");
-            else
-            {
-                string px = pixelInfo[2] + "  ";
-                int x = int.Parse(pixelInfo[0]);
-                int y = int.Parse(pixelInfo[1]);
-                stringFrameBuffer.Draw(x, y, px);
-                await ReplyAsync(LogManager.DGE_LOG + "Succesfuly drew a px " + px + "at x=" + x + " y=" + y + '.');
-            }
+            string px = pixelInfo[2] + "  ";
+            stringFrameBuffer.Draw(x, y, px);
+            await ReplyAsync($"{LogManager.DGE_LOG}Succesfuly drew the pixel {px} at x={x} y={y}.");
+
         }
 
         [Command("clearSFB")]

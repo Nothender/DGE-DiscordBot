@@ -18,7 +18,32 @@ namespace DiscordGameEngine.Core
         /// <returns></returns>
         internal static Task LogDebug(LogMessage msg)
         {
-            Console.WriteLine(msg.ToString());
+            EnderEngine.Logger.LogLevel logLevel;
+            switch (msg.Severity)
+            {
+                case LogSeverity.Info:
+                    logLevel = EnderEngine.Logger.LogLevel.INFO;
+                    break;
+                case LogSeverity.Verbose:
+                    logLevel = EnderEngine.Logger.LogLevel.DEBUG;
+                    break;
+                case LogSeverity.Debug:
+                    logLevel = EnderEngine.Logger.LogLevel.DEBUG;
+                    break;
+                case LogSeverity.Error:
+                    logLevel = EnderEngine.Logger.LogLevel.ERROR;
+                    break;
+                case LogSeverity.Critical:
+                    logLevel = EnderEngine.Logger.LogLevel.FATAL;
+                    break;
+                case LogSeverity.Warning:
+                    logLevel = EnderEngine.Logger.LogLevel.WARN;
+                    break;
+                default:
+                    logLevel = EnderEngine.Logger.LogLevel.DEBUG;
+                    break;
+            }
+            DGEMain.DGELogger.Log($"({msg.Source}) {msg.Message}", logLevel);
             return Task.CompletedTask;
         }
 

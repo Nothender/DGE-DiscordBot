@@ -17,8 +17,13 @@ namespace DiscordGameEnginePlus.Programs
         {
             AddChannel(context.Channel.Id);
             AddInteraction("add", AddCallback);
-            AddInteraction("broadcast", Broadcast);
+            AddInteraction("broadcast", BroadcastCallback);
             AddActionAnswer("42", "42");
+        }
+
+        private void BroadcastCallback(SocketUserMessage umessage)
+        {
+            Broadcast(umessage.Content);
         }
 
         private void InteractCallback(SocketUserMessage message)
@@ -38,13 +43,6 @@ namespace DiscordGameEnginePlus.Programs
         {
             actionAnswer.Add(action, answer);
             AddInteraction(action, InteractCallback);
-        }
-
-        public void Broadcast(SocketUserMessage umessage)
-        {
-            string message = "42 " + umessage.Content.Remove(0, 10);
-            foreach (ISocketMessageChannel channel in interactionChannels)
-                channel.SendMessageAsync(message);
         }
 
         protected override void CallbackNoTriggerMessageRecieved(SocketUserMessage umessage)
