@@ -11,5 +11,6 @@ namespace DiscordGameEngineProgram
 {
     public class CommandsExemple : ModuleBase<SocketCommandContext>
     {
+
     }
 }

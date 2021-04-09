@@ -1,6 +1,7 @@
 ﻿using Discord.Commands;
 using Discord.WebSocket;
 using DiscordGameEngine.Core;
+using DiscordGameEngine.ProgramModules;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -11,10 +12,17 @@ namespace DiscordGameEnginePlus.Programs
     {
         public BonapioProgram(ProgramData programData) : base(programData) { }
 
+        //public static new string description = "bagouette but derived";
+
+        static BonapioProgram()
+        {
+            SetDescription(typeof(BonapioProgram), "haha null ref goes banana, can give you some profiles");
+        }
+
         public BonapioProgram(SocketCommandContext context) : base(context)
         {
             AddChannel(context.Channel.Id);
-            AddInteraction("profile", ProfileCallback);
+            AddInteraction("profile", ProfileCallback, "AAAAA null ref cause Bonapio");
         }
 
         protected override void CallbackNoTriggerMessageRecieved(SocketUserMessage umessage) 
@@ -33,7 +41,7 @@ namespace DiscordGameEnginePlus.Programs
 
         private void ProfileCallback(SocketUserMessage umessage)
         {
-            umessage.Channel.SendMessageAsync(DiscordGameEngine.Core.LogManager.DGE_ERROR + "haha no, what'd you thought ?");
+            throw new Exception("haha no what you'd thought");
         }
 
     }

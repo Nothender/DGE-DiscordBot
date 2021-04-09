@@ -10,10 +10,10 @@ namespace DiscordGameEngineProgram
     {
         private static void Main(string[] args)
         {
-            
-            Task dgeMain = DGEMain.MainAsync();
-            DGEMain.AddCommandModule(typeof(CommandsExemple));
-            DGEMain.AddCommandModule(typeof(ProgramsCommands));
+
+            Task dgeMain = DiscordGameEngineBot.StartAsync();
+            //DiscordGameEngineBot.RegisterCommandModule(typeof(CommandsExemple));
+            DiscordGameEngineBot.RegisterCommandModule(typeof(ProgramsCommands));
             dgeMain.Wait();
         }
     }

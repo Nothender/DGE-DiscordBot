@@ -1,6 +1,7 @@
 ﻿using Discord.Commands;
 using Discord.WebSocket;
 using DiscordGameEngine.Core;
+using DiscordGameEngine.ProgramModules;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -10,11 +11,15 @@ namespace DiscordGameEnginePlus.Programs
     public class RenameConfusionProgram : ProgramModule
     {
 
+        private static string code;
+
+        static RenameConfusionProgram()
+        {
+            SetDescription(typeof(RenameConfusionProgram), "Don't use that program (anyway you can't), keywords : ConfusionRename, Ban");
+        }
+
         //This is a simple and stupid program, that was really badly programmed, and will not be improved
-
         public RenameConfusionProgram(ProgramData programData) : base(programData) { }
-
-        public static string code;
 
         public RenameConfusionProgram(SocketCommandContext context) : base(context)
         {
@@ -78,7 +83,7 @@ namespace DiscordGameEnginePlus.Programs
                 res += c;
                 */
             }
-            DiscordGameEngine.DGEMain.DGELoggerProgram.Log($"New code : {res}", EnderEngine.Logger.LogLevel.INFO, EnderEngine.Logger.LogMethod.TO_CONSOLE);
+            DiscordGameEngine.DiscordGameEngineBot.DGELoggerProgram.Log($"New code : {res}", EnderEngine.Logger.LogLevel.INFO, EnderEngine.Logger.LogMethod.TO_CONSOLE);
             return res;
         }
 

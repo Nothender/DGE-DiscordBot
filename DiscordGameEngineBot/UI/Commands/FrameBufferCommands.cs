@@ -8,24 +8,42 @@ using System.Threading.Tasks;
 using Discord;
 using Discord.Commands;
 using DiscordGameEngine.Core;
+using DiscordGameEngine.Exceptions;
 using DiscordGameEngine.Rendering;
 
 namespace DiscordGameEngine.UI.Commands
 {
+
+    //These commands will be removed soon (FrameBuffers and FB interactions overhaul/remake)
+    [Summary("Global FrameBuffer instance manipulation commands (Deprecated)")]
     public class FrameBufferCommands : ModuleBase<SocketCommandContext>
     {
 
-        internal static StringFrameBuffer stringFrameBuffer;
         internal static FrameBuffer frameBuffer;
 
-        [Command("clearImageBuffersDir")]
-        public async Task ClearImageBuffersDir()
+        private static (int, int) clampPointToFrameBuffer(int x, int y)
         {
-            FrameBuffer.ClearStoredImageBuffers();
-            await ReplyAsync(LogManager.DGE_LOG + "Succesfully Cleared the Image Frame Buffers Dir.");
+            
+            if (x > frameBuffer.size.Width)
+                x = frameBuffer.size.Width;
+            if (x < 0)
+                x = 0;
+            if (y > frameBuffer.size.Height)
+                y = frameBuffer.size.Height;
+            if (y < 0)
+                y = 0;
+            x = Math.Abs(x % frameBuffer.size.Width);
+            y = Math.Abs(y % frameBuffer.size.Width);
+            return (x, y); //new Tuple<int, int>(x, y);
         }
 
-        [Command("initFB")]
+        private static System.Drawing.Color newClampedColor(int a, int r, int g, int b)
+        {
+            return System.Drawing.Color.FromArgb(Math.Abs(a % 255), Math.Abs(r % 255), Math.Abs(g % 255), Math.Abs(b % 255));
+        }
+
+        [Command("InitFB")]
+        [Summary("Inits the FrameBuffer")]
         public async Task CreateFrameBuffer()
         {
             if (frameBuffer != null)
@@ -37,51 +55,54 @@ namespace DiscordGameEngine.UI.Commands
             await ReplyAsync(LogManager.DGE_LOG + "Succesfully initialized the Frame Buffer.");
         }
 
-        [Command("displayFB")]
+        [Command("DisplayFB")]
+        [Summary("Renders and displays the frame buffer")]
         public async Task DisplayFrameBuffer()
         {
+            if (frameBuffer is null)
+                throw new CommandExecutionException("Cannot display the frame buffer if it was not initialized", new NullReferenceException());
             await Task.Run(() =>
             {
                 frameBuffer.Render();
-                frameBuffer.Display(Context);
+                frameBuffer.Display(Context.Channel);
             });
         }
 
-        [Command("drawToFB")]
-        public async Task DrawToFrameBuffer(int x, int y, int r, int g, int b, int? a)
+        [Command("DrawToFB")]
+        [Summary("Draws a pixel to the x, y coordinates, of color r, g, b, a (default 255)")]
+        public async Task DrawToFrameBuffer(int x, int y, int r, int g, int b, int a = 255)
         {
-            System.Drawing.Color color = System.Drawing.Color.FromArgb(a ?? 255, r, g, b);
+            System.Drawing.Color color = newClampedColor(a, r, g, b);
+            (x, y) = clampPointToFrameBuffer(x, y);
             frameBuffer.Draw(x, y, color);
             await ReplyAsync($"{LogManager.DGE_LOG}Succesfuly drew a px {color.ToString()} at x={x} y={y}.");
-
         }
 
-        [Command("drawLineToFB")]
-        public async Task DrawLineToFrameBuffer(int x1, int y1, int x2, int y2, int r, int g, int b, int? a)
+        [Command("DrawLineToFB")]
+        [Summary("Draws a line from x1, y1 to the x2, y2 coordinates, of color r, g, b, a (default 255)")]
+        public async Task DrawLineToFrameBuffer(int x1, int y1, int x2, int y2, int r, int g, int b, int a = 255)
         {
-
-            System.Drawing.Color color = System.Drawing.Color.FromArgb(a ?? 255, r, g, b);
+            System.Drawing.Color color = newClampedColor(a, r, g, b);
+            (x1, y1) = clampPointToFrameBuffer(x1, y1);
+            (x2, y2) = clampPointToFrameBuffer(x2, y2);
             frameBuffer.DrawLine(x1, y1, x2, y2, color);
             await ReplyAsync($"{LogManager.DGE_LOG}Succesfuly drew a line of {color.ToString()} from x1={x1} y1={y1} to x2={x2} y2={y2}.");
         }
 
-        [Command("drawRectToFB")]
-        public async Task DrawRectToFrameBuffer(int x, int y, int sizeX, int sizeY, int r, int g, int b, int? a)
+        [Command("DrawRectToFB")]
+        [Summary("Draws a rectangle from x, y coordinates of sizeX, sizeY Size, and of color r, g, b, a (default 255)")]
+        public async Task DrawRectToFrameBuffer(int x, int y, int sizeX, int sizeY, int r, int g, int b, int a = 255)
         {
-
-            System.Drawing.Color color = System.Drawing.Color.FromArgb(a ?? 255, r, g, b);
+            System.Drawing.Color color = newClampedColor(a, r, g, b);
+            (x, y) = clampPointToFrameBuffer(x, y);
+            (sizeX, sizeY) = clampPointToFrameBuffer(sizeX - x, sizeY - y);
             frameBuffer.DrawRect(x, y, sizeX, sizeY, color);
             await ReplyAsync($"{LogManager.DGE_LOG}Succesfuly drew a rectangle of {color.ToString()} from x={x} y={y} to x={x + sizeX} y={y + sizeY}.");
-        }
 
-        [Command("clearFB")]
-        public async Task ClearFrameBuffer()
-        {
-            frameBuffer.Clear();
-            await ReplyAsync(LogManager.DGE_LOG + "Succesfuly cleared the Frame Buffer.");
         }
 
         [Command("setFBPixelDrawMode")]
+        [Summary("Sets the drawing mode REPLACE (Replaces the pixels when drawing), ALPHA_BLENDING (Blends every pixels using alpha value), or NORMAL (Like replace but alpha is ignored)")]
         public async Task SetFrameBufferPixelDrawMode(string mode)
         {
             switch (mode.ToLower())
@@ -97,49 +118,17 @@ namespace DiscordGameEngine.UI.Commands
                     mode = "alpha_blending";
                     break;
                 default:
-                    mode = "normal";
-                    frameBuffer.pixelDrawMode = PixelDrawMode.NORMAL;
-                    break;
+                    throw new CommandExecutionException($"Cannot change pixel draw mode to {mode}");
             }
             await ReplyAsync("{LogManager.DGE_LOG}Succesfuly set the Frame Buffer PixelRenderMode to {mode.ToUpper()}.");
         }
-
-        [Command("initSFB")]
-        public async Task CreateStringFrameBuffer()
+        
+        [Command("ClearImageBuffersDir")]
+        [Summary("Removes every stored ImageBuffers in the ImageBuffers directory")]
+        public async Task ClearImageBuffersDir()
         {
-            if (stringFrameBuffer != null)
-            {
-                await ReplyAsync(LogManager.DGE_WARN + "Couldn't initialize the String Frame Buffer because it is already initialized.");
-                return;
-            }
-            stringFrameBuffer = new StringFrameBuffer(8, 8, ":red_square:");
-            await ReplyAsync(LogManager.DGE_LOG + "Succesfully initialized the String Frame Buffer.");
+            FrameBuffer.ClearStoredImageBuffers();
+            await ReplyAsync(LogManager.DGE_LOG + "Succesfully Cleared the Image Frame Buffers Dir.");
         }
-
-        [Command("displaySFB")]
-#pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
-        public async Task DisplayStringFrameBuffer()
-#pragma warning restore CS1998 // Async method lacks 'await' operators and will run synchronously
-        {
-            stringFrameBuffer.Display(Context);
-            // await ReplyAsync("");
-        }
-
-        [Command("drawToSFB")]
-        public async Task DrawToStringFrameBuffer(int x, int y, string pixelInfo)
-        {
-            string px = pixelInfo[2] + "  ";
-            stringFrameBuffer.Draw(x, y, px);
-            await ReplyAsync($"{LogManager.DGE_LOG}Succesfuly drew the pixel {px} at x={x} y={y}.");
-
-        }
-
-        [Command("clearSFB")]
-        public async Task ClearStringFrameBuffer()
-        {
-            stringFrameBuffer.Clear();
-            await ReplyAsync(LogManager.DGE_LOG + "Succesfuly cleared the String Frame Buffer.");
-        }
-
     }
 }

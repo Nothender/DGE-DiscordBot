@@ -11,19 +11,29 @@ namespace DiscordGameEngine.Core
 
         private static Dictionary<ulong, Action<ulong, SocketUserMessage>[]> channelCallbacks = new Dictionary<ulong, Action<ulong, SocketUserMessage>[]>();
 
-        public static void AddListenedChannel(ulong channelID, Action<ulong, SocketUserMessage> callback)
+        public static void RemoveListenedChannel(ulong channelId, Action<ulong, SocketUserMessage> callback)
         {
-            if (channelCallbacks.ContainsKey(channelID))
+            if (channelCallbacks.ContainsKey(channelId) && channelCallbacks[channelId].Contains(callback))
             {
-                channelCallbacks[channelID] = channelCallbacks[channelID].Concat(new Action<ulong, SocketUserMessage>[] { callback }).ToArray();
+                List<Action<ulong, SocketUserMessage>> callbacks = channelCallbacks[channelId].ToList();
+                callbacks.Remove(callback);
+                channelCallbacks[channelId] = callbacks.ToArray();
+            }
+        }
+
+        public static void AddListenedChannel(ulong channelId, Action<ulong, SocketUserMessage> callback)
+        {
+            if (channelCallbacks.ContainsKey(channelId))
+            {
+                channelCallbacks[channelId] = channelCallbacks[channelId].Concat(new Action<ulong, SocketUserMessage>[] { callback }).ToArray();
             }
             else
-                channelCallbacks.Add(channelID, new Action<ulong, SocketUserMessage>[] { callback });
+                channelCallbacks.Add(channelId, new Action<ulong, SocketUserMessage>[] { callback });
         }
 
         public static void MessageRecieved(ulong channelID, SocketUserMessage message)
         {
-            foreach (Action<ulong, SocketUserMessage> callback in channelCallbacks[channelID])
+             foreach (Action<ulong, SocketUserMessage> callback in channelCallbacks[channelID])
                 callback(channelID, message);
         }
 

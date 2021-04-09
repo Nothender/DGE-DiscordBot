@@ -2,8 +2,10 @@
 using Discord.Commands;
 using Discord.WebSocket;
 using DiscordGameEngine.Core;
-using DiscordGameEngine.Misc;
+using DiscordGameEngine.ProgramModules;
+using DiscordGameEngine.Services;
 using DiscordGameEngine.UI.Commands;
+using DiscordGameEngine.UI.Feedback;
 using EnderEngine;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -11,18 +13,28 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Threading.Tasks;
+using System.Linq;
 
 namespace DiscordGameEngine
 {
-    public static class DGEMain
+    public static class DiscordGameEngineBot
     {
+        /// <summary>
+        /// The name of the Engine/Assembly
+        /// </summary>
+        public const string NAME = "DiscordGameEngine";
+        /// <summary>
+        /// The current version of the Engine in that format : Major.Minor.Fix/Small.Revision/SmallExtra
+        /// </summary>
+        public const string VERSION = "0.19.11.5"; //not up to date //The last number can be ignored as it is for minor minor changes
+
         private static bool isShutDown = false;
 
         internal static DiscordSocketClient _client;
-        private static CommandService _commands;
-        private static IServiceProvider _services;
+        internal static CommandService _commands;
+        internal static IServiceProvider _services;
 
-        private static string commandPrefix = "//";
+        internal static readonly string commandPrefix = ">"; //To be changed to per guild or per user prefix
 
         internal static Logger DGELogger = new Logger("DGE");
         public static Logger DGELoggerProgram = new Logger("DGEProgram");
@@ -33,7 +45,7 @@ namespace DiscordGameEngine
         /// Main function executed
         /// </summary>
         /// <returns></returns>
-        public static async Task MainAsync()
+        public static async Task StartAsync()
         {
             Engine.Init();
 
@@ -50,9 +62,14 @@ namespace DiscordGameEngine
             RegisterCommandModules();
             await RegisterMethodsAsync();
 
-            //Gets all the infos for the bot to run
-            //index { 0 : Token }
+            /* Gets all the infos for the bot to run
+             * index {
+             *  0 : Bot token (string),
+             *  1 : Feedback/bug reporting DiscordMessageChannel Id (ulong)
+             * } */
             string[] infos = File.ReadAllLines("../../../infos.txt"); // CHANGE ACCESS PATH FOR RELEASE
+
+            UserFeedbackHandler.feedbackChannelId = ulong.Parse(infos[1]);
 
             _client.Ready += Startups;
 
@@ -68,6 +85,7 @@ namespace DiscordGameEngine
         /// </summary>
         public static void Shutdown()
         {
+            DGELogger.Log("Shutting down...", Logger.LogLevel.INFO);
             try
             {
                 OnShutdown?.Invoke(null, null);
@@ -85,50 +103,14 @@ namespace DiscordGameEngine
             //Client method registry
             _client.Log += LogManager.LogDebug;
             //Commands method registry
-            _client.MessageReceived += HandleMessagesAsync;
+            _client.MessageReceived += MessageHandler.HandleMessageAsync;
             await _commands.AddModulesAsync(Assembly.GetEntryAssembly(), _services);
-        }
-
-        private static async Task HandleMessagesAsync(SocketMessage message)
-        {
-            SocketUserMessage uMessage = message as SocketUserMessage;
-            string msg = message.Content.ToLower();
-            int argPos = 0;
-            if (uMessage.HasStringPrefix(commandPrefix, ref argPos) && !uMessage.Author.IsBot)
-            {
-                SocketCommandContext context = new SocketCommandContext(_client, uMessage);
-
-                IResult execution = await _commands.ExecuteAsync(context, argPos, _services);
-                if (!execution.IsSuccess)
-                {
-                    await LogManager.LogDebug(new LogMessage(LogSeverity.Warning, "Commands", execution.ErrorReason));
-                    await context.Channel.SendMessageAsync(LogManager.DGE_ERROR + "Command execution failed : " + execution.ErrorReason);
-                }
-            }
-            else
-            {
-                _ = Task.Run(() =>
-                {
-                    try
-                    {
-                        if (!uMessage.HasStringPrefix(commandPrefix, ref argPos) && uMessage.Author.Id != _client.CurrentUser.Id)
-                        {
-                            if (ChannelListener.IsChannelListened(uMessage.Channel.Id))
-                                ChannelListener.MessageRecieved(uMessage.Channel.Id, uMessage);
-                        }
-                    }
-                    catch (Exception e)
-                    {
-                        message.Channel.SendMessageAsync(LogManager.DGE_ERROR + "Failed reading/executing message : " + e.Message);
-                    }
-                });
-            }
         }
 
         private static Task Startups()
         {
             // Note : An event handler is not used here, every class is started individually, allowing them to subscribe to other events
-            Console.WriteLine("Starting up...");
+            DGELogger.Log("Starting up...", Logger.LogLevel.INFO);
 
             ConsoleCommands().ConfigureAwait(false);
 
@@ -141,22 +123,28 @@ namespace DiscordGameEngine
             {
                 DGELogger.Log(e.Message, Logger.LogLevel.ERROR);
             }
+            UserFeedbackHandler.feedbackChannel = _client.GetChannel(UserFeedbackHandler.feedbackChannelId) as ISocketMessageChannel;
+            _client.SetGameAsync($"V{string.Join(".", VERSION.Split('.', 2))} BetaTesting", type: ActivityType.Playing); //Setting the current version (excluding the last version number)
 
-            Console.WriteLine("Startup complete");
+            DGELogger.Log("Startup complete", Logger.LogLevel.INFO);
             return Task.CompletedTask;
         }
 
-        public static void AddCommandModule(Type type)
+        public static void RegisterCommandModule(Type type)
         {
             _commands.AddModuleAsync(type, _services);
+            DGELogger.Log($"Registered command module {type.Name}", Logger.LogLevel.INFO);
         }
 
         private static void RegisterCommandModules()
         {
-            AddCommandModule(typeof(Commands));
-            AddCommandModule(typeof(FrameBufferCommands));
-            AddCommandModule(typeof(FunCommands));
-            AddCommandModule(typeof(ModerationCommands));
+            RegisterCommandModule(typeof(Commands));
+            RegisterCommandModule(typeof(FrameBufferCommands));
+            RegisterCommandModule(typeof(FunCommands));
+            RegisterCommandModule(typeof(ModerationCommands));
+            RegisterCommandModule(typeof(DebugCommands));
+            RegisterCommandModule(typeof(DevCommands));
+            RegisterCommandModule(typeof(BetaTestingCommands));
         }
 
         /// <summary>

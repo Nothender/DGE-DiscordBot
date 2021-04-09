@@ -43,7 +43,7 @@ namespace DiscordGameEngine.Core
                     logLevel = EnderEngine.Logger.LogLevel.DEBUG;
                     break;
             }
-            DGEMain.DGELogger.Log($"({msg.Source}) {msg.Message}", logLevel);
+            DiscordGameEngineBot.DGELogger.Log($"({msg.Source}) {msg.Message}", logLevel);
             return Task.CompletedTask;
         }
 

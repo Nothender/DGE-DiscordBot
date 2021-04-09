@@ -8,7 +8,7 @@ using System.Reflection;
 namespace DiscordGameEngine.Rendering
 {
 
-    public class PixelBuffer
+    public class PixelBuffer : IPixelBuffer
     {
 
         public Size size { get { return size; } }
@@ -37,7 +37,7 @@ namespace DiscordGameEngine.Rendering
             this.clearColor = clearColor;
         }
 
-        private void Construct(string pathToImage=null)
+        private void Construct(string pathToImage = null)
         {
             CreateBuffer(pathToImage);
             pixelDrawMode = PixelDrawMode.NORMAL;
@@ -91,7 +91,7 @@ namespace DiscordGameEngine.Rendering
             }
         }
 
-        public void DrawLine(int x1, int y1, int x2, int y2, Color color, int width=1)
+        public void DrawLine(int x1, int y1, int x2, int y2, Color color, int width = 1)
         {
             //If the line is Horizontal
             if (y1 == y2)
@@ -169,7 +169,7 @@ namespace DiscordGameEngine.Rendering
             ResizeBuffer(scalingMethod);
         }
 
-        private void CreateBuffer(string filePath=null)
+        private void CreateBuffer(string filePath = null)
         {
             if (filePath == null)
                 buffer = new Bitmap(_size.Width, _size.Height);
@@ -179,7 +179,7 @@ namespace DiscordGameEngine.Rendering
             }
         }
 
-        private void ResizeBuffer(ImageScalingMethod scalingMethod=ImageScalingMethod.CLEAR)
+        private void ResizeBuffer(ImageScalingMethod scalingMethod = ImageScalingMethod.CLEAR)
         {
             Bitmap targetBuffer = new Bitmap(size.Width, size.Height);
             RenderingCore.ResizeBuffer(buffer, targetBuffer, scalingMethod);

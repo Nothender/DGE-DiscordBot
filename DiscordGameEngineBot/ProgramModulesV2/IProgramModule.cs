@@ -2,12 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace DiscordGameEngine.Core
+namespace DiscordGameEngine.ProgramModulesV2
 {
-    public static class UserPermissions
+    public interface IProgramModule
     {
-
-
-
     }
 }

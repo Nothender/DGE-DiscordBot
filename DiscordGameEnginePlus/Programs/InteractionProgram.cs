@@ -1,6 +1,7 @@
 ﻿using Discord.Commands;
 using Discord.WebSocket;
 using DiscordGameEngine.Core;
+using DiscordGameEngine.ProgramModules;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -9,6 +10,11 @@ namespace DiscordGameEnginePlus.Programs
 {
     public class InteractionProgram : ProgramModule
     {
+        static InteractionProgram()
+        {
+            SetDescription(typeof(InteractionProgram), "Adds a few keywords that trigger program execution (disabled for now cause dangerous, except for the 42 keyword) :\nbroadcast (string message) -> sends the string message in every channel,\n42 -> answers 42,\nadd (string keyword, string answer) -> adds a new interaction when saying keyword the bot will answer with answer");
+        }
+
         public InteractionProgram(ProgramData programData) : base(programData) { }
 
         public Dictionary<string, string> actionAnswer = new Dictionary<string, string>();
@@ -16,9 +22,14 @@ namespace DiscordGameEnginePlus.Programs
         public InteractionProgram(SocketCommandContext context) : base(context)
         {
             AddChannel(context.Channel.Id);
-            AddInteraction("add", AddCallback);
-            AddInteraction("broadcast", BroadcastCallback);
+            AddInteraction("add", DisabledCallback);
+            AddInteraction("broadcast", DisabledCallback);
             AddActionAnswer("42", "42");
+        }
+
+        private void DisabledCallback(SocketUserMessage umessage)
+        {
+            umessage.Channel.SendMessageAsync("This keyword was disabled cause it was subject of abuse");
         }
 
         private void BroadcastCallback(SocketUserMessage umessage)

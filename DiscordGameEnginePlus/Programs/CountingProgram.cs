@@ -9,11 +9,16 @@ using System.Text.RegularExpressions;
 using System.Xml.XPath;
 using Discord.Commands;
 using System.Linq;
+using DiscordGameEngine.ProgramModules;
 
 namespace DiscordGameEnginePlus.Programs
 {
     public class CountingProgram : ProgramModule
     {
+        static CountingProgram()
+        {
+            SetDescription(typeof(CountingProgram), "Has a counter that is originally 0, the point is to increment it by step (custom variable given by the user 1 or -1)");
+        }
 
         public CountingProgram(ProgramData programData) : base(programData) { }
 
