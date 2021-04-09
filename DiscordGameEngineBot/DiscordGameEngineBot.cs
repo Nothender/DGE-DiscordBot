@@ -26,7 +26,7 @@ namespace DiscordGameEngine
         /// <summary>
         /// The current version of the Engine in that format : Major.Minor.Fix/Small.Revision/SmallExtra
         /// </summary>
-        public const string VERSION = "0.19.11.5"; //not up to date //The last number can be ignored as it is for minor minor changes
+        public const string VERSION = "0.19.11.6"; //not up to date //The last number can be ignored as it is for minor minor changes
 
         private static bool isShutDown = false;
 
@@ -67,7 +67,7 @@ namespace DiscordGameEngine
              *  0 : Bot token (string),
              *  1 : Feedback/bug reporting DiscordMessageChannel Id (ulong)
              * } */
-            string[] infos = File.ReadAllLines("../../../infos.txt"); // CHANGE ACCESS PATH FOR RELEASE
+            string[] infos = File.ReadAllLines("infos.txt"); // CHANGE ACCESS PATH FOR RELEASE
 
             UserFeedbackHandler.feedbackChannelId = ulong.Parse(infos[1]);
 
@@ -124,7 +124,7 @@ namespace DiscordGameEngine
                 DGELogger.Log(e.Message, Logger.LogLevel.ERROR);
             }
             UserFeedbackHandler.feedbackChannel = _client.GetChannel(UserFeedbackHandler.feedbackChannelId) as ISocketMessageChannel;
-            _client.SetGameAsync($"V{string.Join(".", VERSION.Split('.', 2))} BetaTesting", type: ActivityType.Playing); //Setting the current version (excluding the last version number)
+            _client.SetGameAsync($"V{string.Join(".", VERSION.Split('.', 4).Take(3))} BetaTesting", type: ActivityType.Playing); //Setting the current version (excluding the last version number)
 
             DGELogger.Log("Startup complete", Logger.LogLevel.INFO);
             return Task.CompletedTask;
