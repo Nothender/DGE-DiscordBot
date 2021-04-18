@@ -17,7 +17,10 @@ namespace DiscordGameEngine.Exceptions
         public CommandExecutionException(string reason) : 
             base($"{CommandHandler.AvoidBugReportErrorTag}{reason}") { }
 
-        public CommandExecutionException(string reason, Exception innerException) : 
+        public CommandExecutionException(string reason, Exception innerException) :
             base($"{CommandHandler.AvoidBugReportErrorTag}{reason} - {innerException.Message}") { }
+
+        public CommandExecutionException(Exception innerException) :
+            base($"{CommandHandler.AvoidBugReportErrorTag}{innerException.Message}") { }
     }
 }

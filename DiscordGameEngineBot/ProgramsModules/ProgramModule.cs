@@ -75,6 +75,11 @@ namespace DiscordGameEngine.ProgramModules
             foreach (int i in programs.Keys)
                 DeleteProgram(i);
         }
+
+        public static bool ProgramExists(int programId)
+        {
+            return programs.ContainsKey(programId);
+        }
         #endregion ProgramCollection
 
 
@@ -103,7 +108,7 @@ namespace DiscordGameEngine.ProgramModules
         /// </summary>
         public void ClearOwners()
         {
-            programOwnersUserId = new ulong[1] { programOwnersUserId[0] }; //Clearing every user, keeping the original owner
+            programOwnersUserId = new ulong[1] { GetOriginalUserId() }; //Clearing every user, keeping the original owner
         }
 
         public void RemoveOwner(ulong userId)
@@ -111,6 +116,11 @@ namespace DiscordGameEngine.ProgramModules
             List<ulong> ownersList = programOwnersUserId.ToList();
             ownersList.Remove(userId);
             programOwnersUserId = ownersList.ToArray();
+        }
+
+        public ulong GetOriginalUserId()
+        {
+            return programOwnersUserId[0];
         }
         #endregion Permissions
 

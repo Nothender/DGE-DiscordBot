@@ -29,9 +29,20 @@ namespace DiscordGameEnginePlus.Commands
             { "void", typeof(TestVoidProgram) }
         };
 
+        private static char maxUserProgramsCount = (char) 4;
+        private static Dictionary<ulong, char> userProgramsCount = new Dictionary<ulong, char>(); //char is used an 8bit unsigned integer
+
         [Command("CreateProgram")]
         public async Task CreateProgram(string programKey)
         {
+            if (userProgramsCount.ContainsKey(Context.User.Id)) //Adding a limit of programs that the user can instanciate
+                userProgramsCount.Add(Context.User.Id, (char) 0);
+            userProgramsCount[Context.User.Id]++;
+            if (userProgramsCount[Context.User.Id] > maxUserProgramsCount)
+                throw new CommandExecutionException($"You cannot instance more than {maxUserProgramsCount} programs at once");
+
+            if (!programTypes.ContainsKey(programKey))
+                throw new CommandExecutionException($"This program type was not found, try `>ShowPrograms`"); //TODO with prefix thingy later
             ProgramModule program = (ProgramModule)Activator.CreateInstance(programTypes[programKey.ToLower()], Context);
             await ReplyAsync($"{program.Id}");
         }
@@ -39,6 +50,8 @@ namespace DiscordGameEnginePlus.Commands
         [Command("AddChannelToProgram")]
         public async Task AddListenedChannelToProgram(int programId)
         {
+            if (ProgramNotExists(programId))
+                return;
             ProgramModule.GetProgramById(programId).AddChannel(Context.Channel.Id);
             await ReplyAsync($"This channel is now listend by the program {programId}");
         }
@@ -46,6 +59,8 @@ namespace DiscordGameEnginePlus.Commands
         [Command("RemoveChannelFromProgram")]
         public async Task RemoveListenedChannelFromProgram(int programId)
         {
+            if (ProgramNotExists(programId))
+                return;
             ProgramModule.GetProgramById(programId).RemoveChannel(Context.Channel.Id);
             await ReplyAsync($"This channel will not be listened by the program {programId} anymore");
         }
@@ -53,10 +68,18 @@ namespace DiscordGameEnginePlus.Commands
         [Command("DeleteProgram")]
         public async Task DeleteProgram(int programId)
         {
-            if (ProgramModule.GetProgramById(programId).IsOwner(Context.User.Id))
+            if (ProgramNotExists(programId))
+                return;
+
+            ProgramModule program = ProgramModule.GetProgramById(programId);
+            if (program.IsOwner(Context.User.Id))
+            {
+                userProgramsCount[program.GetOriginalUserId()]--; //Decreasing the points of the original program creator
                 ProgramModule.DeleteProgram(programId);
+            }
             else
                 throw new CommandExecutionException("You must be owner of the program to delete it");
+            
             await ReplyAsync($"Successfully deleted the program of id {programId}");
         }
 
@@ -73,7 +96,7 @@ namespace DiscordGameEnginePlus.Commands
         {
             await ReplyAsync("Listing every existing programs :");
             string programsListing = "";
-            foreach(ProgramModule program in ProgramModule.GetPrograms())
+            foreach (ProgramModule program in ProgramModule.GetPrograms())
             {
                 programsListing += $"- Program **{program.GetType().Name}** of id {program.Id}\n";
             }
@@ -111,10 +134,13 @@ namespace DiscordGameEnginePlus.Commands
 
             await ReplyAsync(embed: embed.Build());
         }
-        
+
         [Command("AddProgramOwner")]
         public async Task AddProgramOwner(int programId, IUser user)
         {
+            if(ProgramNotExists(programId))
+                return;
+
             ProgramModule program = ProgramModule.GetProgramById(programId);
 
             if (program.IsOwner(Context.User.Id))
@@ -123,6 +149,16 @@ namespace DiscordGameEnginePlus.Commands
                 throw new CommandExecutionException("You must be owner of the program give owner");
 
             await ReplyAsync($"Made {user.Username} an owner of the program {program.Id}");
+        }
+
+        private bool ProgramNotExists(int programId)
+        {
+            if (!ProgramModule.ProgramExists(programId))
+            {
+                ReplyAsync($"No ProgramModule of id {programId} was found (try `>ShowInstancedPrograms`)"); //TODO: fix with custom prefix thingy
+                return true;
+            }
+            return false;
         }
 
     }

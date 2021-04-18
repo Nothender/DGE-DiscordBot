@@ -130,6 +130,7 @@ namespace DiscordGameEngine.Rendering
         {
             RenderingCore.ResizeBuffer(buffer, displayBuffer, scalingMethod);
         }
+
         private void SaveBufferToDisk()
         {
             if (scaleOnRender)

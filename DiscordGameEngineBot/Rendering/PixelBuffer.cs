@@ -11,7 +11,7 @@ namespace DiscordGameEngine.Rendering
     public class PixelBuffer : IPixelBuffer
     {
 
-        public Size size { get { return size; } }
+        public Size size { get { return _size; } }
         private Size _size;
         public Color clearColor;
         public Bitmap buffer;

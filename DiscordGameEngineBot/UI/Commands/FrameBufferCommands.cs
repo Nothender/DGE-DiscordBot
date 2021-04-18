@@ -23,23 +23,12 @@ namespace DiscordGameEngine.UI.Commands
 
         private static (int, int) clampPointToFrameBuffer(int x, int y)
         {
-            
-            if (x > frameBuffer.size.Width)
-                x = frameBuffer.size.Width;
-            if (x < 0)
-                x = 0;
-            if (y > frameBuffer.size.Height)
-                y = frameBuffer.size.Height;
-            if (y < 0)
-                y = 0;
-            x = Math.Abs(x % frameBuffer.size.Width);
-            y = Math.Abs(y % frameBuffer.size.Width);
-            return (x, y); //new Tuple<int, int>(x, y);
+            return (Math.Abs(x % frameBuffer.size.Width), Math.Abs(y % frameBuffer.size.Height)); //new Tuple<int, int>(x, y);
         }
 
         private static System.Drawing.Color newClampedColor(int a, int r, int g, int b)
         {
-            return System.Drawing.Color.FromArgb(Math.Abs(a % 255), Math.Abs(r % 255), Math.Abs(g % 255), Math.Abs(b % 255));
+            return System.Drawing.Color.FromArgb(Math.Abs(a % 256), Math.Abs(r % 256), Math.Abs(g % 256), Math.Abs(b % 256));
         }
 
         [Command("InitFB")]
@@ -48,11 +37,11 @@ namespace DiscordGameEngine.UI.Commands
         {
             if (frameBuffer != null)
             {
-                await ReplyAsync(LogManager.DGE_WARN + "Couldn't initialize the Frame Buffer because it is already initialized.");
+                await ReplyAsync(LogManager.DGE_WARN + "Couldn't initialize the Frame Buffer because it is already initialized");
                 return;
             }
-            frameBuffer = new FrameBuffer(new Size(8, 8), System.Drawing.Color.FromArgb(42, 42, 42), true, new Size(800, 800));
-            await ReplyAsync(LogManager.DGE_LOG + "Succesfully initialized the Frame Buffer.");
+            frameBuffer = new FrameBuffer(new Size(42, 42), System.Drawing.Color.FromArgb(42, 42, 42), true, new Size(800, 800));
+            await ReplyAsync(LogManager.DGE_LOG + "Succesfully initialized the Frame Buffer");
         }
 
         [Command("DisplayFB")]
@@ -75,7 +64,7 @@ namespace DiscordGameEngine.UI.Commands
             System.Drawing.Color color = newClampedColor(a, r, g, b);
             (x, y) = clampPointToFrameBuffer(x, y);
             frameBuffer.Draw(x, y, color);
-            await ReplyAsync($"{LogManager.DGE_LOG}Succesfuly drew a px {color.ToString()} at x={x} y={y}.");
+            await ReplyAsync($"{LogManager.DGE_LOG}Succesfuly drew a px {color.ToString()} at x={x} y={y}");
         }
 
         [Command("DrawLineToFB")]
@@ -86,7 +75,7 @@ namespace DiscordGameEngine.UI.Commands
             (x1, y1) = clampPointToFrameBuffer(x1, y1);
             (x2, y2) = clampPointToFrameBuffer(x2, y2);
             frameBuffer.DrawLine(x1, y1, x2, y2, color);
-            await ReplyAsync($"{LogManager.DGE_LOG}Succesfuly drew a line of {color.ToString()} from x1={x1} y1={y1} to x2={x2} y2={y2}.");
+            await ReplyAsync($"{LogManager.DGE_LOG}Succesfuly drew a line of {color.ToString()} from x1={x1} y1={y1} to x2={x2} y2={y2}");
         }
 
         [Command("DrawRectToFB")]
@@ -97,7 +86,7 @@ namespace DiscordGameEngine.UI.Commands
             (x, y) = clampPointToFrameBuffer(x, y);
             (sizeX, sizeY) = clampPointToFrameBuffer(sizeX - x, sizeY - y);
             frameBuffer.DrawRect(x, y, sizeX, sizeY, color);
-            await ReplyAsync($"{LogManager.DGE_LOG}Succesfuly drew a rectangle of {color.ToString()} from x={x} y={y} to x={x + sizeX} y={y + sizeY}.");
+            await ReplyAsync($"{LogManager.DGE_LOG}Succesfuly drew a rectangle of {color.ToString()} from x={x} y={y} to x={x + sizeX} y={y + sizeY}");
 
         }
 
@@ -105,22 +94,25 @@ namespace DiscordGameEngine.UI.Commands
         [Summary("Sets the drawing mode REPLACE (Replaces the pixels when drawing), ALPHA_BLENDING (Blends every pixels using alpha value), or NORMAL (Like replace but alpha is ignored)")]
         public async Task SetFrameBufferPixelDrawMode(string mode)
         {
-            switch (mode.ToLower())
+            mode = mode.ToUpper();
+            switch (mode)
             {
-                case "replace":
+                case "NORMAL":
+                    frameBuffer.pixelDrawMode = PixelDrawMode.NORMAL;
+                    break;
+                case "REPLACE":
                     frameBuffer.pixelDrawMode = PixelDrawMode.REPLACE;
                     break;
-                case "alpha_blending":
+                case "ALPHA_BLENDING":
                     frameBuffer.pixelDrawMode = PixelDrawMode.ALPHA_BLENDING;
                     break;
-                case "alphablending":
+                case "ALPHABLENDING":
                     frameBuffer.pixelDrawMode = PixelDrawMode.ALPHA_BLENDING;
-                    mode = "alpha_blending";
                     break;
                 default:
                     throw new CommandExecutionException($"Cannot change pixel draw mode to {mode}");
             }
-            await ReplyAsync("{LogManager.DGE_LOG}Succesfuly set the Frame Buffer PixelRenderMode to {mode.ToUpper()}.");
+            await ReplyAsync($"{LogManager.DGE_LOG}Succesfuly set the Frame Buffer PixelRenderMode to {frameBuffer.pixelDrawMode}");
         }
         
         [Command("ClearImageBuffersDir")]
@@ -128,7 +120,7 @@ namespace DiscordGameEngine.UI.Commands
         public async Task ClearImageBuffersDir()
         {
             FrameBuffer.ClearStoredImageBuffers();
-            await ReplyAsync(LogManager.DGE_LOG + "Succesfully Cleared the Image Frame Buffers Dir.");
+            await ReplyAsync(LogManager.DGE_LOG + "Succesfully Cleared the Image Frame Buffers Dir");
         }
     }
 }
