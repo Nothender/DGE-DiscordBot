@@ -9,6 +9,7 @@
     <Company>Nothender</Company>
     <Description></Description>
     <AssemblyVersion>1.0.0.0</AssemblyVersion>
+    <LangVersion>preview</LangVersion>
   </PropertyGroup>
 
   <ItemGroup>
