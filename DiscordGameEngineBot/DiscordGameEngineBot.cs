@@ -26,7 +26,7 @@ namespace DiscordGameEngine
         /// <summary>
         /// The current version of the Engine in that format : Major.Minor.Fix/Small.Revision/SmallExtra
         /// </summary>
-        public const string VERSION = "0.19.26.2"; //The last number can be ignored as it is for minor minor changes
+        public const string VERSION = "0.19.26.3"; //The last number can be ignored as it is for minor minor changes
 
         private static bool isShutDown = false;
 
