@@ -26,7 +26,7 @@ namespace DiscordGameEngine
         /// <summary>
         /// The current version of the Engine in that format : Major.Minor.Fix/Small.Revision/SmallExtra
         /// </summary>
-        public const string VERSION = "0.19.26.3"; //The last number can be ignored as it is for minor minor changes
+        public const string VERSION = "0.21.0.0"; //The last number can be ignored as it is for minor minor changes
 
         private static bool isShutDown = false;
 
@@ -127,8 +127,8 @@ namespace DiscordGameEngine
                 DGELogger.Log(e.Message, Logger.LogLevel.ERROR);
             }
             UserFeedbackHandler.feedbackChannel = _client.GetChannel(UserFeedbackHandler.feedbackChannelId) as ISocketMessageChannel;
-            _client.SetGameAsync($"V{string.Join(".", VERSION.Split('.', 4).Take(3))} BetaTesting", type: ActivityType.Playing); //Setting the current version (excluding the last version number)
-            //_client.SetGameAsync($"V{string.Join(".", VERSION.Split('.', 4).Take(3))} Experimental", type: ActivityType.Playing); //Setting the current version (excluding the last version number)
+            //_client.SetGameAsync($"V{string.Join(".", VERSION.Split('.', 4).Take(3))} BetaTesting", type: ActivityType.Playing); //Setting the current version (excluding the last version number)
+            _client.SetGameAsync($"V{string.Join(".", VERSION.Split('.', 4).Take(3))} Experimental", type: ActivityType.Playing); //Setting the current version (excluding the last version number)
 
             try
             {
