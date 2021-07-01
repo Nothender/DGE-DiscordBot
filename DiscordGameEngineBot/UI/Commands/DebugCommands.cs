@@ -56,5 +56,18 @@ namespace DiscordGameEngine.UI.Commands
             throw new Exception(exceptionMessage);
         }
 
+        [Command("ShowPaths")]
+        [Summary("Shows the bots file paths")]
+        [RequireOwner]
+        public async Task CommandShowPaths()
+        {
+            await ReplyAsync(
+                Core.Core.pathToAssets + " \n " + 
+                Core.Core.pathToImageFrameBuffers + " \n " +
+                Core.Core.pathToSavedData + " \n " +
+                Core.Core.PathToStorage
+                );
+        }
+
     }
 }

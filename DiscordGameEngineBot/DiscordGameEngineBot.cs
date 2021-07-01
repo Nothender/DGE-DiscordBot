@@ -26,20 +26,24 @@ namespace DiscordGameEngine
         /// <summary>
         /// The current version of the Engine in that format : Major.Minor.Fix/Small.Revision/SmallExtra
         /// </summary>
-        public const string VERSION = "0.19.17.0"; //The last number can be ignored as it is for minor minor changes
+        public const string VERSION = "0.19.26.2"; //The last number can be ignored as it is for minor minor changes
 
         private static bool isShutDown = false;
 
-        internal static DiscordSocketClient _client;
+        public static DiscordSocketClient _client; //See for usability and accessibility in FW V1 and V2
         internal static CommandService _commands;
         internal static IServiceProvider _services;
 
-        internal static readonly string commandPrefix = ">"; //To be changed to per guild or per user prefix
+        public static readonly string commandPrefix = ">"; //To be changed to per guild or per user prefix
 
         internal static Logger DGELogger = new Logger("DGE");
         public static Logger DGELoggerProgram = new Logger("DGEProgram");
 
         public static event EventHandler OnShutdown;
+        /// <summary>
+        /// This EventHandler is called after the bot was started and ready
+        /// </summary>
+        public static event EventHandler OnStarted;
 
         /// <summary>
         /// Main function executed
@@ -114,7 +118,6 @@ namespace DiscordGameEngine
 
             ConsoleCommands().ConfigureAwait(false);
 
-            Core.Core.Start();
             try
             {
                 ProgramModule.RestoreSavedPrograms();
@@ -125,7 +128,16 @@ namespace DiscordGameEngine
             }
             UserFeedbackHandler.feedbackChannel = _client.GetChannel(UserFeedbackHandler.feedbackChannelId) as ISocketMessageChannel;
             _client.SetGameAsync($"V{string.Join(".", VERSION.Split('.', 4).Take(3))} BetaTesting", type: ActivityType.Playing); //Setting the current version (excluding the last version number)
+            //_client.SetGameAsync($"V{string.Join(".", VERSION.Split('.', 4).Take(3))} Experimental", type: ActivityType.Playing); //Setting the current version (excluding the last version number)
 
+            try
+            {
+                OnStarted?.Invoke(null, null); //Running client start methods
+            }
+            catch (Exception e)
+            {
+                DGELogger.Log(e.Message, Logger.LogLevel.ERROR);
+            }
             DGELogger.Log("Startup complete", Logger.LogLevel.INFO);
             return Task.CompletedTask;
         }
@@ -145,6 +157,7 @@ namespace DiscordGameEngine
             RegisterCommandModule(typeof(DebugCommands));
             RegisterCommandModule(typeof(DevCommands));
             RegisterCommandModule(typeof(BetaTestingCommands));
+            //RegisterCommandModule(typeof(ApplicationServerCommands));
         }
 
         /// <summary>

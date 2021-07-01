@@ -51,7 +51,7 @@ namespace DiscordGameEngine.UI.Commands
         }
 
         [Command("Stop")]
-        [Alias("Shutdown", "Quit", "Exit")]
+        [Alias("Shutdown", "Quit", "Exit", "STFU", "Shut")]
         [RequireOwner]
         [Summary("Stops the bot")]
         public async Task Stop()

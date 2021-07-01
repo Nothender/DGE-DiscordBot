@@ -29,20 +29,26 @@ namespace DiscordGameEnginePlus.Commands
             { "void", typeof(TestVoidProgram) }
         };
 
-        private static char maxUserProgramsCount = (char) 4;
+        private static Int16 maxUserProgramsCount = 4;
         private static Dictionary<ulong, char> userProgramsCount = new Dictionary<ulong, char>(); //char is used an 8bit unsigned integer
+
+        [Command("PMVersion")]
+        public async Task Version()
+        {
+            await ReplyAsync("ProgramModules V1.?.? //Not documented");
+        }
 
         [Command("CreateProgram")]
         public async Task CreateProgram(string programKey)
         {
-            if (userProgramsCount.ContainsKey(Context.User.Id)) //Adding a limit of programs that the user can instanciate
+            if (!userProgramsCount.ContainsKey(Context.User.Id)) //Adding a limit of programs that the user can instanciate
                 userProgramsCount.Add(Context.User.Id, (char) 0);
             userProgramsCount[Context.User.Id]++;
             if (userProgramsCount[Context.User.Id] > maxUserProgramsCount)
                 throw new CommandExecutionException($"You cannot instance more than {maxUserProgramsCount} programs at once");
 
-            if (!programTypes.ContainsKey(programKey))
-                throw new CommandExecutionException($"This program type was not found, try `>ShowPrograms`"); //TODO with prefix thingy later
+            if (!programTypes.ContainsKey(programKey.ToLower()))
+                throw new CommandExecutionException($"This program type was not found, try `{DiscordGameEngineBot.commandPrefix}ShowPrograms`"); //TODO with prefix thingy later
             ProgramModule program = (ProgramModule)Activator.CreateInstance(programTypes[programKey.ToLower()], Context);
             await ReplyAsync($"{program.Id}");
         }
@@ -94,6 +100,8 @@ namespace DiscordGameEnginePlus.Commands
         [Command("ShowInstancedPrograms")]
         public async Task ShowInstancedPrograms()
         {
+            if (ProgramModule.GetPrograms().Count < 1)
+                await ReplyAsync("No program modules are currently instanced");
             await ReplyAsync("Listing every existing programs :");
             string programsListing = "";
             foreach (ProgramModule program in ProgramModule.GetPrograms())
@@ -106,7 +114,7 @@ namespace DiscordGameEnginePlus.Commands
         [Command("ShowPrograms")]
         public async Task ShowExistingPrograms()
         {
-            await ReplyAsync("The different programs that can be instanced are :" + string.Join("\n- ", programTypes.Keys.ToArray()));
+            await ReplyAsync("The different programs that can be instanced are :\n-" + string.Join("\n- ", programTypes.Keys.ToArray()));
         }
 
         [Command("CreateAllPrograms")]
