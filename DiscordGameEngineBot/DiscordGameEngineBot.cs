@@ -68,8 +68,8 @@ namespace DiscordGameEngine
 
             /* Gets all the infos for the bot to run
              * index {
-             *  0 : Bot token (string),
-             *  1 : Feedback/bug reporting DiscordMessageChannel Id (ulong)
+             *  0 : Discord Bot token (string),
+             *  1 : Discord Feedback/bug reporting DiscordMessageChannel Id (ulong)
              * } */
             string[] infos = File.ReadAllLines("infos.txt"); // CHANGE ACCESS PATH FOR RELEASE
 
