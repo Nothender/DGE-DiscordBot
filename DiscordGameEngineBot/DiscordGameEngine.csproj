@@ -16,13 +16,6 @@
     <PackageReference Include="Discord.Net.Core" Version="2.2.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="3.1.8" />
     <PackageReference Include="System.Drawing.Common" Version="4.7.0" />
-    <ProjectReference Include="..\..\EnderEngine\EnderEngine\EnderEngine.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Reference Include="EnderEngine">
-      <HintPath>C:\Users\trist\OneDrive\Documents\Work\Nothender\Projects\EnderEngine\EnderEngine\bin\Debug\EnderEngine.dll</HintPath>
-    </Reference>
   </ItemGroup>
 
 </Project>

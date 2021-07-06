@@ -11,13 +11,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\DiscordGameEngineBot\DiscordGameEngine.csproj" />
-    <ProjectReference Include="..\..\EnderEngine\EnderEngine\EnderEngine.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Reference Include="EnderEngine">
-      <HintPath>C:\Users\trist\OneDrive\Documents\Work\Nothender\Projects\EnderEngine\EnderEngine\bin\Debug\EnderEngine.dll</HintPath>
-    </Reference>
-  </ItemGroup>
 
 </Project>
