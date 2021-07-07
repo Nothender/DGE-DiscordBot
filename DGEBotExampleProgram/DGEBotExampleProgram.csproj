@@ -11,10 +11,4 @@
     <ProjectReference Include="..\DGEFramework\DGEFramework.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Reference Include="EnderEngine">
-      <HintPath>..\DGEFramework\Assemblies\EnderEngine\EnderEngine.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-
 </Project>

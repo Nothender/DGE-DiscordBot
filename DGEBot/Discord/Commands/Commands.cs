@@ -73,6 +73,7 @@ namespace DGE.Discord.Commands
         {
             //TODO: Clean-up this command a bit (methods/delegates/actions, text and names) gl hf
             //Code dirty af
+            //TODO: make the embed look cleaner too
             EmbedBuilder embed = new EmbedBuilder();
             embed.WithColor(Color.Blue);
 
@@ -83,7 +84,7 @@ namespace DGE.Discord.Commands
                 DiscordCommandManager.commands.Modules.ToList().ForEach(m => embed.AddField(
                     m.Name,
                     m.Summary is null ? "No summary" : m.Summary,
-                    true));
+                    false));
             }
             else
             {
@@ -99,7 +100,7 @@ namespace DGE.Discord.Commands
                     {
                         embed.AddField($"{c.Name} {(c.Aliases.Count == 1 ? "" : $"({string.Join(", ", c.Aliases.ToArray(), 1, c.Aliases.Count - 1)})")}",
                             $"{(c.Summary is null ? "No summary" : c.Summary)}" +
-                            (c.Parameters.Count == 0 ? "" : $"\nparams : {(string.Join(", ", c.Parameters.Select(p => $"{p.Type.Name} {p.Name}")))}"));
+                            (c.Parameters.Count == 0 ? "" : $"\nparams : {(string.Join(", ", c.Parameters.Select(p => $"{p.Type.Name} {p.Name}")))}"), false);
                     });
                     embed.WithAuthor($"{module.Name} module :");
                     embed.WithDescription(module.Summary is null ? "No summary" : module.Summary);
@@ -110,7 +111,7 @@ namespace DGE.Discord.Commands
                     embed.AddField($"{command.Name} {(command.Aliases.Count == 1 ? "" : $"({string.Join(", ", command.Aliases.ToArray(), 1, command.Aliases.Count - 1)})")} command :",
                         $"{(command.Summary is null ? "No summary" : command.Summary)}" +
                         (command.Parameters.Count == 0 ? "" : $"\nparams : {(string.Join(", ", command.Parameters.Select(p => $"{p.Type.Name} {p.Name}")))}") +
-                        $"\nremarks : {(command.Remarks is null ? "No remarks" : command.Remarks)}");
+                        $"\nremarks : {(command.Remarks is null ? "No remarks" : command.Remarks)}", false);
                 }
                 else
                 {
