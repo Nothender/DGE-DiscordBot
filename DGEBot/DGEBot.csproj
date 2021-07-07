@@ -1,0 +1,29 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Library</OutputType>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <ApplicationIcon />
+    <StartupObject />
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <Authors>Nothender</Authors>
+    <RepositoryUrl>https://github.com/Nothender/DiscordGameEngine</RepositoryUrl>
+    <RootNamespace>DGE</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Discord.Net" Version="2.4.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="5.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\DGEFramework\DGEFramework.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="EnderEngine">
+      <HintPath>..\DGEFramework\Assemblies\EnderEngine\EnderEngine.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>
