@@ -36,6 +36,8 @@ namespace DGE
             OnStarted += (s, e) => AssemblyFramework.logger.Log("Started DGE Main", EnderEngine.Logger.LogLevel.INFO);
             OnShutdown += (s, e) => AssemblyFramework.logger.Log("Stopping DGE Main", EnderEngine.Logger.LogLevel.INFO);
             OnStopped += (s, e) => AssemblyFramework.logger.Log("Stopped DGE Main", EnderEngine.Logger.LogLevel.INFO);
+
+            DGEModules.RegisterModule(AssemblyFramework.module);
         }
 
         public static async Task Run(RunMode mode = RunMode.CONSOLE)

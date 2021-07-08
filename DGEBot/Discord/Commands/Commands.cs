@@ -11,7 +11,7 @@ using Color = Discord.Color;
 namespace DGE.Discord.Commands
 {
     [Summary("Base commands")]
-    public class Commands : ModuleBase<SocketCommandContext>
+    public class Commands : ModuleBase<DGECommandContext>
     {
         [Command("Ping")]
         [Summary("Replies with \"Pong\"")]

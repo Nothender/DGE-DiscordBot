@@ -13,7 +13,7 @@ using Discord.Commands;
 namespace DiscordGameEngine.UI.Commands
 {
     [Summary("Commands adding literaly nothing useful")]
-    public class FunCommands : ModuleBase<SocketCommandContext>
+    public class FunCommands : ModuleBase<DGECommandContext>
     {
 
         private static Random random = new Random();

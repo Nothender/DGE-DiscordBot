@@ -10,7 +10,7 @@ using DGE.Misc.BetaTesting;
 namespace DGE.Discord.Commands
 {
     [Summary("Command module for beta testing versions (here to show points gotten by triggering the most exceptions possible)")]
-    public class BetaTestingCommands : ModuleBase<SocketCommandContext>
+    public class BetaTestingCommands : ModuleBase<DGECommandContext>
     {
         [Command("ShowPoints")]
         [Summary("Shows the point count of the current or specified user")]

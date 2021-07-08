@@ -8,8 +8,8 @@ namespace DGE.Core
     public static class AssemblyFramework
     {
 
-        public const string NAME = "DGEFramework";
-        public const string VERSION = "0.0.0.0";
+        public const string NAME = "DGE-Framework";
+        public const string VERSION = "0.0.0.3";
 
         public static readonly DGEModule module = new DGEModule(NAME, VERSION, Init);
 

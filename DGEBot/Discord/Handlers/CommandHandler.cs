@@ -22,17 +22,17 @@ namespace DGE.Discord.Handlers
         /// 
         /// </summary>
         /// <returns></returns>
-        internal static async Task<bool> ExecuteCommand(ICommandContext context, int argPos, DiscordBot bot)
+        internal static async Task<bool> ExecuteCommand(DGECommandContext context, int argPos)
         {
-            IResult execution = await DiscordCommandManager.commands.ExecuteAsync(context, argPos, bot.services);
+            IResult execution = await DiscordCommandManager.commands.ExecuteAsync(context, argPos, context.bot.services);
             if (!execution.IsSuccess)
             {
-                bot.logger.Log($"(Commands) {execution.ErrorReason}", EnderEngine.Logger.LogLevel.WARN);
+                context.bot.logger.Log($"(Commands) {execution.ErrorReason}", EnderEngine.Logger.LogLevel.WARN);
                 bool ignoreExceptionReport = execution.ErrorReason.Contains(AvoidBugReportErrorTag);
                 if (execution.Error == CommandError.Exception && !ignoreExceptionReport)
                     //When there is "[DGE]" in the command execution error, no bug reports will be created (creating a way to the automatic bug reporting) -- Something that may need fixing, poorly coded, not really intuitive
                 {
-                    string commandExecuted = context.Message.Content.Split(' ', 2)[0].Remove(0, bot.commandPrefix.Length);
+                    string commandExecuted = context.Message.Content.Split(' ', 2)[0].Remove(0, context.bot.commandPrefix.Length);
                     bool reportWasAlreadySent = UI.Feedback.UserFeedbackHandler.SendFeedback(new UI.Feedback.FeedbackInfo(
                         $"(Automatic [DGE] report) - An exception occured while executing the command `{commandExecuted}`",
                         $"Exception message : \"{execution.ErrorReason}\"",
@@ -53,7 +53,7 @@ namespace DGE.Discord.Handlers
                     string errorReason = execution.ErrorReason;
                     if (ignoreExceptionReport)
                         errorReason = errorReason.Replace(AvoidBugReportErrorTag, "");
-                    await context.Channel.SendMessageAsync($"{LogPrefixes.DGE_ERROR}Command execution failed - {errorReason}\n*See help using `{bot.commandPrefix}help`*");
+                    await context.Channel.SendMessageAsync($"{LogPrefixes.DGE_ERROR}Command execution failed - {errorReason}\n*See help using `{context.bot.commandPrefix}help`*");
                 }
                 return false; //The command execution had problems
             }

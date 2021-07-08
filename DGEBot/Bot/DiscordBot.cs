@@ -18,7 +18,7 @@ using DGE.Discord;
 
 namespace DGE.Bot
 {
-    public class DiscordBot : Application.IApplication
+    public class DiscordBot : IBot
     {
         #region IApplication
         public ApplicationStatus status { get; protected set; }
@@ -35,7 +35,7 @@ namespace DGE.Bot
         public DiscordSocketClient client { get; protected set; }
         public IServiceProvider services { get; protected set; }
 
-        public string commandPrefix;
+        public string commandPrefix { get; set; }
 
         public DiscordBot(string token, string commandPrefix)
         {

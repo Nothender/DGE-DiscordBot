@@ -14,7 +14,7 @@ namespace DGE.Discord.Commands
 {
 
     [Summary("Commands to test misc bot features")]
-    public class DebugCommands : ModuleBase<SocketCommandContext>
+    public class DebugCommands : ModuleBase<DGECommandContext>
     {
 
         [Command("LogTest")]

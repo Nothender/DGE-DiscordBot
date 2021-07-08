@@ -22,9 +22,9 @@ namespace DGE.Discord.Handlers
             int argPos = 0;
             if (uMessage.HasStringPrefix(bot.commandPrefix, ref argPos))// && !uMessage.Author.IsBot)
             {
-                SocketCommandContext context = new SocketCommandContext(bot.client, uMessage);
+                DGECommandContext context = new DGECommandContext(bot.client, uMessage, bot);
 
-                await CommandHandler.ExecuteCommand(context, argPos, bot);
+                await CommandHandler.ExecuteCommand(context, argPos);
             }
             else
             {

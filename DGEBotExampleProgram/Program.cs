@@ -18,11 +18,13 @@ namespace DGE
     {
         private static void Main(string[] args)
         {
-            DGE.Main.Init();
+
+            //TODO: This will be fixed to be cleaner
 
             string[] infos = File.ReadAllLines("../../../../infos.txt"); // 42
 
-            DiscordBot bot1 = new DiscordBot(infos[0], ">");
+            DGE.Main.Init();
+            DGEModules.RegisterModule(AssemblyBot.module);
 
             DiscordCommandManager.RegisterModule(typeof(Commands));
             DiscordCommandManager.RegisterModule(typeof(FunCommands));
@@ -31,11 +33,8 @@ namespace DGE
             DiscordCommandManager.RegisterModule(typeof(DevCommands));
             DiscordCommandManager.RegisterModule(typeof(BetaTestingCommands));
 
-            //TODO: This will be fixed to be cleaner
-            //UserFeedbackHandler.feedbackChannel = Bot1.client.GetChannelAsync(ulong.Parse(infos[1])) as ISocketMessageChannel;
-
+            DiscordBot bot1 = new DiscordBot(infos[0], ">");
             ApplicationManager.Add(bot1);
-
             DGE.Main.OnStarted += (s, e) => bot1.Start(); //The bot automatically starts when the app is on
 
             Task main = DGE.Main.Run();

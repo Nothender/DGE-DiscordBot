@@ -12,9 +12,9 @@ using DGE.UI.Feedback;
 namespace DGE.Discord.Commands
 {
     [Summary("Developpers commands")]
-    public class DevCommands : ModuleBase<SocketCommandContext>
+    public class DevCommands : ModuleBase<DGECommandContext>
     {
-        /*[Command("TimeCommand")]
+        [Command("TimeCommand")]
         [Summary("Executes a command, and measures the total time taken")]
         public async Task TimeCommand(string command, params string[] args)
         {
@@ -24,7 +24,7 @@ namespace DGE.Discord.Commands
             Stopwatch stopwatch = new Stopwatch(); //Debug
             stopwatch.Start();
 
-            bool commandExecutionSuccess = await CommandHandler.ExecuteCommand(Context,  + "TimeCommand".Length + 1);
+            bool commandExecutionSuccess = await CommandHandler.ExecuteCommand(Context, Context.bot.commandPrefix.Length + "TimeCommand".Length + 1);
             //Have to pay attention cause we do not get information on the previous argpos, so previous commands are not ignored and this can easily fall into an endless recursion cycle
 
             stopwatch.Stop();
@@ -32,7 +32,7 @@ namespace DGE.Discord.Commands
                 await ReplyAsync($"{LogPrefixes.DGE_DEBUG}Execution of the `{command}` command took {stopwatch.Elapsed.TotalSeconds * 1000}ms");
             else
                 await ReplyAsync($"{LogPrefixes.DGE_DEBUG}Failed execution the `{command}` command, failing took {stopwatch.Elapsed.TotalSeconds * 1000}ms");
-        }*/
+        }
 
         [Command("ClearReports")]
         [Summary("Removes feedback report messages and files")]
