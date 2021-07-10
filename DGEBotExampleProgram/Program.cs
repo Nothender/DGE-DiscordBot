@@ -25,6 +25,7 @@ namespace DGE
 
             DGE.Main.Init();
             DGEModules.RegisterModule(AssemblyBot.module);
+            DGEModules.RegisterModule(AssemblyBot.module);
 
             DiscordCommandManager.RegisterModule(typeof(Commands));
             DiscordCommandManager.RegisterModule(typeof(FunCommands));

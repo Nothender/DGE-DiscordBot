@@ -21,19 +21,11 @@ namespace DGE.Core
 
         internal static Logger logger = new Logger("DGE-Bot");
 
-        private static bool assemblyInitialized = false;
-
         /// <summary>
         /// Init function for the assembly (DGEModule)
         /// </summary>
-        public static void Init()
+        private static void Init()
         {
-            if (assemblyInitialized)
-            {
-                logger.Log("DGE Bot is being initialized more than once", Logger.LogLevel.WARN);
-                return;
-            }
-            assemblyInitialized = true;
 
             //Bot Init code
 

@@ -19,7 +19,7 @@ namespace DGE.Core
                 return;
             }
             modules.Add(module);
-            module.initCallback();
+            module.Init();
             AssemblyFramework.logger.Log($"Loaded and initialized {module}", Logger.LogLevel.INFO);
         }
 

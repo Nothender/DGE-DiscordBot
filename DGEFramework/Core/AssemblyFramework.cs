@@ -9,26 +9,18 @@ namespace DGE.Core
     {
 
         public const string NAME = "DGE-Framework";
-        public const string VERSION = "0.0.0.3";
+        public const string VERSION = "0.0.1.0";
 
         public static readonly DGEModule module = new DGEModule(NAME, VERSION, Init);
 
         internal static Logger logger = new Logger("DGE");
 
-        private static bool assemblyInitialized = false;
 
         /// <summary>
         /// Init function for the assembly (DGEModule)
         /// </summary>
-        public static void Init()
+        private static void Init()
         {
-            if (assemblyInitialized)
-            {
-                logger.Log("DGE Framework is being initialized more than once", Logger.LogLevel.WARN);
-                return;
-            }
-            assemblyInitialized = true;
-
             //FW Init code
             Engine.Init();
 

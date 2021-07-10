@@ -11,7 +11,9 @@ namespace DGE.Core
 
         public readonly Guid ID;
 
-        public Action initCallback;
+        private Action initCallback;
+
+        private bool initialized = false;
 
         public DGEModule(string name, string version, Action initCallback)
         {
@@ -19,6 +21,17 @@ namespace DGE.Core
             VERSION = version;
             ID = Guid.NewGuid();
             this.initCallback = initCallback;
+        }
+
+        public void Init()
+        {
+            if (initialized)
+            {
+                AssemblyFramework.logger.Log($"{this} was already initialized", EnderEngine.Logger.LogLevel.WARN);
+                return;
+            }
+            initialized = true;
+            initCallback();
         }
 
         public override string ToString()
