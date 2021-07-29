@@ -1,4 +1,5 @@
-﻿using Discord.Commands;
+﻿using DGE.Discord;
+using Discord.Commands;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -6,7 +7,7 @@ using System.Text;
 namespace DiscordGameEngine.UI.Commands
 {
     [Summary("Not yet implemented/No commands")]
-    public class ModerationCommands : ModuleBase<DGECommandContext>
+    public class ModerationCommands : DGEModuleBase
     {
     }
 }

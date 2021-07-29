@@ -20,8 +20,6 @@ namespace DGE.UI.Feedback
 
         private static int linesCounter;
 
-        public static ISocketMessageChannel feedbackChannel { get; set; }
-
         static UserFeedbackHandler()
         {
             if (File.Exists(filepath))
@@ -35,7 +33,7 @@ namespace DGE.UI.Feedback
         /// </summary>
         /// <param name="feedbackInfo"></param>
         /// <returns></returns>
-        public static bool SendFeedback(FeedbackInfo feedbackInfo)
+        public static bool SendFeedback(FeedbackInfo feedbackInfo, IMessageChannel feedbackChannel)
         {
             if (File.Exists(reportIdsFilepath) && File.ReadAllLines(reportIdsFilepath).Any(s => s.StartsWith(feedbackInfo.reportId)))
             {
@@ -61,7 +59,7 @@ namespace DGE.UI.Feedback
             return false;
         }
 
-        public static void ClearReports()
+        public static void ClearReports(IMessageChannel feedbackChannel)
         {
             //Resetting everything
             int reportsCount = 42; //if we don't know how many reports were created
@@ -75,7 +73,7 @@ namespace DGE.UI.Feedback
             linesCounter = 1;
         }
 
-        public static void DeleteReport(string reportId)
+        public static void DeleteReport(string reportId, IMessageChannel feedbackChannel)
         {
             //command is slow, and stupidly made... BUT IT WORKS
 

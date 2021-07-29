@@ -12,7 +12,7 @@ using DGE.UI.Feedback;
 namespace DGE.Discord.Commands
 {
     [Summary("Developpers commands")]
-    public class DevCommands : ModuleBase<DGECommandContext>
+    public class DevCommands : DGEModuleBase
     {
         [Command("TimeCommand")]
         [Summary("Executes a command, and measures the total time taken")]
@@ -39,7 +39,7 @@ namespace DGE.Discord.Commands
         [RequireOwner]
         public async Task CommandClearReports()
         {
-            UserFeedbackHandler.ClearReports();
+            UserFeedbackHandler.ClearReports(Context.bot.feedbackChannel);
             await ReplyAsync(LogPrefixes.DGE_LOG + "Cleared every reports");
         }
 
@@ -50,7 +50,7 @@ namespace DGE.Discord.Commands
         {
             try
             {
-                UserFeedbackHandler.DeleteReport(reportId);
+                UserFeedbackHandler.DeleteReport(reportId, Context.bot.feedbackChannel);
             }
             catch (KeyNotFoundException e)
             {

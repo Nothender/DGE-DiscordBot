@@ -22,7 +22,7 @@ namespace DGE.Discord.Handlers
         /// 
         /// </summary>
         /// <returns></returns>
-        internal static async Task<bool> ExecuteCommand(DGECommandContext context, int argPos)
+        public static async Task<bool> ExecuteCommand(IDGECommandContext context, int argPos)
         {
             IResult execution = await DiscordCommandManager.commands.ExecuteAsync(context, argPos, context.bot.services);
             if (!execution.IsSuccess)
@@ -30,9 +30,9 @@ namespace DGE.Discord.Handlers
                 context.bot.logger.Log($"(Commands) {execution.ErrorReason}", EnderEngine.Logger.LogLevel.WARN);
                 bool ignoreExceptionReport = execution.ErrorReason.Contains(AvoidBugReportErrorTag);
                 if (execution.Error == CommandError.Exception && !ignoreExceptionReport)
-                    //When there is "[DGE]" in the command execution error, no bug reports will be created (creating a way to the automatic bug reporting) -- Something that may need fixing, poorly coded, not really intuitive
                 {
                     string commandExecuted = context.Message.Content.Split(' ', 2)[0].Remove(0, context.bot.commandPrefix.Length);
+
                     bool reportWasAlreadySent = UI.Feedback.UserFeedbackHandler.SendFeedback(new UI.Feedback.FeedbackInfo(
                         $"(Automatic [DGE] report) - An exception occured while executing the command `{commandExecuted}`",
                         $"Exception message : \"{execution.ErrorReason}\"",
@@ -40,7 +40,7 @@ namespace DGE.Discord.Handlers
                         new string[] { $"Discord user : @{context.User.Username}(id: {context.User.Id})",
                             $"Discord server : {context.Guild.Name}",
                             $"Discord channel : #{context.Channel.Name}"},
-                        new string[] { commandExecuted, execution.ErrorReason }));
+                        new string[] { commandExecuted, execution.ErrorReason }), context.bot.feedbackChannel);
                     string bugReportLine = reportWasAlreadySent ? "This bug was already reported, and is being fixed" : "A BugReport was automatically sent to the developpers (+1 point)";
                     await context.Channel.SendMessageAsync($"{LogPrefixes.DGE_ERROR}Command execution failed - {execution.ErrorReason}\n*{bugReportLine}*");
 

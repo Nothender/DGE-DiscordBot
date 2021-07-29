@@ -9,11 +9,13 @@ using System.Threading.Tasks;
 using System.Linq;
 using Discord;
 using Discord.Commands;
+using DGE.Discord;
+using Discord.WebSocket;
 
 namespace DiscordGameEngine.UI.Commands
 {
     [Summary("Commands adding literaly nothing useful")]
-    public class FunCommands : ModuleBase<DGECommandContext>
+    public class FunCommands : DGEModuleBase
     {
 
         private static Random random = new Random();
@@ -70,7 +72,7 @@ namespace DiscordGameEngine.UI.Commands
         [Summary("Pings a random person")]
         public async Task PingRandomPerson()
         {
-            await ReplyAsync("Haha ping " + Context.Guild.Users.ElementAt(random.Next(0, Context.Guild.Users.Count)).Mention);
+            await ReplyAsync("Haha ping " + (Context.Guild as SocketGuild).Users.ElementAt(random.Next(0, (Context.Guild as SocketGuild).Users.Count)).Mention);
         }
 
     }

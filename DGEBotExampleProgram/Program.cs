@@ -11,20 +11,24 @@ using System.Security;
 using DiscordGameEngine.UI.Commands;
 using DGE.Discord;
 using DGE.Discord.Commands;
+using DGE.Discord.Handlers;
 
 namespace DGE
 {
+
     public class Program
     {
         private static void Main(string[] args)
         {
 
             //TODO: This will be fixed to be cleaner
-
-            string[] infos = File.ReadAllLines("../../../../infos.txt"); // 42
+#if DEBUG
+            string[] infos = File.ReadAllLines("config-exp.txt"); //Running experimental config
+#else
+            string[] infos = File.ReadAllLines("config.txt"); //Running normal DGE config
+#endif
 
             DGE.Main.Init();
-            DGEModules.RegisterModule(AssemblyBot.module);
             DGEModules.RegisterModule(AssemblyBot.module);
 
             DiscordCommandManager.RegisterModule(typeof(Commands));
@@ -34,7 +38,7 @@ namespace DGE
             DiscordCommandManager.RegisterModule(typeof(DevCommands));
             DiscordCommandManager.RegisterModule(typeof(BetaTestingCommands));
 
-            DiscordBot bot1 = new DiscordBot(infos[0], ">");
+            DiscordBot bot1 = new DiscordBot(infos[0], "<", ulong.Parse(infos[1]));
             ApplicationManager.Add(bot1);
             DGE.Main.OnStarted += (s, e) => bot1.Start(); //The bot automatically starts when the app is on
 

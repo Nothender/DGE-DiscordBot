@@ -7,10 +7,11 @@ using System.Text;
 
 namespace DGE.Discord
 {
-    public class DGECommandContext : SocketCommandContext
+    public class DGECommandContext : SocketCommandContext, IDGECommandContext
     {
 
-        public IBot bot;
+        public IBot bot { get; protected set; }
+        public bool commandGotFeedback { get; set; }
 
         public DGECommandContext(DiscordSocketClient client, SocketUserMessage msg, IBot bot) : base(client, msg)
         {

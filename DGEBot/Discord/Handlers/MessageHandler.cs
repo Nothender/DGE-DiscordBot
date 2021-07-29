@@ -24,7 +24,11 @@ namespace DGE.Discord.Handlers
             {
                 DGECommandContext context = new DGECommandContext(bot.client, uMessage, bot);
 
-                await CommandHandler.ExecuteCommand(context, argPos);
+                if(await CommandHandler.ExecuteCommand(context, argPos))
+                {
+                    if (!context.commandGotFeedback)
+                        await message.AddReactionAsync(new Emoji("✔"));
+                }
             }
             else
             {

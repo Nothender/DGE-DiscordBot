@@ -1,35 +1,33 @@
-﻿using Discord;
-using Discord.Commands;
-using Discord.WebSocket;
+﻿using DGE.Application;
 using DGE.Core;
-using DGE.UI.Feedback;
+using DGE.Discord;
+using DGE.Discord.Handlers;
+using Discord;
+using Discord.WebSocket;
 using EnderEngine;
 using Microsoft.Extensions.DependencyInjection;
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Reflection;
 using System.Threading.Tasks;
-using System.Linq;
-using DGE.Discord.Handlers;
-using DGE;
-using DGE.Application;
-using DGE.Discord;
 
 namespace DGE.Bot
 {
     public class DiscordBot : IBot
     {
         #region IApplication
+
         public ApplicationStatus status { get; protected set; }
 
         public Logger logger { get; protected set; }
         private static int appCount = 0;
 
         public event EventHandler OnStarting;
+
         public event EventHandler OnStarted;
+
         public event EventHandler OnShutdown;
+
         public event EventHandler OnStopped;
+
         #endregion IApplication
 
         public DiscordSocketClient client { get; protected set; }
@@ -37,7 +35,26 @@ namespace DGE.Bot
 
         public string commandPrefix { get; set; }
 
-        public DiscordBot(string token, string commandPrefix)
+        public string activity
+        {
+            get { return activityStatus; }
+            set
+            {
+                activityStatus = value;
+                client.SetGameAsync(activity);
+            }
+        }
+
+#if DEBUG
+        private string activityStatus = $"{AssemblyFramework.module} Experimental";
+#else
+        private string activityStatus = $"{AssemblyBot.module} BetaTesting";
+#endif
+
+        public IMessageChannel feedbackChannel { get; set; }
+        private ulong feedbackChannelId;
+
+        public DiscordBot(string token, string commandPrefix, ulong feedbackChannelId)
         {
             appCount++;
 
@@ -47,6 +64,7 @@ namespace DGE.Bot
             OnStopped += (s, e) => status = ApplicationStatus.OFF;
 
             this.commandPrefix = commandPrefix;
+            this.feedbackChannelId = feedbackChannelId;
 
             client = new DiscordSocketClient(new DiscordSocketConfig()
             {
@@ -59,7 +77,7 @@ namespace DGE.Bot
 
             logger = new Logger($"DGE-Bot:{appCount}");
 
-            client.Log += LogDebug;
+            client.Log += (m) => DiscordNETLogger.Log(m, logger);
             client.MessageReceived += (m) => MessageHandler.HandleMessageAsync(m, this);
 
             client.LoginAsync(TokenType.Bot, token);
@@ -78,8 +96,17 @@ namespace DGE.Bot
                 return;
             OnStarting?.Invoke(this, EventArgs.Empty);
 
+            client.Ready += StartedBotReady;
             client.StartAsync().GetAwaiter().GetResult();
-            client.SetGameAsync($"{AssemblyFramework.module} Experimental");
+        }
+
+        public async Task StartedBotReady()
+        {
+            client.Ready -= StartedBotReady;
+
+            if (feedbackChannel is null)
+                feedbackChannel = client.GetChannel(feedbackChannelId) as IMessageChannel;
+            await client.SetGameAsync(activity);
 
             OnStarted?.Invoke(this, EventArgs.Empty);
         }
@@ -92,22 +119,5 @@ namespace DGE.Bot
 
             OnStopped?.Invoke(this, EventArgs.Empty);
         }
-
-        private Task LogDebug(LogMessage msg)
-        {
-            Logger.LogLevel logLevel = msg.Severity switch
-            {
-                LogSeverity.Info => Logger.LogLevel.INFO,
-                LogSeverity.Verbose => Logger.LogLevel.DEBUG,
-                LogSeverity.Debug => Logger.LogLevel.DEBUG,
-                LogSeverity.Error => Logger.LogLevel.ERROR,
-                LogSeverity.Critical => Logger.LogLevel.FATAL,
-                LogSeverity.Warning => Logger.LogLevel.WARN,
-                _ => Logger.LogLevel.DEBUG,
-            };
-            logger.Log($"({msg.Source}) {msg.Message}", logLevel);
-            return Task.CompletedTask;
-        }
-
     }
 }

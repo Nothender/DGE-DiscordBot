@@ -14,7 +14,7 @@ namespace DGE.Misc.BetaTesting
 
         public UserPointsPair(ulong id, int points, DiscordSocketClient client)
         {
-            this.user = client.GetUser(id);
+            user = client.GetUser(id);
             this.points = points;
         }
     }

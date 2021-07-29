@@ -41,10 +41,22 @@ namespace DGE.Console
             return Task.CompletedTask;
         }
 
+        public static void CreateCommand(string name, Func<string[], string> action)
+        {
+            if (commands.ContainsKey(name))
+                return;
+            commands.Add(name, action);
+        }
+
+        public static string[] GetCommands()
+        {
+            return commands.Keys.ToArray();
+        }
+
         private static void CreateCommands()
         {
             //TODO: Commands may need to be improved (with structs or classes or attributes, with automatic TypeCasting and arguments passing)
-            commands.Add("help", (a) =>
+            CreateCommand("help", (a) =>
             {
                 if (a.Length != 0) throw new InvalidArgumentCountException("help", 0, a.Length);
 
@@ -52,7 +64,7 @@ namespace DGE.Console
                 helpMessage += "\n- " + string.Join("\n- ", commands.Keys.ToArray());
                 return helpMessage;
             });
-            commands.Add("startapp", (a) =>
+            CreateCommand("startapp", (a) =>
             {
                 if (a.Length != 1) throw new InvalidArgumentCountException("startapp", 1, a.Length);
                 if (!int.TryParse(a[0], out int id)) throw new InvalidArgumentTypeException(0, typeof(int));
@@ -60,7 +72,7 @@ namespace DGE.Console
                 ApplicationManager.Get(int.Parse(a[0])).Start();
                 return $"Application of id {id} was started";
             });
-            commands.Add("stopapp", (a) =>
+            CreateCommand("stopapp", (a) =>
             {
                 if (a.Length != 1) throw new InvalidArgumentCountException("stopapp", 1, a.Length);
                 if (!int.TryParse(a[0], out int id)) throw new InvalidArgumentTypeException(0, typeof(int));
@@ -68,7 +80,7 @@ namespace DGE.Console
                 ApplicationManager.Get(int.Parse(a[0])).Stop();
                 return $"Application of id {id} was stopped";
             });
-            commands.Add("showapps", (a) =>
+            CreateCommand("showapps", (a) =>
             {
                 if (a.Length != 0) throw new InvalidArgumentCountException("showapps", 0, a.Length);
                 string res = "Loaded apps :";
@@ -77,13 +89,9 @@ namespace DGE.Console
                     res += $"\n{apps[i].GetType().Name} application of id {i}, currently {apps[i].status}";
                 return res;
             });
-            commands.Add("stop", (a) =>
+            CreateCommand("stop", (a) =>
             {
                 return "THIS STRING SHOULDNT SHOW #0"; //the #0 is the id of the string that shouldnt show, so if it ever shows ik from where it is
-            });
-            commands.Add("botcmd", (a) =>
-            {
-                return "Is under dev, will add the ability to execute a bot command from the console";
             });
         }
 

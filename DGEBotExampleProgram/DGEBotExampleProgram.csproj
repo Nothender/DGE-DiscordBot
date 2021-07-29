@@ -14,5 +14,10 @@
     <ProjectReference Include="..\DGEBot\DGEBot.csproj" />
     <ProjectReference Include="..\DGEFramework\DGEFramework.csproj" />
   </ItemGroup>
-
+  
+  <ItemGroup>
+    <None Include="../config.txt" CopyToOutputDirectory="Always" />
+    <None Include="../config-exp.txt" CopyToOutputDirectory="Always" />
+  </ItemGroup>
+  
 </Project>

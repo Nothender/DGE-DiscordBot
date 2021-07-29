@@ -6,11 +6,13 @@ using System.Text;
 using System.Threading.Tasks;
 using DGE.Misc;
 using DGE.Misc.BetaTesting;
+using DGE.Application;
+using Discord.WebSocket;
 
 namespace DGE.Discord.Commands
 {
     [Summary("Command module for beta testing versions (here to show points gotten by triggering the most exceptions possible)")]
-    public class BetaTestingCommands : ModuleBase<DGECommandContext>
+    public class BetaTestingCommands : DGEModuleBase
     {
         [Command("ShowPoints")]
         [Summary("Shows the point count of the current or specified user")]
@@ -26,7 +28,7 @@ namespace DGE.Discord.Commands
         [Summary("Shows leaderboard of the users (most points to least points)")]
         public async Task CommandShowPointsLeaderboard()
         {
-            List<UserPointsPair> users = BetaTestingPointsCounter.GetUsersPoints(Context.Client);
+            List<UserPointsPair> users = BetaTestingPointsCounter.GetUsersPoints(Context.Client as DiscordSocketClient);
             users.Sort((x, y) => y.points.CompareTo(x.points));
 
             string leaderboard = "";
@@ -58,6 +60,33 @@ namespace DGE.Discord.Commands
                 BetaTestingPointsCounter.ResetPoints(user.Id);
                 await ReplyAsync($"Points were reset for the user {user.Username}");
             }
+        }
+
+        [Command("StartApp")]
+        [Summary("Stops the app of specified id")]
+        [RequireOwner]
+        public async Task CommandStartApp(int id)
+        {
+            Application.IApplication app = ApplicationManager.Get(id);
+            app.Start();
+            await ReplyAsync($"Started app {id} of type {app.GetType().Name}");
+        }
+
+        [Command("StopApp")]
+        [Summary("Stops the app of specified id")]
+        [RequireOwner]
+        public async Task CommandStopApp(int id)
+        {
+            Application.IApplication app = ApplicationManager.Get(id);
+            app.Stop();
+            await ReplyAsync($"Stopped app {id} of type {app.GetType().Name}");
+        }
+
+        [Command("UselessCommand")]
+        [Summary("Is useless, no i swear, don't believe me ? well then try it.")]
+        public async Task CommandUselessCommand()
+        {
+            await Task.Run(() => { });
         }
 
     }

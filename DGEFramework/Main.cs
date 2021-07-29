@@ -30,6 +30,8 @@ namespace DGE
 
         private static bool stopRequest = false;
 
+        private static object sender = null;
+
         public static void Init()
         {
             OnStarting += (s, e) => AssemblyFramework.logger.Log("Starting DGE Main", EnderEngine.Logger.LogLevel.INFO);
@@ -38,11 +40,11 @@ namespace DGE
             OnStopped += (s, e) => AssemblyFramework.logger.Log("Stopped DGE Main", EnderEngine.Logger.LogLevel.INFO);
 
             DGEModules.RegisterModule(AssemblyFramework.module);
+
         }
 
         public static async Task Run(RunMode mode = RunMode.CONSOLE)
         {
-            object sender = null; // If i ever want a sender
             
             OnStarting?.Invoke(sender, EventArgs.Empty);
 
@@ -52,11 +54,7 @@ namespace DGE
             OnStarted?.Invoke(sender, EventArgs.Empty);
             while (!stopRequest)
                 await Task.Delay(100);
-            OnShutdown?.Invoke(sender, EventArgs.Empty);
-
-            //Stop code
-
-            OnStopped?.Invoke(sender, EventArgs.Empty);
+            Stop();
         }
 
         /// <summary>
@@ -64,7 +62,18 @@ namespace DGE
         /// </summary>
         public static void Stop()
         {
-            stopRequest = true;
+            if (!stopRequest)
+            {
+                stopRequest = true;
+                return;
+            }
+
+            OnShutdown?.Invoke(sender, EventArgs.Empty);
+
+            //Stop code
+
+            OnStopped?.Invoke(sender, EventArgs.Empty);
+
         }
 
         private static Task StartConsoleIO()

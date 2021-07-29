@@ -2,6 +2,7 @@
 using DGE.UI.Feedback;
 using Discord;
 using Discord.Commands;
+using Discord.WebSocket;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,7 +12,7 @@ using Color = Discord.Color;
 namespace DGE.Discord.Commands
 {
     [Summary("Base commands")]
-    public class Commands : ModuleBase<DGECommandContext>
+    public class Commands : DGEModuleBase
     {
         [Command("Ping")]
         [Summary("Replies with \"Pong\"")]
@@ -39,16 +40,21 @@ namespace DGE.Discord.Commands
         [Summary("Shows the latency from the bot to the gateway server")]
         public async Task PingLatency()
         {
-            await ReplyAsync($"Pong : the latency is {Context.Client.Latency}ms");
+            await ReplyAsync($"Pong : the latency is {(Context.Client as DiscordSocketClient).Latency}ms");
         }
 
         [Command("Stop")]
         [Alias("Shutdown", "Quit", "Exit", "STFU", "Shut")]
         [RequireOwner]
-        [Summary("Stops the bot")]
-        public async Task Stop()
+        [Summary("Stops the app bot if bot is true, else it shutdowns the entire framework")]
+        public async Task Stop(bool bot = false)
         {
-            await ReplyAsync("Shutting DGE - FW and Apps");
+            if (bot)
+            {
+                Context.bot.Stop();
+                return;
+            }
+            await ReplyAsync("Shutting down everything");
             Main.Stop();
         }
 
@@ -63,7 +69,7 @@ namespace DGE.Discord.Commands
                 description,
                 additionnalInfo);
 
-            UserFeedbackHandler.SendFeedback(feedbackInfo);
+            UserFeedbackHandler.SendFeedback(feedbackInfo, Context.bot.feedbackChannel);
             await ReplyAsync("Thanks for sending feedback");
         }
 
@@ -119,7 +125,31 @@ namespace DGE.Discord.Commands
                 }
             }
 
+            await ReplyAsync($"Use `{Context.bot.commandPrefix}HelpAll` to list all commands from every module", false, embed.Build());
+        }
+
+        [Command("HelpAll")]
+        [Summary("Replies with all existing commands, their params, their remarks and descriptions")]
+        public async Task CommandHelpAll()
+        {
+            EmbedBuilder embed = new EmbedBuilder();
+
+            DiscordCommandManager.commands.Commands.ToList().ForEach(c =>
+            {
+                embed.AddField($"{c.Name} {(c.Aliases.Count == 1 ? "" : $"({string.Join(", ", c.Aliases.ToArray(), 1, c.Aliases.Count - 1)})")} [{c.Module.Name}]",
+                    $"{(c.Summary is null ? "No summary" : c.Summary)}" +
+                    (c.Parameters.Count == 0 ? "" : $"\nparams : {(string.Join(", ", c.Parameters.Select(p => $"{p.Type.Name} {p.Name}")))}"), false);
+            });
+
             await ReplyAsync(null, false, embed.Build());
         }
+
+        [Command("ChangePrefix")]
+        [Summary("Changes the current bot instance's command prefix (means it resets after restart)")]
+        public async Task CommandChangePrefix(string prefix)
+        {
+            await Task.Run(() => Context.bot.commandPrefix = prefix);
+        }
+
     }
 }
