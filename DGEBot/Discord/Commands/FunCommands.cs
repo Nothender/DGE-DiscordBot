@@ -21,7 +21,8 @@ namespace DiscordGameEngine.UI.Commands
         private static Random random = new Random();
 
         [Command("Send42s", RunMode = RunMode.Async)]
-        [RequireUserPermission(ChannelPermission.ManageChannels, Group = "test")] //Bc it can be very chiant
+        [RequireUserPermission(ChannelPermission.ManageChannels, Group = "fun.spam42")] //Bc it can be very chiant
+        [RequireOwner(Group = "fun.spam42")]
         [Summary("Sends 42 continually in the channel")]
         public async Task SendMsgsFast()
         {
@@ -39,8 +40,8 @@ namespace DiscordGameEngine.UI.Commands
         }
 
         [Command("Count", RunMode = RunMode.Async)]
-        [RequireUserPermission(ChannelPermission.ManageChannels, Group = "42")] //Bc it can be very chiant
-        [RequireOwner(Group = "42")]
+        [RequireUserPermission(ChannelPermission.ManageChannels, Group = "fun.count")] //Bc it can be very chiant
+        [RequireOwner(Group = "fun.count")]
         [Summary("Counts from 0 to MaxCount (default 42) a step can be specified (default 1)")]
         public async Task Count(int maxCount = 42, int step = 1)
         {
@@ -71,7 +72,8 @@ namespace DiscordGameEngine.UI.Commands
 
         [Command("PingRandom")]
         [Summary("Pings a random person")]
-        [RequireUserPermission(ChannelPermission.MentionEveryone)]
+        [RequireUserPermission(ChannelPermission.MentionEveryone, Group = "fun.pingr")]
+        [RequireOwner(Group = "fun.pingr")]
         public async Task PingRandomPerson()
         {
             await ReplyAsync("Haha ping " + (Context.Guild as SocketGuild).Users.ElementAt(random.Next(0, (Context.Guild as SocketGuild).Users.Count)).Mention);

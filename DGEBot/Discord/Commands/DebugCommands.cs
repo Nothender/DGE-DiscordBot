@@ -18,7 +18,8 @@ namespace DGE.Discord.Commands
     {
 
         [Command("LogTest")]
-        [RequireUserPermission(ChannelPermission.MentionEveryone)]
+        [RequireUserPermission(ChannelPermission.MentionEveryone, Group = "debug.log")]
+        [RequireOwner(Group = "debug.log")]
         [Summary("tests the DGE logging prefixes, the log level has to be ERROR, LOG, WARN, or DEBUG, the rest of the message is counted as single string to be used after the prefix")]
         public async Task LogTest(string logLevel, [Remainder] string message)
         {

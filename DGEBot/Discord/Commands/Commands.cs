@@ -147,6 +147,7 @@ namespace DGE.Discord.Commands
 
         [Command("ChangePrefix")]
         [Summary("Changes the current bot instance's command prefix (means it resets after restart)")]
+        [RequireOwner()]
         public async Task CommandChangePrefix(string prefix)
         {
             await Task.Run(() => Context.bot.commandPrefix = prefix);
