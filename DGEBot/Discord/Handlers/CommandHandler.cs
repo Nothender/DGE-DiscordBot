@@ -38,11 +38,11 @@ namespace DGE.Discord.Handlers
                         $"Exception message : \"{execution.ErrorReason}\"",
                         $"User message : \"{context.Message.Content}\"",
                         new string[] { $"Discord user : @{context.User.Username}(id: {context.User.Id})",
-                            $"Discord server : {context.Guild.Name}",
-                            $"Discord channel : #{context.Channel.Name}"},
+                        $"Discord server : {context.Guild.Name}",
+                        $"Discord channel : #{context.Channel.Name}"},
                         new string[] { commandExecuted, execution.ErrorReason }), context.bot.feedbackChannel);
                     string bugReportLine = reportWasAlreadySent ? "This bug was already reported, and is being fixed" : "A BugReport was automatically sent to the developpers (+1 point)";
-                    await context.Channel.SendMessageAsync($"{LogPrefixes.DGE_ERROR}Command execution failed - {execution.ErrorReason}\n*{bugReportLine}*");
+                    await context.Channel.SendMessageAsync($"{LogPrefixes.DGE_ERROR}Command execution failed - {execution.ErrorReason}\n*{bugReportLine}*").ConfigureAwait(true);
 
                     //Temp error triggering point system
                     if (!reportWasAlreadySent)
@@ -51,6 +51,13 @@ namespace DGE.Discord.Handlers
                 else
                 {
                     string errorReason = execution.ErrorReason;
+                    if (execution is PreconditionGroupResult)
+                    {
+                        IEnumerator<PreconditionResult> preconditionResults = (execution as PreconditionGroupResult).PreconditionResults.GetEnumerator();
+                        preconditionResults.Reset();
+                        preconditionResults.MoveNext();
+                        errorReason = preconditionResults.Current.ErrorReason;
+                    }
                     if (ignoreExceptionReport)
                         errorReason = errorReason.Replace(AvoidBugReportErrorTag, "");
                     await context.Channel.SendMessageAsync($"{LogPrefixes.DGE_ERROR}Command execution failed - {errorReason}\n*See help using `{context.bot.commandPrefix}help`*");

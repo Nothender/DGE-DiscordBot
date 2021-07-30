@@ -41,6 +41,8 @@ namespace DGE
 
             DGEModules.RegisterModule(AssemblyFramework.module);
 
+            TaskScheduler.UnobservedTaskException += (s, ea) => AssemblyFramework.logger.Log("42" + ea.Exception.StackTrace, EnderEngine.Logger.LogLevel.ERROR); //This doesn't seem to work but whatever
+
         }
 
         public static async Task Run(RunMode mode = RunMode.CONSOLE)

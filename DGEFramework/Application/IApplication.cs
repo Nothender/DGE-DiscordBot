@@ -1,4 +1,5 @@
-﻿using EnderEngine;
+﻿using DGE.Core;
+using EnderEngine;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -30,5 +31,6 @@ namespace DGE.Application
 
         public void Start();
         public void Stop();
+
     }
 }

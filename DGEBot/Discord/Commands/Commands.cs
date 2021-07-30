@@ -1,4 +1,5 @@
-﻿using DGE.Exceptions;
+﻿using DGE.Discord.Handlers;
+using DGE.Exceptions;
 using DGE.UI.Feedback;
 using Discord;
 using Discord.Commands;
@@ -150,6 +151,5 @@ namespace DGE.Discord.Commands
         {
             await Task.Run(() => Context.bot.commandPrefix = prefix);
         }
-
     }
 }

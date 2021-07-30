@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DGE.Core;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -20,6 +21,7 @@ namespace DGE.Application
                 return -1;
             applications.Add(application);
             Main.OnShutdown += (s, e) => application.Stop();
+            AssemblyFramework.logger.Log($"Application {application.GetType().Name} added (id: {applications.Count - 1})", EnderEngine.Logger.LogLevel.INFO);
             return applications.Count - 1;
         }
 

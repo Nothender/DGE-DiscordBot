@@ -13,7 +13,7 @@ namespace DGE.Discord
         public IBot bot { get; protected set; }
         public bool commandGotFeedback { get; set; }
 
-        public DGECommandContext(DiscordSocketClient client, SocketUserMessage msg, IBot bot) : base(client, msg)
+        public DGECommandContext(SocketUserMessage msg, IBot bot) : base(bot.client, msg)
         {
             this.bot = bot;
         }

@@ -22,12 +22,15 @@ namespace DGE.Discord.Handlers
             int argPos = 0;
             if (uMessage.HasStringPrefix(bot.commandPrefix, ref argPos))// && !uMessage.Author.IsBot)
             {
-                DGECommandContext context = new DGECommandContext(bot.client, uMessage, bot);
+                DGECommandContext context = new DGECommandContext(uMessage, bot);
 
                 if(await CommandHandler.ExecuteCommand(context, argPos))
                 {
                     if (!context.commandGotFeedback)
+                    {
                         await message.AddReactionAsync(new Emoji("✔"));
+                        context.commandGotFeedback = true;
+                    }
                 }
             }
             else

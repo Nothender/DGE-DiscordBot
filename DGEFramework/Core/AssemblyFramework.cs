@@ -9,7 +9,7 @@ namespace DGE.Core
     {
 
         public const string NAME = "DGE-Framework";
-        public const string VERSION = "0.0.2.1";
+        public const string VERSION = "0.0.2.4";
 
         public static readonly DGEModule module = new DGEModule(NAME, VERSION, Init);
 

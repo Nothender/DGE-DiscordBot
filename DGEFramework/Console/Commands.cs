@@ -29,14 +29,14 @@ namespace DGE.Console
                 arguments = new string[0];
             try
             {
-                logger.Log(commands[commandName](arguments), EnderEngine.Logger.LogLevel.INFO);
+                logger.Log(commands[commandName](arguments), Logger.LogLevel.DEBUG);
             }
             catch (Exception e)
             {
-                if (e is KeyNotFoundException)
-                    logger.Log($"The command {commandName} does not exist", EnderEngine.Logger.LogLevel.WARN);
+                if (e is KeyNotFoundException) //Can cause problems if the command has a KeyNotFoundException
+                    logger.Log($"The command {commandName} does not exist", Logger.LogLevel.WARN);
                 else
-                    logger.Log(e.Message, EnderEngine.Logger.LogLevel.WARN);
+                    logger.Log(e.Message, Logger.LogLevel.ERROR);
             }
             return Task.CompletedTask;
         }
@@ -92,6 +92,11 @@ namespace DGE.Console
             CreateCommand("stop", (a) =>
             {
                 return "THIS STRING SHOULDNT SHOW #0"; //the #0 is the id of the string that shouldnt show, so if it ever shows ik from where it is
+            });
+            CreateCommand("fgc", (a) =>
+            {
+                GC.Collect();
+                return "Force started garbage collection";
             });
         }
 
