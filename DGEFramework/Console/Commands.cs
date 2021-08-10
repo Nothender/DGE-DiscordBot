@@ -96,7 +96,7 @@ namespace DGE.Console
             CreateCommand("fgc", (a) =>
             {
                 GC.Collect();
-                return "Force started garbage collection";
+                return "Forced a garbage collection";
             });
         }
 

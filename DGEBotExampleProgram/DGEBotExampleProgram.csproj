@@ -12,6 +12,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\DGEBot\DGEBot.csproj" />
+    <ProjectReference Include="..\DGEEngine\DGEEngine.csproj" />
     <ProjectReference Include="..\DGEFramework\DGEFramework.csproj" />
   </ItemGroup>
   

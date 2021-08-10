@@ -1,15 +1,14 @@
-﻿using System;
+﻿using EnderEngine;
+using System;
 using System.Collections.Generic;
 using System.Text;
-using EnderEngine;
 
 namespace DGE.Core
 {
-    public static class AssemblyFramework
+    public static class AssemblyEngine
     {
-
-        public const string NAME = "DGE-Framework";
-        public const string VERSION = "0.0.2.5";
+        public const string NAME = "DGE-Engine";
+        public const string VERSION = "0.0.0.0";
 
         public static readonly DGEModule module = new DGEModule(NAME, VERSION, Init);
 
@@ -21,9 +20,7 @@ namespace DGE.Core
         /// </summary>
         private static void Init()
         {
-            //FW Init code
-            Engine.Init();
-
+            //Engine Init code
         }
 
     }
