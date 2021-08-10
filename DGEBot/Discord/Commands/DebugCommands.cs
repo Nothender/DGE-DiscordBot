@@ -61,10 +61,7 @@ namespace DGE.Discord.Commands
         public async Task CommandShowPaths()
         {
             await ReplyAsync(
-                Paths.pathToAssets + " \n " +
-                Paths.pathToImageFrameBuffers + " \n " +
-                Paths.pathToSavedData + " \n " +
-                Paths.PathToStorage
+                "not operational"
                 );
         }
 

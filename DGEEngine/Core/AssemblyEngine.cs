@@ -8,7 +8,7 @@ namespace DGE.Core
     public static class AssemblyEngine
     {
         public const string NAME = "DGE-Engine";
-        public const string VERSION = "0.0.0.0";
+        public const string VERSION = "0.0.0.1";
 
         public static readonly DGEModule module = new DGEModule(NAME, VERSION, Init);
 
@@ -20,7 +20,7 @@ namespace DGE.Core
         /// </summary>
         private static void Init()
         {
-            //Engine Init code
+            Paths.Add("ImageBuffers", Paths.Get("Storage") + "ImageBuffers/");
         }
 
     }

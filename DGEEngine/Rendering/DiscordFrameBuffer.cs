@@ -57,13 +57,13 @@ namespace DGE.Rendering
         }
         public static void ClearStoredImageBuffers()
         {
-            Directory.Delete(Paths.pathToImageFrameBuffers, true);
-            Paths.CheckForDir(Paths.pathToImageFrameBuffers);
+            Directory.Delete(Paths.Get("ImageBuffers"), true);
+            Paths.CheckForDir(Paths.Get("ImageBuffers"));
         }
 
         public void ClearStoredImageBuffer()
         {
-            string path = Paths.pathToImageFrameBuffers + imageBufferID;
+            string path = Paths.Get("ImageBuffers") + imageBufferID;
             if (File.Exists(path))
                 File.Delete(path);
         }
@@ -74,7 +74,7 @@ namespace DGE.Rendering
         /// <param name="channel"></param>
         public void Display(IMessageChannel channel)
         {
-            channel.SendFileAsync(Paths.pathToImageFrameBuffers + imageBufferID);
+            channel.SendFileAsync(Paths.Get("ImageBuffers") + imageBufferID);
         }
 
         /// <summary>
@@ -136,9 +136,9 @@ namespace DGE.Rendering
         private void SaveBufferToDisk()
         {
             if (scaleOnRender)
-                displayBuffer.Save(Paths.pathToImageFrameBuffers + imageBufferID, imageBufferSaveFormat);
+                displayBuffer.Save(Paths.Get("ImageBuffers") + imageBufferID, imageBufferSaveFormat);
             else
-                buffer.Save(Paths.pathToImageFrameBuffers + imageBufferID, imageBufferSaveFormat);
+                buffer.Save(Paths.Get("ImageBuffers") + imageBufferID, imageBufferSaveFormat);
         }
     }
 }

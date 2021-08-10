@@ -11,7 +11,7 @@ namespace DGE.Misc.BetaTesting
     public static class BetaTestingPointsCounter
     {
         private static string filename = "BetaTestingUserPoints.txt";
-        private static string filepath = Paths.pathToSavedData + filename;
+        private static string filepath = Paths.Get("SaveData") + filename;
 
         public static int GetUserPoints(ulong userId)
         { //When a user doens't exist we assume it has 0 points

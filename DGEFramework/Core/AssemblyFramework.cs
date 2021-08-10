@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Reflection;
 using System.Text;
 using EnderEngine;
 
@@ -9,7 +11,7 @@ namespace DGE.Core
     {
 
         public const string NAME = "DGE-Framework";
-        public const string VERSION = "0.0.2.5";
+        public const string VERSION = "0.0.3.0";
 
         public static readonly DGEModule module = new DGEModule(NAME, VERSION, Init);
 
@@ -23,7 +25,8 @@ namespace DGE.Core
         {
             //FW Init code
             Engine.Init();
-
+            Paths.Add("SaveData", Paths.Get("Storage") + "SaveData/");
+            Paths.Add("Assets", Paths.Get("Storage") + "Assets/");
         }
 
     }

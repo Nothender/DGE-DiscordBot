@@ -207,7 +207,7 @@ namespace DGE.ProgramModules
             foreach (ProgramModule program in programs.Values)
                 programsData.Add(new ProgramData(program));
 
-            File.WriteAllText(Paths.pathToSavedData + SaveFileName, JsonSerializer.Serialize(programsData));
+            File.WriteAllText(Paths.Get("SaveData") + SaveFileName, JsonSerializer.Serialize(programsData));
         }
 
         public static void RestoreSavedPrograms(IBot bot)
@@ -221,14 +221,14 @@ namespace DGE.ProgramModules
 
         private static List<ProgramData> LoadProgramsData()
         {
-            if (File.Exists(Paths.pathToSavedData + SaveFileName))
-                return JsonSerializer.Deserialize<List<ProgramData>>(File.ReadAllText(Paths.pathToSavedData + SaveFileName));
+            if (File.Exists(Paths.Get("SaveData") + SaveFileName))
+                return JsonSerializer.Deserialize<List<ProgramData>>(File.ReadAllText(Paths.Get("SaveData") + SaveFileName));
             return new List<ProgramData>();
         }
 
         internal static void DeleteProgramsSaveFile()
         {
-            File.Delete(Paths.pathToSavedData + SaveFileName);
+            File.Delete(Paths.Get("SaveData") + SaveFileName);
         }
 
         private static void InstantiatePrograms(List<ProgramData> programsData, IBot bot)

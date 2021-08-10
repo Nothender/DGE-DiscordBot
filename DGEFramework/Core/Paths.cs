@@ -9,17 +9,37 @@ namespace DGE.Core
     public static class Paths
     {
 
-        public static readonly string PathToStorage = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location).Replace('\\', '/') + "/Storage/";
-        public static readonly string pathToAssets = PathToStorage + "Assets/";
-        public static readonly string pathToImageFrameBuffers = PathToStorage + "ImageBuffers/";
-        public static readonly string pathToSavedData = PathToStorage + "SavedData/";
+        private static Dictionary<string, string> paths = new Dictionary<string, string>();
 
         static Paths()
         {
-            CheckForDir(PathToStorage);
-            CheckForDir(pathToAssets);
-            CheckForDir(pathToImageFrameBuffers);
-            CheckForDir(pathToSavedData);
+            Add("Storage", Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location).Replace('\\', '/') + "/Storage/"); //Default
+        }
+
+        public static string Get(string name)
+        {
+            if (name is null || paths.ContainsKey(name))
+                return Get("Storage");
+            return paths[name.ToLower()];
+        }
+
+        /// <summary>
+        /// Adds a global path, and can be accessed with Paths.Get("name"). If it is a directory it is automatically created if it doesn't exist
+        /// </summary>
+        /// <param name="name">The name of the path you want to save it with</param>
+        /// <param name="path">The path to the file or directory, if it is a directory please specify using the character '/' at the end of the string</param>
+        public static void Add(string name, string path)
+        {
+            name = name.ToLower();
+            if (paths.ContainsKey(name))
+            {
+                AssemblyFramework.logger.Log($"Couldn't add the path [{name}] \"{path}\" because a path with that name already exists", EnderEngine.Logger.LogLevel.ERROR);
+                return;
+            }
+            path = path.Replace('\\', '/');
+            paths.Add(name, path);
+            if (path.EndsWith('/'))
+                CheckForDir(path);
         }
 
         /// <summary>

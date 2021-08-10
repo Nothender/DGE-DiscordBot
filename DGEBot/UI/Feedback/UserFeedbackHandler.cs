@@ -15,8 +15,8 @@ namespace DGE.UI.Feedback
     {
         private static string filename = "FeedbackReports.txt";
         private static string reportIdsFilename = "FeedbackReports-LinesIds.txt"; //Where the line and corresponding report id's are found
-        private static string filepath = Paths.PathToStorage + filename;
-        private static string reportIdsFilepath = Paths.PathToStorage + reportIdsFilename;
+        private static string filepath = Paths.Get("Storage") + filename;
+        private static string reportIdsFilepath = Paths.Get("Storage") + reportIdsFilename;
 
         private static int linesCounter;
 
