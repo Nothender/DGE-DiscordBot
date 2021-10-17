@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <item>
-    <version>2.0.0.0</version>
+    <version>0.0.0.0</version>
     <url>https://github.com/Nothender/EnderEngine/archive/refs/tags/0.0.4.2.zip</url>
     <changelog>https://github.com/Nothender/DGE-DiscordBot/releases</changelog>
     <mandatory>false</mandatory>
