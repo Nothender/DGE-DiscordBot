@@ -36,7 +36,7 @@ namespace DGE.ProgramModules
 
             public void Increment(int value)
             {
-                currentCount = currentCount + value;
+                currentCount += value;
             }
 
             public void SetDirection(int value)
@@ -51,9 +51,9 @@ namespace DGE.ProgramModules
 
         }
 
-        private static Dictionary<ulong, CountAndDirection> channelsCount = new Dictionary<ulong, CountAndDirection>();
+        private static readonly Dictionary<ulong, CountAndDirection> channelsCount = new Dictionary<ulong, CountAndDirection>();
 
-        private ulong mainChannelId;
+        private readonly ulong mainChannelId;
 
         public CountingProgram(SocketCommandContext context) : base(context)
         {

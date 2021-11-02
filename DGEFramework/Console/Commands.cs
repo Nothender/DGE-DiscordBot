@@ -12,8 +12,8 @@ namespace DGE.Console
 {
     public static class Commands
     {
-        private static Dictionary<string, Func<string[], string>> commands = new Dictionary<string, Func<string[], string>>();
-        private static Logger logger = new Logger("DGE-CC"); //DGE-CC for DGE ConsoleCommands
+        private static readonly Dictionary<string, Func<string[], string>> commands = new Dictionary<string, Func<string[], string>>();
+        private static readonly Logger logger = new Logger("DGE-CC"); //DGE-CC for DGE ConsoleCommands
 
         static Commands()
         {
@@ -69,16 +69,16 @@ namespace DGE.Console
                 if (a.Length != 1) throw new InvalidArgumentCountException("startapp", 1, a.Length);
                 if (!int.TryParse(a[0], out int id)) throw new InvalidArgumentTypeException(0, typeof(int));
 
-                ApplicationManager.Get(int.Parse(a[0])).Start();
-                return $"Application of id {id} was started";
+                ApplicationManager.Get(id).Start();
+                return $"Application of id {a[0]} was started";
             });
             CreateCommand("stopapp", (a) =>
             {
                 if (a.Length != 1) throw new InvalidArgumentCountException("stopapp", 1, a.Length);
                 if (!int.TryParse(a[0], out int id)) throw new InvalidArgumentTypeException(0, typeof(int));
 
-                ApplicationManager.Get(int.Parse(a[0])).Stop();
-                return $"Application of id {id} was stopped";
+                ApplicationManager.Get(id).Stop();
+                return $"Application of id {a[0]} was stopped";
             });
             CreateCommand("showapps", (a) =>
             {

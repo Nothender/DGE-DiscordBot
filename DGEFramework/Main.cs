@@ -30,7 +30,7 @@ namespace DGE
 
         private static bool stopRequest = false;
 
-        private static object sender = null;
+        private static readonly object sender = null;
 
         public static void Init()
         {
@@ -50,8 +50,9 @@ namespace DGE
             
             OnStarting?.Invoke(sender, EventArgs.Empty);
 
-            _ = StartConsoleIO();
             //Start code
+            if (mode == MainRunMode.CONSOLE)
+                _ = StartConsoleIO();
             
             OnStarted?.Invoke(sender, EventArgs.Empty);
             while (!stopRequest)

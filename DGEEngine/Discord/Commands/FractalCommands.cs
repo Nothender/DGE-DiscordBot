@@ -17,17 +17,12 @@ namespace DGE.Discord.Commands
     public class FractalCommands : DGEModuleBase
     {
 
-        private static DiscordFrameBuffer displaySurface = new DiscordFrameBuffer(new Size((int) (420 * 1.5f), 420), Color.FromArgb(255, 0, 0, 0));
-        private static Mandelbrot mandelbrot = new Mandelbrot();
+        private static readonly DiscordFrameBuffer displaySurface = new DiscordFrameBuffer(new Size((int) (420 * 1.5f), 420), Color.FromArgb(255, 0, 0, 0));
+        private static readonly Mandelbrot mandelbrot = new Mandelbrot();
 
-        private static (int, int) clampPointToFrameBuffer(int x, int y, IFrameBuffer b)
+        private static (int, int) ClampPointToFrameBuffer(int x, int y, IFrameBuffer b)
         {
             return (Math.Abs(x % b.size.Width), Math.Abs(y % b.size.Height)); //new Tuple<int, int>(x, y);
-        }
-
-        private static System.Drawing.Color newClampedColor(int a, int r, int g, int b)
-        {
-            return System.Drawing.Color.FromArgb(Math.Abs(a % 256), Math.Abs(r % 256), Math.Abs(g % 256), Math.Abs(b % 256));
         }
 
         [Command("Mandelbrot")]

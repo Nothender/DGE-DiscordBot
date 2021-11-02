@@ -119,11 +119,7 @@ namespace DGE.Rendering
 
         private static string GetNewImageBufferID()
         {
-            string res;
-            do
-            {
-                res = "imageBuffer" + random.Next(1000000, 10000000 - 1) + '.' + imageBufferSaveFormat.ToString().ToLower();
-            } while (imageBufferIDs.Contains(res));
+            string res = "imageBuffer" + DateTime.Now.Ticks.ToString() + '.' + imageBufferSaveFormat.ToString().ToLower();
             imageBufferIDs.Add(res);
             return res;
         }

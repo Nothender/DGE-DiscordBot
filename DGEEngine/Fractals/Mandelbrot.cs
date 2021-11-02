@@ -12,7 +12,7 @@ namespace DGE.Fractals
     public class Mandelbrot : IFractal
     {
 
-        private float[,] mask;
+        private readonly float[,] mask;
 
         public Mandelbrot(int size = 1000, int maxIterations = 256)
         {
@@ -29,7 +29,7 @@ namespace DGE.Fractals
 
             alphas[maxIterations - 1] = 0f;
 
-            maxIterations = maxIterations - 1;
+            maxIterations -= 1;
 
             float xv = 3f / sizex;
             float yv = 2f / size; 

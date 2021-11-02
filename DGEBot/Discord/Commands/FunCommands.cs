@@ -57,7 +57,7 @@ namespace DGE.Discord.Commands
             while (Math.Abs(number) <= Math.Abs(maxCount))
             {
                 watch.Restart();
-                while ((message + number + '\n').Length < 2000 && !(Math.Abs(number) > Math.Abs(maxCount)))
+                while ((message + number.ToString() + '\n').Length < 2000 && !(Math.Abs(number) > Math.Abs(maxCount)))
                 {
                     message += number.ToString() + "\n";
                     number += step;
