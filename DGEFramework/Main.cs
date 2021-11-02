@@ -45,7 +45,7 @@ namespace DGE
 
         }
 
-        public static async Task Run(RunMode mode = RunMode.CONSOLE)
+        public static async Task Run(MainRunMode mode = MainRunMode.CONSOLE)
         {
             
             OnStarting?.Invoke(sender, EventArgs.Empty);
@@ -104,7 +104,7 @@ namespace DGE
 
     }
 
-    public enum RunMode
+    public enum MainRunMode
     {
         CONSOLE
     }

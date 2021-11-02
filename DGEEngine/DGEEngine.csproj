@@ -15,7 +15,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Discord\Commands\" />
     <Folder Include="Discord\ProgramsModules\Modules\" />
   </ItemGroup>
 

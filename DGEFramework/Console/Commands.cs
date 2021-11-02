@@ -34,7 +34,7 @@ namespace DGE.Console
             catch (Exception e)
             {
                 if (e is KeyNotFoundException) //Can cause problems if the command has a KeyNotFoundException
-                    logger.Log($"The command {commandName} does not exist", Logger.LogLevel.WARN);
+                    logger.Log($"The command \"{commandName}\" does not exist", Logger.LogLevel.WARN);
                 else
                     logger.Log(e.Message, Logger.LogLevel.ERROR);
             }

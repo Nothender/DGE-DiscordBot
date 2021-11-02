@@ -8,7 +8,6 @@ using System.IO;
 using DGE.UI.Feedback;
 using Discord.WebSocket;
 using System.Security;
-using DiscordGameEngine.UI.Commands;
 using DGE.Discord;
 using DGE.Discord.Commands;
 using DGE.Discord.Handlers;
@@ -42,8 +41,9 @@ namespace DGE
             DiscordCommandManager.RegisterModule(typeof(BetaTestingCommands));
             DiscordCommandManager.RegisterModule(typeof(FrameBufferCommands));
             DiscordCommandManager.RegisterModule(typeof(ProgramsCommands));
+            DiscordCommandManager.RegisterModule(typeof(FractalCommands));
 
-            DiscordBot bot1 = new DiscordBot(infos[0], "<", ulong.Parse(infos[1]));
+            DiscordBot bot1 = new DiscordBot(infos[0], infos[2], ulong.Parse(infos[1]));
             ApplicationManager.Add(bot1);
             DGE.Main.OnStarted += (s, e) => bot1.Start(); //The bot automatically starts when the app is on
             bot1.OnStarted += (s, e) => ProgramModule.RestoreSavedPrograms(bot1);

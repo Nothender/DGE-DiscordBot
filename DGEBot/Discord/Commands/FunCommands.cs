@@ -12,7 +12,7 @@ using Discord.Commands;
 using DGE.Discord;
 using Discord.WebSocket;
 
-namespace DiscordGameEngine.UI.Commands
+namespace DGE.Discord.Commands
 {
     [Summary("Commands adding literaly nothing useful")]
     public class FunCommands : DGEModuleBase

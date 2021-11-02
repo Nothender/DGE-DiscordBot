@@ -72,9 +72,9 @@ namespace DGE.Rendering
         /// Sends the last rendered frame to the MessageChannel channel
         /// </summary>
         /// <param name="channel"></param>
-        public void Display(IMessageChannel channel)
+        public void Display(IMessageChannel channel, string message = null)
         {
-            channel.SendFileAsync(Paths.Get("ImageBuffers") + imageBufferID);
+            channel.SendFileAsync(Paths.Get("ImageBuffers") + imageBufferID, message);
         }
 
         /// <summary>

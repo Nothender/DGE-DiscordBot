@@ -14,7 +14,7 @@ namespace DGE.Rendering
         event EventHandler OnResize;
 
         void ClearStoredImageBuffer();
-        void Display(IMessageChannel channel);
+        void Display(IMessageChannel channel, string message = null);
         void Render();
         void SetScaleOnRender(Size displaySize, bool scaleOnRender);
     }
