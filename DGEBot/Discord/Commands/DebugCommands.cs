@@ -65,5 +65,19 @@ namespace DGE.Discord.Commands
                 );
         }
 
+        [Command("ShowModules")]
+        [Summary("Shows the currently loaded assembly DGEModules")]
+        public async Task CommandShowDGEModules()
+        {
+            await ReplyAsync("Currently loaded DGE modules in assembly :\n" + string.Join("\n", DGEModules.modules));
+        }
+
+        [Command("ShowGuilds")]
+        [Summary("Shows the guilds in which the bot is")]
+        public async Task CommandShowGuilds()
+        {
+            await ReplyAsync("Joined guilds :\n - " + string.Join("\n - ", Context.bot.client.Guilds));
+        }
+
     }
 }

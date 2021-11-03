@@ -133,16 +133,26 @@ namespace DGE.Discord.Commands
         [Summary("Replies with all existing commands, their params, their remarks and descriptions")]
         public async Task CommandHelpAll()
         {
-            EmbedBuilder embed = new EmbedBuilder();
 
-            DiscordCommandManager.commands.Commands.ToList().ForEach(c =>
+            for (int i = 0; i < DiscordCommandManager.commands.Commands.Count(); i += 25) //Creates an embed for each 25 commands and sends it (cannot create more than 25 fields in one embed)
             {
-                embed.AddField($"{c.Name} {(c.Aliases.Count == 1 ? "" : $"({string.Join(", ", c.Aliases.ToArray(), 1, c.Aliases.Count - 1)})")} [{c.Module.Name}]",
-                    $"{(c.Summary is null ? "No summary" : c.Summary)}" +
-                    (c.Parameters.Count == 0 ? "" : $"\nparams : {(string.Join(", ", c.Parameters.Select(p => $"{p.Type.Name} {p.Name}")))}"), false);
-            });
 
-            await ReplyAsync(null, false, embed.Build());
+                EmbedBuilder embed = new EmbedBuilder();
+
+                for (int j = i; j < i + 25; j++)
+                {
+                    if (j >= DiscordCommandManager.commands.Commands.Count())
+                        break;
+
+                    CommandInfo c = DiscordCommandManager.commands.Commands.ElementAt(j);
+
+                    embed.AddField($"{c.Name} {(c.Aliases.Count == 1 ? "" : $"({string.Join(", ", c.Aliases.ToArray(), 1, c.Aliases.Count - 1)})")} [{c.Module.Name}]",
+                        $"{(c.Summary is null ? "No summary" : c.Summary)}" +
+                        (c.Parameters.Count == 0 ? "" : $"\nparams : {(string.Join(", ", c.Parameters.Select(p => $"{p.Type.Name} {p.Name}")))}"), false);
+                }
+
+                await ReplyAsync(null, false, embed.Build());
+            }
         }
 
         [Command("ChangePrefix")]

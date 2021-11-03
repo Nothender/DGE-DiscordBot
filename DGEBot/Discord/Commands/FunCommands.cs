@@ -9,7 +9,6 @@ using System.Threading.Tasks;
 using System.Linq;
 using Discord;
 using Discord.Commands;
-using DGE.Discord;
 using Discord.WebSocket;
 
 namespace DGE.Discord.Commands
