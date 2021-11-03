@@ -23,7 +23,7 @@ namespace DGE.Console
         public static Task ExecuteCommand(string commandName, params string[] arguments)
         {
             commandName = commandName.ToLower();
-            if (commandName == "stop")
+            if (commandName == "exit")
                 return Task.CompletedTask;
             if (arguments is null)
                 arguments = new string[0];
@@ -89,14 +89,34 @@ namespace DGE.Console
                     res += $"\n{apps[i].GetType().Name} application of id {i}, currently {apps[i].status}";
                 return res;
             });
-            CreateCommand("stop", (a) =>
+            CreateCommand("exit", (a) =>
             {
                 return "THIS STRING SHOULDNT SHOW #0"; //the #0 is the id of the string that shouldnt show, so if it ever shows ik from where it is
             });
             CreateCommand("fgc", (a) =>
             {
+                if (a.Length != 0) throw new InvalidArgumentCountException("FGC", 0, a.Length);
+
                 GC.Collect();
                 return "Forced a garbage collection";
+            });
+            CreateCommand("showmodules", (a) =>
+            {
+                if (a.Length != 0) throw new InvalidArgumentCountException("showmodules", 0, a.Length);
+
+                return $"Loaded assembly DGE Modules :\n - {string.Join("\n - ", DGEModules.modules)}";
+            });
+            CreateCommand("sau", (a) =>
+            {
+                if (a.Length != 0) throw new InvalidArgumentCountException("sau", 0, a.Length);
+
+                ProcessStartInfo startInfo = new ProcessStartInfo();
+                
+                startInfo.FileName = "DGEUpdater.exe";
+                Process.Start(startInfo);
+                //Main.Stop();
+
+                return "Started auto-updater";
             });
         }
 

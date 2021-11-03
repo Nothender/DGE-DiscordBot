@@ -8,6 +8,9 @@ using EnderEngine;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Threading.Tasks;
+using System.Linq;
+using DGE.Exceptions;
+using Discord.Webhook;
 
 namespace DGE.Bot
 {
@@ -52,7 +55,12 @@ namespace DGE.Bot
 #endif
 
         public IMessageChannel feedbackChannel { get; set; }
+
+        public int id { get; } = Application.IApplication.GetNewId();
+
         private ulong feedbackChannelId;
+
+        private DiscordWebhookClient webhook;
 
         public DiscordBot(string token, string commandPrefix, ulong feedbackChannelId)
         {

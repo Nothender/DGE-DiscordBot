@@ -14,11 +14,14 @@
     <ProjectReference Include="..\DGEBot\DGEBot.csproj" />
     <ProjectReference Include="..\DGEEngine\DGEEngine.csproj" />
     <ProjectReference Include="..\DGEFramework\DGEFramework.csproj" />
+    <ProjectReference Include="..\DGEUpdater\DGEUpdater.csproj" />
   </ItemGroup>
   
   <ItemGroup>
     <None Include="../config.txt" CopyToOutputDirectory="Always" />
     <None Include="../config-exp.txt" CopyToOutputDirectory="Always" />
+    <None Include="../DGEUpdater/DGEUpdater.runtimeconfig.json" CopyToOutputDirectory="Always" />
+    <None Include="ProjectInfoConfig.xml" CopyToOutputDirectory="Always" />
   </ItemGroup>
   
 </Project>

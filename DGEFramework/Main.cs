@@ -35,6 +35,11 @@ namespace DGE
 
         public static void Init()
         {
+
+#if RELEASE
+            EnderEngine.Logger.IgnoreLogLevel(EnderEngine.Logger.LogLevel.DEBUG);
+#endif
+
             OnStarting += (s, e) => AssemblyFramework.logger.Log("Starting DGE Main", EnderEngine.Logger.LogLevel.INFO);
             OnStarted += (s, e) => AssemblyFramework.logger.Log("Started DGE Main", EnderEngine.Logger.LogLevel.INFO);
             OnShutdown += (s, e) => AssemblyFramework.logger.Log("Stopping DGE Main", EnderEngine.Logger.LogLevel.INFO);
@@ -42,7 +47,7 @@ namespace DGE
 
             DGEModules.RegisterModule(AssemblyFramework.module);
 
-            TaskScheduler.UnobservedTaskException += (s, ea) => AssemblyFramework.logger.Log("42" + ea.Exception.StackTrace, EnderEngine.Logger.LogLevel.ERROR); //This doesn't seem to work but whatever
+            TaskScheduler.UnobservedTaskException += (s, ea) => AssemblyFramework.logger.Log($"UnobservedTaskException caught => {ea.Exception.Message}\nStacktrace > {ea.Exception.StackTrace}", EnderEngine.Logger.LogLevel.ERROR); //This doesn't seem to work but whatever
 
         }
 
@@ -50,6 +55,8 @@ namespace DGE
         {
             
             OnStarting?.Invoke(sender, EventArgs.Empty);
+            
+            ProjectUpdateInfoWriter.CreateXMLFile(); //Saving information on the current running project for DGEUpdater to check for updates
 
             //Start code
             if (mode == MainRunMode.CONSOLE)
@@ -99,7 +106,7 @@ namespace DGE
                     
                     await Commands.ExecuteCommand(command, arguments);
 
-                } while (command != "stop");
+                } while (command != "exit");
                 Stop();
             });
         }

@@ -12,6 +12,10 @@ using DGE.Discord;
 using DGE.Discord.Commands;
 using DGE.Discord.Handlers;
 using DGE.ProgramModules;
+using DGE.Rendering;
+using System.Drawing;
+
+using System.Diagnostics;
 
 namespace DGE
 {
