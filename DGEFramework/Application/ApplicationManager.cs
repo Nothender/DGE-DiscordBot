@@ -37,5 +37,20 @@ namespace DGE.Application
             return applications.ToArray();
         }
 
+        public static int GetCount()
+        {
+            return applications.Count;
+        }
+
+        internal static void Dispose()
+        {
+            int c = applications.Count;
+            foreach (IApplication app in applications)
+                app.Dispose();
+            applications.Clear();
+            AssemblyFramework.logger.Log($"Disposed of {c} applications", EnderEngine.Logger.LogLevel.INFO);
+
+
+        }
     }
 }

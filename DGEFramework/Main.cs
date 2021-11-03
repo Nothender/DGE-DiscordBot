@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Linq;
 using DGE.Console;
+using DGE.Application;
 
 namespace DGE
 {
@@ -73,7 +74,7 @@ namespace DGE
 
             OnShutdown?.Invoke(sender, EventArgs.Empty);
 
-            //Stop code
+            ApplicationManager.Dispose();
 
             OnStopped?.Invoke(sender, EventArgs.Empty);
 

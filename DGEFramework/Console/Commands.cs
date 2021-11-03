@@ -29,7 +29,7 @@ namespace DGE.Console
                 arguments = new string[0];
             try
             {
-                logger.Log(commands[commandName](arguments), Logger.LogLevel.DEBUG);
+                logger.Log(commands[commandName](arguments), Logger.LogLevel.INFO);
             }
             catch (Exception e)
             {

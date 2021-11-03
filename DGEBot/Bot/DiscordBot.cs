@@ -86,7 +86,7 @@ namespace DGE.Bot
         public void Dispose()
         {
             Stop();
-            client.LogoutAsync();
+            client.LogoutAsync().Wait(); //When quitting the application the application may not have finished disposing, so we wait for it as to not cause memory leaks or anything
             client.Dispose();
         }
 
