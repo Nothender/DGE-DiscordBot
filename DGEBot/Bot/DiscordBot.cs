@@ -60,8 +60,6 @@ namespace DGE.Bot
 
         private ulong feedbackChannelId;
 
-        private DiscordWebhookClient webhook;
-
         public DiscordBot(string token, string commandPrefix, ulong feedbackChannelId)
         {
             appCount++;
