@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <RootNamespace>DGE</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="NothenderEnderEngine" Version="1.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\DGEBot\DGEBot.csproj" />
+    <ProjectReference Include="..\DGEEngine\DGEEngine.csproj" />
+    <ProjectReference Include="..\DGEFramework\DGEFramework.csproj" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <None Include="../config.txt" CopyToOutputDirectory="Always" />
+    <None Include="../config-exp.txt" CopyToOutputDirectory="Always" />
+  </ItemGroup>
+  
+</Project>
