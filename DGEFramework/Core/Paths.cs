@@ -13,7 +13,8 @@ namespace DGE.Core
 
         static Paths()
         {
-            Add("Storage", Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location).Replace('\\', '/') + "/Storage/"); //Default
+            Add("Application", Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location).Replace('\\', '/') + '/'); //Running application location
+            Add("Storage", Get("Application") + "/Storage/"); //Default
         }
 
         public static string Get(string name)

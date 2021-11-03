@@ -31,7 +31,7 @@ namespace DGE.UI.Feedback
             foreach (string word in words)
             {
                 tempId.Append($"{(0 + (word.Length > 0 ? word[0] : '_'))}{word.Sum(c => c + value)}");
-                value = value + 1;
+                value++;
             }
             reportId = tempId.ToString();
             tempId.Clear();

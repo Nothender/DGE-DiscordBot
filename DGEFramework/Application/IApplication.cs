@@ -8,6 +8,8 @@ namespace DGE.Application
 {
     public interface IApplication : IDisposable
     {
+        public int id { get; }
+
         ApplicationStatus status { get; }
 
         /// <summary>
@@ -31,6 +33,17 @@ namespace DGE.Application
 
         public void Start();
         public void Stop();
+
+
+        private static int currentId = -1;
+
+        /// <summary>
+        /// Returns an id that no other application has
+        /// </summary>
+        public static int GetNewId()
+        {
+            return currentId++;
+        }
 
     }
 }

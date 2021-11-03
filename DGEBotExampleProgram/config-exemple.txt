@@ -1,0 +1,3 @@
+﻿Discord bot Token goes here
+FeedbackChannel ID (ulong) goes here
+Bot Prefix goes here

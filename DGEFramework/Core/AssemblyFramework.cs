@@ -11,11 +11,11 @@ namespace DGE.Core
     {
 
         public const string NAME = "DGE-Framework";
-        public const string VERSION = "0.0.4.0";
+        public const string VERSION = "0.0.4.5";
 
         public static readonly DGEModule module = new DGEModule(NAME, VERSION, Init);
 
-        internal static Logger logger = new Logger("DGE");
+        internal static Logger logger { get; } = new Logger("DGE");
 
 
         /// <summary>

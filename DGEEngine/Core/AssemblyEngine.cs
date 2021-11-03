@@ -8,11 +8,11 @@ namespace DGE.Core
     public static class AssemblyEngine
     {
         public const string NAME = "DGE-Engine";
-        public const string VERSION = "0.1.0.4";
+        public const string VERSION = "0.1.0.6";
 
         public static readonly DGEModule module = new DGEModule(NAME, VERSION, Init);
 
-        internal static Logger logger = new Logger("DGE");
+        internal static Logger logger = new Logger("DGE-Engine");
 
 
         /// <summary>

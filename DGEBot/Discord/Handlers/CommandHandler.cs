@@ -31,7 +31,7 @@ namespace DGE.Discord.Handlers
                 bool ignoreExceptionReport = execution.ErrorReason.Contains(AvoidBugReportErrorTag);
                 if (execution.Error == CommandError.Exception && !ignoreExceptionReport)
                 {
-                    string commandExecuted = context.Message.Content.Split(' ', 2)[0].Remove(0, context.bot.commandPrefix.Length);
+                    string commandExecuted = context.Message.Content.Split(' ', 2)[0].Remove(0, context.bot.commandPrefix.Length).ToLower();
 
                     bool reportWasAlreadySent = UI.Feedback.UserFeedbackHandler.SendFeedback(new UI.Feedback.FeedbackInfo(
                         $"(Automatic [DGE] report) - An exception occured while executing the command `{commandExecuted}`",

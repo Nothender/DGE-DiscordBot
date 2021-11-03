@@ -17,7 +17,7 @@ namespace DGE.Discord
 
         public static void RegisterModule(Type type)
         {
-            commands.AddModuleAsync(type, null); //TODO: not clean and may cause bugs, per Bot instance client services ?
+            commands.AddModuleAsync(type, null); //TODO: not clean and may cause bugs, per Bot instance bot command services ?
             AssemblyBot.logger.Log($"Loaded command module [{type.Name}]", EnderEngine.Logger.LogLevel.INFO);
         }
 

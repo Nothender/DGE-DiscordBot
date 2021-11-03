@@ -11,6 +11,7 @@ using DGE.Bot;
 
 namespace DGE.UI.Feedback
 {
+
     public static class UserFeedbackHandler
     {
         private static string filename = "FeedbackReports.txt";
@@ -78,7 +79,7 @@ namespace DGE.UI.Feedback
             //command is slow, and stupidly made... BUT IT WORKS
 
             //Checking for errors or problems that could happen when trying to clear the report
-            bool reportsFileExists = File.Exists(filepath); //TODO: Finish
+            bool reportsFileExists = File.Exists(filepath); //TODO: Finish //After a few months : i think this is actually finished ? is it ?
             bool reportsIdsInfoFileExists = File.Exists(reportIdsFilepath);
             bool messagesInReportsChannel = feedbackChannel.GetMessagesAsync(1).FlattenAsync().Result.Count() > 0;
 
