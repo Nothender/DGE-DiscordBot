@@ -8,6 +8,7 @@ using DGE.Exceptions;
 using DGE.Discord.Handlers;
 using DGE.Core;
 using DGE.UI.Feedback;
+using DGE.Bot;
 
 namespace DGE.Discord.Commands
 {
@@ -16,7 +17,7 @@ namespace DGE.Discord.Commands
     {
         [Command("TimeCommand")]
         [Summary("Executes a command, and measures the total time taken")]
-        public async Task TimeCommand(string command, params string[] args)
+        public async Task CommandTimeCommand(string command, params string[] args)
         {
             if (command.ToLower() == "timecommand") //Making sure that the user doesn't create an infinite loop
                 throw new CommandExecutionException("Cannot time the execution of TimeCommand (bc the current code would cause a stack overflow)");
@@ -57,6 +58,54 @@ namespace DGE.Discord.Commands
                 throw new CommandExecutionException(e.Message, e);
             }
             await ReplyAsync($"{LogPrefixes.DGE_LOG} Deleted report {reportId}");
+        }
+
+        [Command("Stop")]
+        [Alias("Shutdown", "Quit", "Exit", "STFU", "Shut")]
+        [RequireOwner]
+        [Summary("Stops the app bot if bot is true, else it shutdowns the entire framework")]
+        public async Task CommandStop(bool bot = false)
+        {
+            if (bot)
+            {
+                await ReplyAsync("Shutting down bot");
+                Context.bot.Stop();
+                return;
+            }
+            await ReplyAsync("Shutting down everything");
+            Main.Stop();
+        }
+
+        [Command("Reboot")]
+        [Alias("Shutdown", "Quit", "Exit", "STFU", "Shut")]
+        [RequireOwner]
+        [Summary("Stops the app bot if bot is true, else it shutdowns the entire framework")]
+        public async Task CommandReboot(bool bot = false)
+        {
+            if (bot)
+            {
+                await ReplyAsync("Rebooting bot");
+                _ = Task.Run(() => //Dont want to await call
+                {
+                    Context.bot.OnStopped += BotStoppedHandler;
+                    Context.bot.Stop();
+                });
+                return;
+            }
+            await ReplyAsync("Rebooting entire framework application is not supported at the moment");
+        }
+
+        private void BotStoppedHandler(object sender, EventArgs e)
+        {
+            if (sender is Application.IApplication app)
+            {
+                app.OnStopped -= BotStoppedHandler;
+                app.Start();
+            }
+            else
+            {
+                AssemblyBot.logger.Log($"BotStoppedHandler for reboot command was fired, but the sender isn't of type IApplication", EnderEngine.Logger.LogLevel.ERROR);
+            }
         }
 
     }

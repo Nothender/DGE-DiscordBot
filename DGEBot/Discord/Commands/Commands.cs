@@ -44,21 +44,6 @@ namespace DGE.Discord.Commands
             await ReplyAsync($"Pong : the latency is {(Context.Client as DiscordSocketClient).Latency}ms");
         }
 
-        [Command("Stop")]
-        [Alias("Shutdown", "Quit", "Exit", "STFU", "Shut")]
-        [RequireOwner]
-        [Summary("Stops the app bot if bot is true, else it shutdowns the entire framework")]
-        public async Task Stop(bool bot = false)
-        {
-            if (bot)
-            {
-                Context.bot.Stop();
-                return;
-            }
-            await ReplyAsync("Shutting down everything");
-            Main.Stop();
-        }
-
         [Command("SendFeedback")]
         [Alias("ReportBug")]
         [Summary("Sends a feedback report, you can enter this command like that : {prefix}SendFeedback\n\"Summary\"\n\"Description\"\n\"additional info 1\" \"additional info 2\" etc...")]
