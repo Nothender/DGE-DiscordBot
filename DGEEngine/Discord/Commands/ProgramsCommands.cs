@@ -28,7 +28,7 @@ namespace DGE.ProgramModules
             { "void", typeof(TestVoidProgram) }
         };
 
-        private static Int16 maxUserProgramsCount = 4;
+        private static short maxUserProgramsCount = 4;
         private static Dictionary<ulong, char> userProgramsCount = new Dictionary<ulong, char>(); //char is used an 8bit unsigned integer
 
         [Command("PMVersion")]

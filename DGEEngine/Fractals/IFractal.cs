@@ -9,9 +9,10 @@ namespace DGE.Fractals
     public interface IFractal
     {
         /// <summary>
-        /// Gets a render of the fractal using specific parameters as an IPixelBuffer
+        /// Renders the fractal on the given surface
         /// </summary>
-        /// <returns>The IPixelBuffer</returns>
+        /// <param name="surface">The IPixelBuffer surface the fractal is drawn onto</param>
+        /// <param name="colors">The colors used to create a gradient from color 0 to color n</param>
         public void Render(IPixelBuffer surface, params Color[] colors);
 
     }

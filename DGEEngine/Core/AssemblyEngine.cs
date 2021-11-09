@@ -8,7 +8,7 @@ namespace DGE.Core
     public static class AssemblyEngine
     {
         public const string NAME = "DGE-Engine";
-        public const string VERSION = "0.1.0.6";
+        public const string VERSION = "0.1.2.4";
 
         public static readonly DGEModule module = new DGEModule(NAME, VERSION, Init);
 

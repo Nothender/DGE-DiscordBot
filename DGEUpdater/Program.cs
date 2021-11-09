@@ -44,7 +44,7 @@ namespace DGE
                             }
                             catch (Exception e)
                             {
-                                SimpleLogger.Log("Couldn't download or install latest version");
+                                SimpleLogger.Log("Couldn't download or install latest version :\n" + e.Message);
                             }
                             //TODO: Try to download update/Ask if want to download
                             //If downloading new update -> shutdown application that ran the updater.
@@ -53,7 +53,7 @@ namespace DGE
                     }
                     catch (Exception e)
                     {
-                        SimpleLogger.Log("Couldn't fetch the latest version of your project, maybe check if your repository is public (autoupdater doens't support logins yet):\n" + e.Message, 2);
+                        SimpleLogger.Log("Couldn't fetch the latest version of your project, maybe check if your repository is public (autoupdater doens't support logins yet) :\n" + e.Message, 2);
                     }
                 }
 

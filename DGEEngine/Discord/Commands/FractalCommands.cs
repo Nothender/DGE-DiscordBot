@@ -10,6 +10,7 @@ using System.Diagnostics;
 using System.Linq;
 using DGE.Fractals;
 using DGE.Exceptions;
+using Discord;
 
 namespace DGE.Discord.Commands
 {//These commands will be removed soon (FrameBuffers and FB interactions overhaul/remake)
@@ -17,26 +18,30 @@ namespace DGE.Discord.Commands
     public class FractalCommands : DGEModuleBase
     {
 
-        private static readonly DiscordFrameBuffer displaySurface = new DiscordFrameBuffer(new Size((int) (420 * 1.5f), 420), Color.FromArgb(255, 0, 0, 0));
+        private static readonly DiscordFrameBuffer displaySurface = new DiscordFrameBuffer(new Size((int) (420 * 1.5f), 420), System.Drawing.Color.FromArgb(255, 0, 0, 0));
         private static readonly Mandelbrot mandelbrot = new Mandelbrot();
 
-        private static (int, int) ClampPointToFrameBuffer(int x, int y, IFrameBuffer b)
-        {
-            return (Math.Abs(x % b.size.Width), Math.Abs(y % b.size.Height)); //new Tuple<int, int>(x, y);
-        }
+        private static bool IsMandelbrotBeingRenderedAndDisplayed = false;
 
         [Command("Mandelbrot")]
-        [Summary("Renders and displays mandelbrot with a gradient from color1 to color2")]
+        [Summary("Renders and displays mandelbrot with a gradient")]
+        [Remarks("RGBs are the ints paired by 3 to create n colors used to generate the gradient")]
         public async Task CommandRenderMandebrot(params int[] RGBs)
         {
+            if (IsMandelbrotBeingRenderedAndDisplayed)
+            {
+                await ReactAsync(new Emoji("╳"));
+                return;
+            }
+            IsMandelbrotBeingRenderedAndDisplayed = true;
             if (RGBs.Length == 0)
                 RGBs = new int[3] { 0, 0, 0 };
             if (RGBs.Length % 3 != 0)
                 throw new CommandExecutionException(new ArgumentException("Colors need to be defined using 3 values"));
 
-            List<Color> colors = new List<Color>();
+            System.Drawing.Color[] colors = new System.Drawing.Color[RGBs.Length / 3];
             for (int i = 0; i < RGBs.Length; i += 3)
-                colors.Add(Color.FromArgb(255, RGBs[i], RGBs[i + 1], RGBs[i + 2]));
+                colors[i / 3] = System.Drawing.Color.FromArgb(255, RGBs[i], RGBs[i + 1], RGBs[i + 2]);
 
             Stopwatch watch = new Stopwatch();
             watch.Start();
@@ -44,7 +49,7 @@ namespace DGE.Discord.Commands
             watch.Stop();
             displaySurface.Render();
             displaySurface.Display(Context.Channel, $"Render took {watch.ElapsedMilliseconds}ms");
-            await Task.Run(() => { /* do literally nothing but now the compiler is happy */ });
+            IsMandelbrotBeingRenderedAndDisplayed = false;
         }
         
     }

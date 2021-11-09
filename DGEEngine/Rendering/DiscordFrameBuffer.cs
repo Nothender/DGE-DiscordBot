@@ -16,7 +16,6 @@ namespace DGE.Rendering
     {
         private static readonly List<string> imageBufferIDs = new List<string>();
         private static readonly System.Drawing.Imaging.ImageFormat imageBufferSaveFormat = System.Drawing.Imaging.ImageFormat.Png;
-        private static readonly Random random = new Random();
         private Size _displaySize;
 
         private bool _scaleOnRender;
@@ -74,7 +73,7 @@ namespace DGE.Rendering
         /// <param name="channel"></param>
         public void Display(IMessageChannel channel, string message = null)
         {
-            channel.SendFileAsync(Paths.Get("ImageBuffers") + imageBufferID, message);
+            channel.SendFileAsync(Paths.Get("ImageBuffers") + imageBufferID, message).GetAwaiter().GetResult();
         }
 
         /// <summary>

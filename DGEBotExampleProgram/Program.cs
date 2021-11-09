@@ -37,11 +37,11 @@ namespace DGE
             DGEModules.RegisterModule(AssemblyBot.module);
             DGEModules.RegisterModule(AssemblyEngine.module);
 
+            DiscordCommandManager.RegisterModule(typeof(DevCommands));
+            DiscordCommandManager.RegisterModule(typeof(DebugCommands));
             DiscordCommandManager.RegisterModule(typeof(Commands));
             DiscordCommandManager.RegisterModule(typeof(FunCommands));
             DiscordCommandManager.RegisterModule(typeof(ModerationCommands));
-            DiscordCommandManager.RegisterModule(typeof(DebugCommands));
-            DiscordCommandManager.RegisterModule(typeof(DevCommands));
             DiscordCommandManager.RegisterModule(typeof(BetaTestingCommands));
             DiscordCommandManager.RegisterModule(typeof(FrameBufferCommands));
             DiscordCommandManager.RegisterModule(typeof(ProgramsCommands));
