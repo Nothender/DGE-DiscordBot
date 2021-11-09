@@ -9,11 +9,15 @@ using DGE.Discord.Handlers;
 using DGE.Core;
 using DGE.UI.Feedback;
 using DGE.Bot;
+using Discord;
+using Discord.Addons.Interactive;
+using Discord.Addons;
+using System.Linq;
 
 namespace DGE.Discord.Commands
 {
     [Summary("Developpers commands")]
-    public class DevCommands : DGEModuleBase
+    public class DevCommands : DGEInteractiveBase
     {
         [Command("TimeCommand")]
         [Summary("Executes a command, and measures the total time taken")]
@@ -30,9 +34,9 @@ namespace DGE.Discord.Commands
 
             stopwatch.Stop();
             if (commandExecutionSuccess)
-                await ReplyAsync($"{LogPrefixes.DGE_DEBUG}Execution of the `{command}` command took {stopwatch.Elapsed.TotalSeconds * 1000}ms");
+                await ReplyAsync($"{LogPrefixes.DGE_DEBUG}Execution of the `{command}` command took {stopwatch.Elapsed.TotalMilliseconds}ms");
             else
-                await ReplyAsync($"{LogPrefixes.DGE_DEBUG}Failed execution the `{command}` command, failing took {stopwatch.Elapsed.TotalSeconds * 1000}ms");
+                await ReplyAsync($"{LogPrefixes.DGE_DEBUG}Failed execution the `{command}` command, failing took {stopwatch.Elapsed.TotalMilliseconds}ms");
         }
 
         [Command("ClearReports")]
@@ -60,12 +64,32 @@ namespace DGE.Discord.Commands
             await ReplyAsync($"{LogPrefixes.DGE_LOG} Deleted report {reportId}");
         }
 
-        [Command("Stop")]
+        [Command("Stop", RunMode = RunMode.Async)]
         [Alias("Shutdown", "Quit", "Exit", "STFU", "Shut")]
         [RequireOwner]
         [Summary("Stops the app bot if bot is true, else it shutdowns the entire framework")]
         public async Task CommandStop(bool bot = false)
         {
+#if DEBUG
+            Random r = new Random();
+            string code = r.Next(10, 99).ToString();
+            for (int i = 0; i < 6; i++)
+            {
+                code += '-' + r.Next(10, 99).ToString();
+            }
+            await ReplyAsync($"Are you sure ? Write code {code.Replace("-", "")} by placing a '-' every 2 numbers");
+            IMessage message = await NextMessageAsync();
+            if(message is null)
+            {
+                await ReplyAsync(new DiscordInteractiveTimeoutException(DiscordBot.interactiveTimeoutSeconds).Message.Replace(CommandHandler.AvoidBugReportErrorTag, ""));
+                return;
+            }
+            if(message.Content.Trim() != code)
+            {
+                await ReplyAsync("Wrong code");
+                return;
+            }
+#endif
             if (bot)
             {
                 await ReplyAsync("Shutting down bot");

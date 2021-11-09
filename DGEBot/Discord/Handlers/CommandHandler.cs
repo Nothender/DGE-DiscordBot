@@ -16,7 +16,7 @@ namespace DGE.Discord.Handlers
         /// <summary>
         /// A tag used by the CommandExecutionException, it is used to make the error not reported as a bug if the command throws an error
         /// </summary>
-        internal static readonly string AvoidBugReportErrorTag = "[DGE-KECE-IBR]"; //DiscordGameEngine-KnownExecutionCommandException-IgnoreBugReporting
+        public static readonly string AvoidBugReportErrorTag = "[DGE-KECE-IBR]"; //DiscordGameEngine-KnownExecutionCommandException-IgnoreBugReporting
 
         /// <summary>
         /// 
@@ -24,7 +24,7 @@ namespace DGE.Discord.Handlers
         /// <returns></returns>
         public static async Task<bool> ExecuteCommand(IDGECommandContext context, int argPos)
         {
-            IResult execution = await DiscordCommandManager.commands.ExecuteAsync(context, argPos, context.bot.services);
+            IResult execution = await context.bot.commandsService.ExecuteAsync(context, argPos, context.bot.services);
             if (!execution.IsSuccess)
             {
                 context.bot.logger.Log($"(Commands) {execution.ErrorReason}", EnderEngine.Logger.LogLevel.WARN);

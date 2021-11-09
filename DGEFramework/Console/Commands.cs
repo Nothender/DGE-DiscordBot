@@ -7,6 +7,7 @@ using DGE.Core;
 using DGE.Exceptions;
 using System.Linq;
 using EnderEngine;
+using System.Diagnostics;
 
 namespace DGE.Console
 {

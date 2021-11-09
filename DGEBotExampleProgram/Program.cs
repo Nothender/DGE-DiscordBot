@@ -37,21 +37,23 @@ namespace DGE
             DGEModules.RegisterModule(AssemblyBot.module);
             DGEModules.RegisterModule(AssemblyEngine.module);
 
-            DiscordCommandManager.RegisterModule(typeof(DevCommands));
-            DiscordCommandManager.RegisterModule(typeof(DebugCommands));
-            DiscordCommandManager.RegisterModule(typeof(Commands));
-            DiscordCommandManager.RegisterModule(typeof(FunCommands));
-            DiscordCommandManager.RegisterModule(typeof(ModerationCommands));
-            DiscordCommandManager.RegisterModule(typeof(BetaTestingCommands));
-            DiscordCommandManager.RegisterModule(typeof(FrameBufferCommands));
-            DiscordCommandManager.RegisterModule(typeof(ProgramsCommands));
-            DiscordCommandManager.RegisterModule(typeof(FractalCommands));
-
             DiscordBot bot1 = new DiscordBot(infos[0], infos[2], ulong.Parse(infos[1]));
             ApplicationManager.Add(bot1);
-            DGE.Main.OnStarted += (s, e) => bot1.Start(); //The bot automatically starts when the app is on
+
             bot1.OnStarted += (s, e) => ProgramModule.RestoreSavedPrograms(bot1);
 
+            DGE.Main.OnStarted += (s, e) => bot1.Start(); //The bot automatically starts when the app is on
+            
+            bot1.RegisterCommandModule(typeof(DevCommands));
+            bot1.RegisterCommandModule(typeof(DebugCommands));
+            bot1.RegisterCommandModule(typeof(Commands));
+            bot1.RegisterCommandModule(typeof(FunCommands));
+            bot1.RegisterCommandModule(typeof(ModerationCommands));
+            bot1.RegisterCommandModule(typeof(BetaTestingCommands));
+            bot1.RegisterCommandModule(typeof(FrameBufferCommands));
+            bot1.RegisterCommandModule(typeof(ProgramsCommands));
+            bot1.RegisterCommandModule(typeof(FractalCommands));
+            
             Task main = DGE.Main.Run();
             main.Wait();
 

@@ -11,6 +11,8 @@ using System.Threading.Tasks;
 using System.Linq;
 using DGE.Exceptions;
 using Discord.Webhook;
+using Discord.Addons.Interactive;
+using Discord.Commands;
 
 namespace DGE.Bot
 {
@@ -35,6 +37,10 @@ namespace DGE.Bot
 
         public DiscordSocketClient client { get; protected set; }
         public IServiceProvider services { get; protected set; }
+        public CommandService commandsService { get; protected set; }
+        public InteractiveService interactiveServices { get; protected set; }
+
+        public const int interactiveTimeoutSeconds = 21;
 
         public string commandPrefix { get; set; }
 
@@ -76,9 +82,15 @@ namespace DGE.Bot
             {
                 AlwaysDownloadUsers = true
             });
+
+            commandsService = new CommandService();
+
+            interactiveServices = new InteractiveService(client, new InteractiveServiceConfig{ DefaultTimeout = new TimeSpan(0, 0, interactiveTimeoutSeconds) });
+
             services = new ServiceCollection()
                 .AddSingleton(client)
-                .AddSingleton(DiscordCommandManager.commands)
+                .AddSingleton(commandsService)
+                .AddSingleton(interactiveServices)
                 .BuildServiceProvider();
 
             logger = new Logger($"DGE-Bot:{appCount}");
@@ -124,6 +136,12 @@ namespace DGE.Bot
             client.StopAsync().GetAwaiter().GetResult();
 
             OnStopped?.Invoke(this, EventArgs.Empty);
+        }
+
+        public void RegisterCommandModule(Type module)
+        {
+            commandsService.AddModuleAsync(module, services);
+            AssemblyBot.logger.Log($"Loaded command module [{module.Name}]", EnderEngine.Logger.LogLevel.INFO);
         }
     }
 }

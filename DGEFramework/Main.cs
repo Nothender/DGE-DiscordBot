@@ -47,7 +47,12 @@ namespace DGE
 
             DGEModules.RegisterModule(AssemblyFramework.module);
 
-            TaskScheduler.UnobservedTaskException += (s, ea) => AssemblyFramework.logger.Log($"UnobservedTaskException caught => {ea.Exception.Message}\nStacktrace > {ea.Exception.StackTrace}", EnderEngine.Logger.LogLevel.ERROR); //This doesn't seem to work but whatever
+            TaskScheduler.UnobservedTaskException += (s, ea)
+                => AssemblyFramework.logger.Log(
+                    ea is null ?
+                    "An UnobservedTaskException occured, but the exception cannot be identified" : 
+                    $"UnobservedTaskException caught >\n{ea.Exception.Message}\nStacktrace >{(ea.Exception.StackTrace is null ? "No stack trace" : ea.Exception.StackTrace)}\nSource > {ea.Exception.Source ?? "No source"}\nTargetSite > {ea.Exception.TargetSite?.Name ?? "No target site"}"
+                    , EnderEngine.Logger.LogLevel.ERROR);
 
         }
 

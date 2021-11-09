@@ -1,17 +1,15 @@
 ﻿using Discord;
 using Discord.Addons.Interactive;
-using Discord.Commands;
 using System;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace DGE.Discord
 {
-    public class DGEModuleBase : ModuleBase<IDGECommandContext>
+    public class DGEInteractiveBase : InteractiveBase<DGECommandContext>
     {
-        
+
         protected async Task ReactAsync(IEmote emote, RequestOptions options = null)
         {
             await Context.Message.AddReactionAsync(emote, options);

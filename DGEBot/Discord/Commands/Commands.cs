@@ -73,7 +73,7 @@ namespace DGE.Discord.Commands
             {
                 embed.WithAuthor("Modules :");
 
-                DiscordCommandManager.commands.Modules.ToList().ForEach(m => embed.AddField(
+                Context.bot.commandsService.Modules.ToList().ForEach(m => embed.AddField(
                     m.Name,
                     m.Summary is null ? "No summary" : m.Summary,
                     false));
@@ -82,8 +82,8 @@ namespace DGE.Discord.Commands
             {
                 valueName = valueName.ToLower();
 
-                List<ModuleInfo> modules = DiscordCommandManager.commands.Modules.ToList();
-                List<CommandInfo> commands = DiscordCommandManager.commands.Commands.ToList();
+                List<ModuleInfo> modules = Context.bot.commandsService.Modules.ToList();
+                List<CommandInfo> commands = Context.bot.commandsService.Commands.ToList();
 
                 if (modules.Any(m => m.Name.ToLower() == valueName))
                 {
@@ -119,17 +119,17 @@ namespace DGE.Discord.Commands
         public async Task CommandHelpAll()
         {
 
-            for (int i = 0; i < DiscordCommandManager.commands.Commands.Count(); i += 25) //Creates an embed for each 25 commands and sends it (cannot create more than 25 fields in one embed)
+            for (int i = 0; i < Context.bot.commandsService.Commands.Count(); i += 25) //Creates an embed for each 25 commands and sends it (cannot create more than 25 fields in one embed)
             {
 
                 EmbedBuilder embed = new EmbedBuilder();
 
                 for (int j = i; j < i + 25; j++)
                 {
-                    if (j >= DiscordCommandManager.commands.Commands.Count())
+                    if (j >= Context.bot.commandsService.Commands.Count())
                         break;
 
-                    CommandInfo c = DiscordCommandManager.commands.Commands.ElementAt(j);
+                    CommandInfo c = Context.bot.commandsService.Commands.ElementAt(j);
 
                     embed.AddField($"{c.Name} {(c.Aliases.Count == 1 ? "" : $"({string.Join(", ", c.Aliases.ToArray(), 1, c.Aliases.Count - 1)})")} [{c.Module.Name}]",
                         $"{(c.Summary is null ? "No summary" : c.Summary)}" +
