@@ -26,7 +26,9 @@ namespace DGE.Core
             Paths.Add("Downloads", Paths.Get("Updater") + "Downloads/");
             Paths.Add("Contents", Paths.Get("Updater") + "Contents/");
 
-            Directory.Delete(Paths.Get("Contents"), true); //Deleting it to delete every files in it and prevent bugs
+            Directory.Delete(Paths.Get("Downloads"), true); //Deleting it to delete every files in it and prevent bugs
+            Directory.CreateDirectory(Paths.Get("Downloads"));
+            Directory.Delete(Paths.Get("Contents"), true);
             Directory.CreateDirectory(Paths.Get("Contents"));
 
         }

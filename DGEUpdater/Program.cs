@@ -14,6 +14,9 @@ namespace DGE
         static void Main(string[] args)
         {
 
+            DGE.Main.Init();
+            DGEModules.RegisterModule(AssemblyUpdater.module);
+
             try
             {
                 ProjectUpdateInfo info = new ProjectUpdateInfo(Paths.Get("Application") + "ProjectUpdateInfo.xml", Paths.Get("Application") + "ProjectInfoConfig.xml"); //Version info from each repository used in the project (to know if an update is needed)
@@ -37,7 +40,7 @@ namespace DGE
                         {
                             try
                             {
-                                AssemblyUpdater.logger.Log($"Update available, Attempting download", EnderEngine.Logger.LogLevel.INFO);
+                                AssemblyUpdater.logger.Log($"Update available, Attempting download", Logger.LogLevel.INFO);
 
                                 //FetcherCollection.DownloadLatestVersion(info.ProjectDlLatest[i].Split(sep));
                                 
@@ -47,6 +50,8 @@ namespace DGE
                                     if (file.EndsWith(".zip"))
                                         ZipFile.ExtractToDirectory(file, Paths.Get("Contents"), true);
                                 }
+
+                                //ScriptsManager.RunScript(launchPId);
 
                                 //TODO: Fetch latest release, and put it in a seperate directory
                                 //TODO: If download successful, shutdown launching process, move files to process folder, rerun launching process
@@ -72,13 +77,13 @@ namespace DGE
                 AssemblyUpdater.logger.Log("Error loading ProjectUpdate info and config file : " + e.Message, Logger.LogLevel.FATAL);
                 AssemblyUpdater.logger.Log("Maybe try to run the application first (before the updater)", Logger.LogLevel.INFO);
             }
-            
+            AssemblyUpdater.logger.Log("Stopped", Logger.LogLevel.INFO);
+
             //If there are no updates application shutdown
-            
+
             //TODO: Split main in different functions
             //TODO: Add a simple way to load DLL and check if a new release is available, without having to reference this project
             //TODO: maybe use EnderEngine for Paths?, logging
-
         }
 
     }

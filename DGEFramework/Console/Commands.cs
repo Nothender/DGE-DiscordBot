@@ -111,12 +111,8 @@ namespace DGE.Console
             {
                 if (a.Length != 0) throw new InvalidArgumentCountException("sau", 0, a.Length);
 
-                ProcessStartInfo startInfo = new ProcessStartInfo();
+                Updater.UpdateManager.StartUpdater();
                 
-                startInfo.FileName = "DGEUpdater.exe";
-                Process.Start(startInfo);
-                //Main.Stop();
-
                 return "Started auto-updater";
             });
         }
