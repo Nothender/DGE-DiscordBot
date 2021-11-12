@@ -70,7 +70,7 @@ namespace DGE.Discord.Commands
         [Summary("Stops the app bot if bot is true, else it shutdowns the entire framework")]
         public async Task CommandStop(bool bot = false)
         {
-#if DEBUG
+#if RELEASE
             Random r = new Random();
             string code = r.Next(10, 99).ToString();
             for (int i = 0; i < 6; i++)
@@ -111,8 +111,9 @@ namespace DGE.Discord.Commands
                 await ReplyAsync("Rebooting bot");
                 _ = Task.Run(() => //Dont want to await call
                 {
-                    Context.bot.OnStopped += BotStoppedHandler;
+                    //Context.bot.OnStopped += BotStoppedHandler;
                     Context.bot.Stop();
+                    Context.bot.Start();
                 });
                 return;
             }

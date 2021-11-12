@@ -22,7 +22,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="WindowsUScript.bat" CopyToOutputDirectory="Always" />
+    <None Include="WindowsUdScript.bat" CopyToOutputDirectory="Always" />
   </ItemGroup>
 
 </Project>

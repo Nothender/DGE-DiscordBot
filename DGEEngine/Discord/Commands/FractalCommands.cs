@@ -43,13 +43,23 @@ namespace DGE.Discord.Commands
             for (int i = 0; i < RGBs.Length; i += 3)
                 colors[i / 3] = System.Drawing.Color.FromArgb(255, RGBs[i], RGBs[i + 1], RGBs[i + 2]);
 
-            Stopwatch watch = new Stopwatch();
-            watch.Start();
-            mandelbrot.Render(displaySurface, colors.ToArray());
-            watch.Stop();
-            displaySurface.Render();
-            displaySurface.Display(Context.Channel, $"Render took {watch.ElapsedMilliseconds}ms");
-            IsMandelbrotBeingRenderedAndDisplayed = false;
+            try
+            {
+                Stopwatch watch = new Stopwatch();
+                watch.Start();
+                mandelbrot.Render(displaySurface, colors.ToArray());
+                watch.Stop();
+                displaySurface.Render();
+                displaySurface.Display(Context.Channel, $"Render took {watch.ElapsedMilliseconds}ms");
+            }
+            catch
+            {
+                await ReactAsync(new Emoji("🛑")); //The user has to slow down, (probably a GDI+ exception caused due to not being able to save on disk)
+            }
+            finally
+            {
+                IsMandelbrotBeingRenderedAndDisplayed = false;
+            }
         }
         
     }

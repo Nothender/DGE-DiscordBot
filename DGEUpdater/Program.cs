@@ -41,6 +41,7 @@ namespace DGE
                             try
                             {
                                 AssemblyUpdater.logger.Log($"Update available, Attempting download", Logger.LogLevel.INFO);
+                                System.Console.WriteLine("DGEUT");
 
                                 //FetcherCollection.DownloadLatestVersion(info.ProjectDlLatest[i].Split(sep));
                                 
@@ -71,13 +72,15 @@ namespace DGE
                     }
                 }
 
+                System.Console.WriteLine("DGEUT-URR"); //Simulating an update is due, so restart required
+
             }
             catch(Exception e)
             {
                 AssemblyUpdater.logger.Log("Error loading ProjectUpdate info and config file : " + e.Message, Logger.LogLevel.FATAL);
                 AssemblyUpdater.logger.Log("Maybe try to run the application first (before the updater)", Logger.LogLevel.INFO);
             }
-            AssemblyUpdater.logger.Log("Stopped", Logger.LogLevel.INFO);
+            AssemblyUpdater.logger.Log("Stopped auto-updater", Logger.LogLevel.INFO);
 
             //If there are no updates application shutdown
 
