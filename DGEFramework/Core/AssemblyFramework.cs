@@ -17,7 +17,6 @@ namespace DGE.Core
 
         internal static Logger logger { get; } = new Logger("DGE");
 
-
         /// <summary>
         /// Init function for the assembly (DGEModule)
         /// </summary>

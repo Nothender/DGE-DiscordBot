@@ -109,28 +109,14 @@ namespace DGE.Discord.Commands
             if (bot)
             {
                 await ReplyAsync("Rebooting bot");
-                _ = Task.Run(() => //Dont want to await call
+                _ = Task.Run(() => //Dont want to await call otherwise it creates a bug
                 {
-                    //Context.bot.OnStopped += BotStoppedHandler;
                     Context.bot.Stop();
                     Context.bot.Start();
                 });
                 return;
             }
             await ReplyAsync("Rebooting entire framework application is not supported at the moment");
-        }
-
-        private void BotStoppedHandler(object sender, EventArgs e)
-        {
-            if (sender is Application.IApplication app)
-            {
-                app.OnStopped -= BotStoppedHandler;
-                app.Start();
-            }
-            else
-            {
-                AssemblyBot.logger.Log($"BotStoppedHandler for reboot command was fired, but the sender isn't of type IApplication", EnderEngine.Logger.LogLevel.ERROR);
-            }
         }
 
     }
