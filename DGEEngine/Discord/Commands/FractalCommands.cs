@@ -11,6 +11,7 @@ using System.Linq;
 using DGE.Fractals;
 using DGE.Exceptions;
 using Discord;
+using System.Threading;
 
 namespace DGE.Discord.Commands
 {//These commands will be removed soon (FrameBuffers and FB interactions overhaul/remake)
@@ -23,7 +24,7 @@ namespace DGE.Discord.Commands
 
         private static bool IsMandelbrotBeingRenderedAndDisplayed = false;
 
-        [Command("Mandelbrot")]
+        [Command("Mandelbrot", RunMode = RunMode.Async)]
         [Summary("Renders and displays mandelbrot with a gradient")]
         [Remarks("RGBs are the ints paired by 3 to create n colors used to generate the gradient")]
         public async Task CommandRenderMandebrot(params int[] RGBs)
@@ -35,13 +36,13 @@ namespace DGE.Discord.Commands
             }
             IsMandelbrotBeingRenderedAndDisplayed = true;
             if (RGBs.Length == 0)
-                RGBs = new int[3] { 0, 0, 0 };
+                RGBs = new int[3] { 255, 255, 255 };
             if (RGBs.Length % 3 != 0)
                 throw new CommandExecutionException(new ArgumentException("Colors need to be defined using 3 values"));
 
             System.Drawing.Color[] colors = new System.Drawing.Color[RGBs.Length / 3];
             for (int i = 0; i < RGBs.Length; i += 3)
-                colors[i / 3] = System.Drawing.Color.FromArgb(255, RGBs[i], RGBs[i + 1], RGBs[i + 2]);
+                colors[i / 3] = System.Drawing.Color.FromArgb(255, Math.Clamp(RGBs[i], 0, 255), Math.Clamp(RGBs[i + 1], 0, 255), Math.Clamp(RGBs[i + 2], 0, 255));
 
             try
             {
@@ -60,6 +61,7 @@ namespace DGE.Discord.Commands
             {
                 IsMandelbrotBeingRenderedAndDisplayed = false;
             }
+
         }
         
     }

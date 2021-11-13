@@ -21,10 +21,11 @@ namespace DGE.Fractals
             int sizex = (int) (1.5f * size);
             mask = new float[sizex, size];
 
+            float logMaxIterations = ((float)Math.Log2(maxIterations+1));
             float[] alphas = new float[maxIterations];
             for (int i = 0; i < maxIterations; i++)
             {
-                alphas[i] = (float) i / maxIterations;
+                alphas[i] = ((float) Math.Log2(i + 1)) / logMaxIterations;
             }
 
             alphas[maxIterations - 1] = 0f;
@@ -62,38 +63,42 @@ namespace DGE.Fractals
         {
             //If not enough colors to create a gradient
             if (colors.Length == 1)
-                colors = colors.Concat(new Color[1] { Color.FromArgb(255, 255, 255, 255) }).ToArray();
+                colors = new Color[1] { Color.FromArgb(255, 0, 0, 0) }.Concat(colors).ToArray();
             if (colors.Length == 0)
                 colors = new Color[2] { Color.FromArgb(255, 0, 0, 0), Color.FromArgb(255, 255, 255, 255) };
 
             //TODO: move gradient generation somewhere else (maybe a utils file), and create a LogGradient as it works better for most fractals
             //TODO: Create a Fast Log method either here (math utils file) or in EE | Also could do a GPU accelerated Gradient generator
 
+            int[] tsteps = new int[colors.Length-1];
+
+            for (int i = 0; i < colors.Length - 1; i += 1)
+            {
+                Color c1 = colors[i], c2 = colors[i + 1];
+                tsteps[i] = Math.Max(Math.Max(Math.Abs(c1.R - c2.R), Math.Abs(c1.G - c2.G)), Math.Abs(c1.B - c2.B));
+            }
+
             //Generate gradient for Colors
-            Color[] gradient = new Color[0] ;
+            Color[] gradient = new Color[tsteps.Sum()];
+            int p = 0;
             for (int i = 0; i < colors.Length - 1; i += 1)
             {
                 Color c1 = colors[i];
                 Color c2 = colors[i + 1];
                  
-                int steps = Math.Max(Math.Max(Math.Abs(c1.R - c2.R), Math.Abs(c1.G - c2.G)), Math.Abs(c1.B - c2.B)); //Gathering the largest number of steps possible (for example from 13, 12, 11 to 134, 42, 252, the maximum number of steps is 252 - 11 = 241  
+                int steps = tsteps[i]; //Gathering the largest number of steps possible (for example from 13, 12, 11 to 134, 42, 252, the maximum number of steps is 252 - 11 = 241  
                 steps = steps > 2 ? steps : 2;
 
-                Color[] g = new Color[steps];
-
-                int cr = Math.Min(c1.R, c2.R), cg = Math.Min(c1.G, c2.G), cb = Math.Min(c1.B, c2.B); //Color min
-                int crm = Math.Max(c1.R, c2.R), cgm = Math.Max(c1.G, c2.G), cbm = Math.Max(c1.B, c2.B); //Color max
-
-                for (int s = 0; s < steps; s++)
+                for (int s = p; s < p + steps; s++)
                 {
                     float v = (s + 1f) / steps;
-                    g[s] = Color.FromArgb(
+                    gradient[s] = Color.FromArgb(
                         255,
-                        Math.Min(cr + (int) ((crm - cr) * v), 255),
-                        Math.Min(cg + (int) ((cgm - cg) * v), 255),
-                        Math.Min(cb + (int) ((cbm - cb) * v), 255));
+                        Math.Min(c1.R + (int) ((c2.R - c1.R) * v), 255),
+                        Math.Min(c1.G + (int) ((c2.G - c1.G) * v), 255),
+                        Math.Min(c1.B + (int) ((c2.B - c1.B) * v), 255));
                 }
-                gradient = gradient.Concat(g).ToArray();
+
             }
 
             gradient[0] = Color.FromArgb(255, 0, 0, 0);
