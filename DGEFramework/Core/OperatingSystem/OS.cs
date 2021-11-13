@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
 
-namespace DGE.Core
+namespace DGE.Core.OperatingSystem
 {
-
+    /// <summary>
+    /// Enum to identify the os/platform
+    /// </summary>
     public enum OSPlatform
     {
-        WINDOWS,
+        WINDOWS = 0,
         UNIX,
         MACOS,
         UNKNOWN
@@ -16,9 +18,15 @@ namespace DGE.Core
 
     public static class OS
     {
-
+        /// <summary>
+        /// The OS the app is currently running on
+        /// </summary>
         public static readonly OSPlatform CurrentOS = GetRunningOS();
 
+        /// <summary>
+        /// Gets the OS on which the app is running
+        /// </summary>
+        /// <returns>The current OS on which the app is running</returns>
         private static OSPlatform GetRunningOS()
         {
             if (RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Windows))
