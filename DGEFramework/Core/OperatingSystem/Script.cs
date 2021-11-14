@@ -21,6 +21,8 @@ namespace DGE.Core.OperatingSystem
 
         public string FileName { get; }
 
+        private Process process;
+
         /// <summary>
         /// Constructs the script, with the associated name, use DefineImplementation to create an implementation for an OS
         /// </summary>
@@ -40,16 +42,36 @@ namespace DGE.Core.OperatingSystem
             return implementations[(int)platform] ?? throw new NotImplementedException($"There are no implementation for the specified OS {platform}");
         }
 
-        public void Run()
+        /// <summary>
+        /// Creates the process for execution but doesn't start it (Ability to start it using Run)
+        /// </summary>
+        /// <param name="args"></param>
+        /// <returns></returns>
+        public Process CreateProcess(params string[] args)
         {
-            string filePath = Paths.Get("Scripts") + $"{FileName}.{Extensions}";
+            string filePath = Paths.Get("Scripts") + $"{FileName}.{Extensions[(int) OS.CurrentOS]}";
+            string sArgs = string.Join(' ', args);
             File.WriteAllText(filePath, GetImplementation(OS.CurrentOS));
             Process p = new Process();
             p.StartInfo = new ProcessStartInfo
             {
-                FileName = filePath
+                FileName = filePath,
+                Arguments = sArgs
             };
-            p.Start();
+            process?.Dispose();
+            process = p;
+            return p;
+        }
+
+        /// <summary>
+        /// Starts the script by using the process if created, if not creates one with no arguments
+        /// </summary>
+        public void Run()
+        {
+            if (process is null)
+                CreateProcess();
+
+            process.Start();
 
             //TODO: Log output using Framework logger, or create an OS/Scripts logger
 

@@ -8,6 +8,7 @@ using DGE.Exceptions;
 using System.Linq;
 using EnderEngine;
 using System.Diagnostics;
+using DGE.Core.OperatingSystem;
 
 namespace DGE.Console
 {
@@ -84,10 +85,8 @@ namespace DGE.Console
             CreateCommand("showapps", (a) =>
             {
                 if (a.Length != 0) throw new InvalidArgumentCountException("showapps", 0, a.Length);
-                string res = "Loaded apps :";
-                IApplication[] apps = ApplicationManager.GetAll();
-                for (int i = 0; i < apps.Length; i++)
-                    res += $"\n{apps[i].GetType().Name} application of id {i}, currently {apps[i].status}";
+                string res = "Instanced applications :";
+                foreach (IApplication app in ApplicationManager.GetAll()) res += $"\n - {app.GetType().Name} application of id {app.Id}, currently {app.status}";
                 return res;
             });
             CreateCommand("exit", (a) =>
@@ -114,6 +113,16 @@ namespace DGE.Console
                 Updater.UpdateManager.StartUpdater();
                 
                 return "Started auto-updater";
+            });
+            CreateCommand("restart", (a) =>
+            {
+                if (a.Length != 0) throw new InvalidArgumentCountException("restart", 0, a.Length);
+
+                Scripts.RunApp.CreateProcess(Process.GetCurrentProcess().MainModule.FileName);
+                Main.OnStopped += (s, e) => Scripts.RunApp.Run();
+                Main.Stop();
+
+                return "Restarting";
             });
         }
 

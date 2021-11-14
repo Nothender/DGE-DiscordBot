@@ -15,7 +15,7 @@ namespace DGE.Core
         /// <summary>
         /// The current version of the Engine in that format : Major.Minor.Fix/Small.Revision/SmallExtra
         /// </summary>
-        public const string VERSION = "0.22.4.3";
+        public const string VERSION = "0.22.5.2";
 
         public static readonly DGEModule module = new DGEModule(NAME, VERSION, Init);
 

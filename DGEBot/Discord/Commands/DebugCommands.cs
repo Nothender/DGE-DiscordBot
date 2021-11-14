@@ -79,5 +79,14 @@ namespace DGE.Discord.Commands
             await ReplyAsync("Joined guilds :\n - " + string.Join("\n - ", Context.bot.client.Guilds));
         }
 
+        [Command("ShowApps")]
+        [RequireOwner]
+        [Summary("Shows the applications in DGE-Framework")]
+        public async Task CommandShowApps()
+        {
+            string res = "Instanced applications :";
+            foreach (Application.IApplication app in Application.ApplicationManager.GetAll()) res += $"\n - {app.GetType().Name} application of id {app.Id}, currently {app.status}";
+            await ReplyAsync(res);
+        }
     }
 }

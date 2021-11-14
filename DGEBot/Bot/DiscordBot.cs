@@ -62,8 +62,6 @@ namespace DGE.Bot
 
         public IMessageChannel feedbackChannel { get; set; }
 
-        public int id { get; } = Application.IApplication.GetNewId();
-
         private ulong feedbackChannelId;
 
         public DiscordBot(string token, string commandPrefix, ulong feedbackChannelId)
@@ -141,7 +139,8 @@ namespace DGE.Bot
         public void RegisterCommandModule(Type module)
         {
             commandsService.AddModuleAsync(module, services);
-            AssemblyBot.logger.Log($"Loaded command module [{module.Name}]", EnderEngine.Logger.LogLevel.INFO);
+            logger.Log($"Loaded command module [{module.Name}]", Logger.LogLevel.INFO);
         }
+
     }
 }

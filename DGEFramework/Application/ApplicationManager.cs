@@ -14,15 +14,16 @@ namespace DGE.Application
         /// Adds an application and returns its Id, returns -1 if it was already added (The app will be automatically shutdown when the main app is shutdown)
         /// </summary>
         /// <param name="application"></param>
-        /// <returns></returns>
+        /// <returns>The id of the IApplication</returns>
         public static int Add(IApplication application)
         {
             if (applications.Contains(application))
                 return -1;
             applications.Add(application);
+            application.Id = applications.Count - 1;
             Main.OnShutdown += (s, e) => application.Stop();
             AssemblyFramework.logger.Log($"Application {application.GetType().Name} added (id: {applications.Count - 1})", EnderEngine.Logger.LogLevel.INFO);
-            return applications.Count - 1;
+            return application.Id;
         }
 
         public static IApplication Get(int id)

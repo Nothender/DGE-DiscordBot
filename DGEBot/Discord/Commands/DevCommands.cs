@@ -13,6 +13,7 @@ using Discord;
 using Discord.Addons.Interactive;
 using Discord.Addons;
 using System.Linq;
+using DGE.Core.OperatingSystem;
 
 namespace DGE.Discord.Commands
 {
@@ -101,10 +102,10 @@ namespace DGE.Discord.Commands
         }
 
         [Command("Reboot")]
-        [Alias("Shutdown", "Quit", "Exit", "STFU", "Shut")]
+        [Alias("Restart")]
         [RequireOwner]
-        [Summary("Stops the app bot if bot is true, else it shutdowns the entire framework")]
-        public async Task CommandReboot(bool bot = false)
+        [Summary("Reboots the bot if true, and the entire framework if false")]
+        public async Task CommandReboot(bool bot = true)
         {
             if (bot)
             {
@@ -116,7 +117,10 @@ namespace DGE.Discord.Commands
                 });
                 return;
             }
-            await ReplyAsync("Rebooting entire framework application is not supported at the moment");
+            await ReplyAsync("Rebooting Entire framework");
+            Scripts.RunApp.CreateProcess(Process.GetCurrentProcess().MainModule.FileName);
+            Main.OnStopped += (s, e) => Scripts.RunApp.Run();
+            Main.Stop();
         }
 
     }
