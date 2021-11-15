@@ -16,22 +16,16 @@ using Discord.Commands;
 
 namespace DGE.Bot
 {
-    public class DiscordBot : IBot
+    public class DiscordBot : Application.Application, IBot
     {
         #region IApplication
 
-        public ApplicationStatus status { get; protected set; }
-
-        public Logger logger { get; protected set; }
         private static int appCount = 0;
 
-        public event EventHandler OnStarting;
-
-        public event EventHandler OnStarted;
-
-        public event EventHandler OnShutdown;
-
-        public event EventHandler OnStopped;
+        public override event EventHandler OnStarting;
+        public override event EventHandler OnStarted;
+        public override event EventHandler OnShutdown;
+        public override event EventHandler OnStopped;
 
         #endregion IApplication
 
@@ -99,14 +93,14 @@ namespace DGE.Bot
             client.LoginAsync(TokenType.Bot, token);
         }
 
-        public void Dispose()
+        public override void Dispose()
         {
             Stop();
             client.LogoutAsync().Wait(); //When quitting the application the application may not have finished disposing, so we wait for it as to not cause memory leaks or anything
             client.Dispose();
         }
 
-        public void Start()
+        public override void Start()
         {
             if ((int)status > 1) //App already on or starting
                 return;
@@ -127,7 +121,7 @@ namespace DGE.Bot
             OnStarted?.Invoke(this, EventArgs.Empty);
         }
 
-        public void Stop()
+        public override void Stop()
         {
             OnShutdown?.Invoke(this, EventArgs.Empty);
 

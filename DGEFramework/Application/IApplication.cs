@@ -8,9 +8,12 @@ namespace DGE.Application
 {
     public interface IApplication : IDisposable
     {
-        public int id { get; }
-
+        /// <summary>
+        /// The status of the application
+        /// </summary>
         ApplicationStatus status { get; }
+
+        public int Id { get; }
 
         /// <summary>
         /// When the Start method is called
@@ -34,15 +37,9 @@ namespace DGE.Application
         public void Start();
         public void Stop();
 
-
-        private static int currentId = -1;
-
-        /// <summary>
-        /// Returns an id that no other application has
-        /// </summary>
-        public static int GetNewId()
+        public string ToString()
         {
-            return currentId++;
+            return $"{GetType().Name} application of id {Id}, currently {status}";
         }
 
     }
