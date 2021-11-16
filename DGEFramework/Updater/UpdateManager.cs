@@ -54,19 +54,8 @@ namespace DGE.Updater
 
         private static void StartUpdateScript()
         {
-
-            string fileName = OS.CurrentOS switch
-            {
-                OSPlatform.WINDOWS => "WindowsUdScript.bat", //TODO: Either have DGE-FW automatically create a script depending on the machine, or have them in a script form (Note : the script has to know which program to rerun after execution)
-                _ => ""
-            };
-
-            Process p = new Process();
-            p.StartInfo = new ProcessStartInfo
-            {
-                FileName = Paths.Get("Application") + fileName
-            };
-            Main.OnStopped += (s, e) => p.Start();
+            Scripts.UpdateRestartApp.CreateProcess(Process.GetCurrentProcess().MainModule.FileName);
+            Main.OnStopped += (s, e) => Scripts.UpdateRestartApp.Run();
             Main.Stop(); //TODO: PDB Files from DGEExampleProgram and deps are not moved (access denied) maybe ensure the app is running by detaching the process ?
         }
 
