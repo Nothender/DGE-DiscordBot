@@ -21,8 +21,4 @@
     </Reference>
   </ItemGroup>
 
-  <ItemGroup>
-    <None Include="WindowsUdScript.bat" CopyToOutputDirectory="Always" />
-  </ItemGroup>
-
 </Project>
