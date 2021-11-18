@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using EnderEngine;
 
 namespace DGE.Updater
 {
@@ -22,9 +23,15 @@ namespace DGE.Updater
         /// </summary>
         /// <param name="logLevel"></param>
         /// <returns></returns>
-        public static string GetLogTag(EnderEngine.Logger.LogLevel logLevel)
+        public static string GetLogTag(Logger.LogLevel logLevel)
         {
             return $"{log}{(int)logLevel}";
+        }
+
+        public static Logger.LogLevel GetLogLevel(string logTag)
+        {
+            if (!int.TryParse(logTag.Replace(log, ""), out int i) || i < 0 || i > 4) return Logger.LogLevel.DEBUG; //If the int is out of bounds
+            return (Logger.LogLevel)i;
         }
 
         //These Tags are added after the `PassthroughInfo` one

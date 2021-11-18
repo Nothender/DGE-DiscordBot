@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
+using System.Linq;
 
 namespace DGE.Updater
 {
@@ -39,8 +40,12 @@ namespace DGE.Updater
         private static void OutputRecievedHandler(object sender, DataReceivedEventArgs line)
         {
             if (line is null || line.Data is null) return;
-            System.Console.WriteLine(line.Data);//TODO: To remove, proper logging, remove logging from DGEUpdater program
-            if (line.Data.Contains(UpdaterTags.log)) System.Console.WriteLine("Imagine Logging : ");
+            //System.Console.WriteLine(line.Data);//TODO: To remove, proper logging, remove logging from DGEUpdater program
+            if (line.Data.Contains(UpdaterTags.log))
+            {
+                int st = UpdaterTags.log.Length + 1;
+                logger.Log(line.Data.Substring(st).Replace("\\n", "\n"), UpdaterTags.GetLogLevel(line.Data.Substring(0, st)));
+            }
             if (line.Data.Contains(UpdaterTags.PassthroughInfo))
                 ProcessData(line.Data);
         }

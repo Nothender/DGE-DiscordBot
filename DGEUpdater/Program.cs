@@ -33,7 +33,7 @@ namespace DGE
 
                         IVersion latestVersion = DGEVersion.FromString(FetcherCollection.FetchLatestVersion(info.ProjectVLatest[i].Split(sep))); //Latest version from website
                         IVersion localVersion = info.ProjectVersions[i]; //Local version calculated
-                        System.Console.WriteLine($"{UpdaterTags.GetLogTag(Logger.LogLevel.INFO)}\n - Latest version from website : {latestVersion}\n - Local version calculated : {localVersion}");
+                        System.Console.WriteLine($"{UpdaterTags.GetLogTag(Logger.LogLevel.INFO)}\\nProject {i+1} :\\n -> Latest version from website : {latestVersion}\\n -> Local version calculated : {localVersion}");
 
                         if (true || latestVersion.IsNewer(localVersion)) //If the version on the internet is newer than the local version
                         //We try to download it or ask for download
@@ -44,7 +44,9 @@ namespace DGE
                                 System.Console.WriteLine(UpdaterTags.PassthroughInfo + UpdaterTags.UpdateAvailableTag);
 
                                 //FetcherCollection.DownloadLatestVersion(info.ProjectDlLatest[i].Split(sep));
-                                
+
+                                //TODO: Move down, so it extracts the files, once every project is done downloading | Extract with priorities : the first project downloaded should overwrite others if they share files
+
                                 //Download and app shutdown was successful : Extracting zip
                                 foreach(string file in Directory.GetFiles(Paths.Get("Downloads")))
                                 {
@@ -53,15 +55,14 @@ namespace DGE
                                 }
 
                                 System.Console.WriteLine(UpdaterTags.PassthroughInfo + UpdaterTags.UpdateDownloadedTag);
-
-                                //ScriptsManager.RunScript(launchPId);
+                                System.Console.WriteLine($"{UpdaterTags.GetLogTag(Logger.LogLevel.INFO)}Update downloaded successfully");
 
                                 //TODO: Fetch latest release, and put it in a seperate directory
                                 //TODO: If download successful, shutdown launching process, move files to process folder, rerun launching process
                             }
                             catch (Exception e)
                             {
-                                System.Console.WriteLine($"{UpdaterTags.GetLogTag(Logger.LogLevel.ERROR)}Couldn't download or install latest version :\n{e.Message}");
+                                System.Console.WriteLine($"{UpdaterTags.GetLogTag(Logger.LogLevel.ERROR)}Couldn't download or install latest version :\\n{e.Message}");
                             }
                             //TODO: Try to download update/Ask if want to download
                             //If downloading new update -> shutdown application that ran the updater.
@@ -70,14 +71,14 @@ namespace DGE
                     }
                     catch (Exception e)
                     {
-                        System.Console.WriteLine($"{UpdaterTags.GetLogTag(Logger.LogLevel.ERROR)}Couldn't fetch the latest version of your project, maybe check if your repository is public (autoupdater doens't support logins yet) :\n{e.Message}");
+                        System.Console.WriteLine($"{UpdaterTags.GetLogTag(Logger.LogLevel.ERROR)}Couldn't fetch the latest version of your project, maybe check if your repository is public (autoupdater doens't support logins yet) :\\n{e.Message}");
                     }
                 }
 
             }
             catch(Exception e)
             {
-                System.Console.WriteLine($"{UpdaterTags.GetLogTag(Logger.LogLevel.FATAL)}Error loading ProjectUpdate info and config file (you should try running the application first) :\n{e.Message}");
+                System.Console.WriteLine($"{UpdaterTags.GetLogTag(Logger.LogLevel.FATAL)}Error loading ProjectUpdate info and config file (you should try running the application first) :\\n{e.Message}");
             }
 
             System.Console.WriteLine(UpdaterTags.PassthroughInfo + UpdaterTags.Stopped);
