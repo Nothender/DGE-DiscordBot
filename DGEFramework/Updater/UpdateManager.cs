@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
 using System.Linq;
+using System.IO;
 
 namespace DGE.Updater
 {
@@ -15,6 +16,8 @@ namespace DGE.Updater
 
         private static bool isUpdateAndRestartRequired = false;
 
+        public static StreamWriter updaterInput { get; private set; }
+
         public static void StartUpdater()
         {
             ProcessStartInfo startInfo = new ProcessStartInfo
@@ -23,7 +26,9 @@ namespace DGE.Updater
                 Arguments = Process.GetCurrentProcess().Id.ToString(),
                 UseShellExecute = false,
                 RedirectStandardOutput = true,
-                RedirectStandardError = true
+                RedirectStandardError = true,
+                RedirectStandardInput = true,
+                CreateNoWindow = true
             };
 
             Process updaterProcess = new Process
@@ -32,9 +37,11 @@ namespace DGE.Updater
             };
             updaterProcess.OutputDataReceived += OutputRecievedHandler;
             updaterProcess.ErrorDataReceived += OutputRecievedHandler;
+
             updaterProcess.Start();
             updaterProcess.BeginOutputReadLine();
             updaterProcess.BeginErrorReadLine();
+            updaterInput = updaterProcess.StandardInput;
         }
 
         private static void OutputRecievedHandler(object sender, DataReceivedEventArgs line)
@@ -59,6 +66,10 @@ namespace DGE.Updater
         private static void UpdaterProgramStopped()
         {
             if (isUpdateAndRestartRequired) StartUpdateScript();
+            //Resetting input media
+            updaterInput?.Close();
+            updaterInput?.Dispose();
+            updaterInput = null;
         }
 
         private static void StartUpdateScript()
