@@ -33,7 +33,11 @@ namespace DGE
 
         private static readonly object sender = null;
 
-        public static void Init()
+        /// <summary>
+        /// Inits DGE-Framework, and main app
+        /// </summary>
+        /// <param name="createUpdaterCommands">If true, commands related to the updater will be created</param>
+        public static void Init(bool createUpdaterCommands = true)
         {
 
 #if RELEASE
@@ -46,6 +50,9 @@ namespace DGE
             OnStopped += (s, e) => AssemblyFramework.logger.Log("Stopped DGE Main", EnderEngine.Logger.LogLevel.INFO);
 
             DGEModules.RegisterModule(AssemblyFramework.module);
+
+            FrameworkCommands.Create();
+            if (createUpdaterCommands) UpdaterCommands.Create();
 
             TaskScheduler.UnobservedTaskException += (s, ea)
                 => AssemblyFramework.logger.Log(

@@ -14,7 +14,7 @@ namespace DGE
 
         static void Main(string[] args)
         {
-            DGE.Main.Init();
+            DGE.Main.Init(false); //We dont want to create commands for the updater, if this is the updater
             DGEModules.RegisterModule(AssemblyUpdater.module);
 
             //TODO: Cannot get command feedback because ender engine is not well made enough, need interface so we can create our own logger to replace the command one (so it can send back the command execution result to DGE)

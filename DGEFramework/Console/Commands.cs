@@ -14,13 +14,8 @@ namespace DGE.Console
 {
     public static class Commands
     {
-        private static readonly Dictionary<string, Func<string[], string>> commands = new Dictionary<string, Func<string[], string>>();
+        internal static readonly Dictionary<string, Func<string[], string>> commands = new Dictionary<string, Func<string[], string>>();
         private static readonly Logger logger = new Logger("DGE-CC"); //DGE-CC for DGE ConsoleCommands
-
-        static Commands()
-        {
-            CreateCommands();
-        }
 
         public static Task ExecuteCommand(string commandName, params string[] arguments)
         {
@@ -53,90 +48,6 @@ namespace DGE.Console
         public static string[] GetCommands()
         {
             return commands.Keys.ToArray();
-        }
-
-        private static void CreateCommands()
-        {
-            //TODO: Commands may need to be improved (with structs or classes or attributes, with automatic TypeCasting and arguments passing)
-            CreateCommand("help", (a) =>
-            {
-                if (a.Length != 0) throw new InvalidArgumentCountException("help", 0, a.Length);
-
-                string helpMessage = "Commands that exist :";
-                helpMessage += "\n- " + string.Join("\n- ", commands.Keys.ToArray());
-                return helpMessage;
-            });
-            CreateCommand("startapp", (a) =>
-            {
-                if (a.Length != 1) throw new InvalidArgumentCountException("startapp", 1, a.Length);
-                if (!int.TryParse(a[0], out int id)) throw new InvalidArgumentTypeException(0, typeof(int));
-
-                ApplicationManager.Get(id).Start();
-                return $"Application of id {a[0]} was started";
-            });
-            CreateCommand("stopapp", (a) =>
-            {
-                if (a.Length != 1) throw new InvalidArgumentCountException("stopapp", 1, a.Length);
-                if (!int.TryParse(a[0], out int id)) throw new InvalidArgumentTypeException(0, typeof(int));
-
-                ApplicationManager.Get(id).Stop();
-                return $"Application of id {a[0]} was stopped";
-            });
-            CreateCommand("showapps", (a) =>
-            {
-                if (a.Length != 0) throw new InvalidArgumentCountException("showapps", 0, a.Length);
-                string res = "Instanced applications :";
-                foreach (IApplication app in ApplicationManager.GetAll()) res += $"\n - {app.GetType().Name} application of id {app.Id}, currently {app.status}";
-                return res;
-            });
-            CreateCommand("exit", (a) =>
-            {
-                return "THIS STRING SHOULDNT SHOW #0"; //the #0 is the id of the string that shouldnt show, so if it ever shows ik from where it is
-            });
-            CreateCommand("fgc", (a) =>
-            {
-                if (a.Length != 0) throw new InvalidArgumentCountException("FGC", 0, a.Length);
-
-                GC.Collect();
-                return "Forced a garbage collection";
-            });
-            CreateCommand("showmodules", (a) =>
-            {
-                if (a.Length != 0) throw new InvalidArgumentCountException("showmodules", 0, a.Length);
-
-                return $"Loaded assembly DGE Modules :\n - {string.Join("\n - ", DGEModules.modules)}";
-            });
-            CreateCommand("sau", (a) =>
-            {
-                if (a.Length != 0) throw new InvalidArgumentCountException("sau", 0, a.Length);
-
-                Updater.UpdateManager.StartUpdater();
-                
-                return "Started auto-updater";
-            });
-            CreateCommand("restart", (a) =>
-            {
-                if (a.Length != 0) throw new InvalidArgumentCountException("restart", 0, a.Length);
-
-                Scripts.RunApp.CreateProcess(Process.GetCurrentProcess().MainModule.FileName);
-                Main.OnStopped += (s, e) => Scripts.RunApp.Run();
-                Main.Stop();
-
-                return "Restarting";
-            });
-            CreateCommand("wau", (a) => //Write to auto updater
-            {
-                if (a.Length < 1) throw new InvalidArgumentCountException("wau", 1, a.Length, true);
-
-                if (Updater.UpdateManager.updaterInput is null)
-                    return "Cannot write to the AutoUpdater as it is not running";
-
-                string command = string.Join(' ', a);
-
-                Updater.UpdateManager.updaterInput.WriteLine(command);
-
-                return $"Wrote command `{string.Join(' ', a)}` to the AutoUpdater process";
-            });
         }
 
     }
