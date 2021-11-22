@@ -47,10 +47,6 @@ namespace DGE.Console
                 foreach (IApplication app in ApplicationManager.GetAll()) res += $"\n - {app.GetType().Name} application of id {app.Id}, currently {app.status}";
                 return res;
             });
-            Commands.CreateCommand("exit", (a) =>
-            {
-                return "THIS STRING SHOULDNT SHOW #0"; //the #0 is the id of the string that shouldnt show, so if it ever shows ik from where it is
-            });
             Commands.CreateCommand("fgc", (a) =>
             {
                 if (a.Length != 0) throw new InvalidArgumentCountException("FGC", 0, a.Length);

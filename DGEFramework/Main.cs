@@ -36,8 +36,8 @@ namespace DGE
         /// <summary>
         /// Inits DGE-Framework, and main app
         /// </summary>
-        /// <param name="createUpdaterCommands">If true, commands related to the updater will be created</param>
-        public static void Init(bool createUpdaterCommands = true)
+        /// <param name="createUpdaterCommands">If true, all commands will be created</param>
+        public static void Init(bool createCommands = true)
         {
 
 #if RELEASE
@@ -51,10 +51,14 @@ namespace DGE
 
             DGEModules.RegisterModule(AssemblyFramework.module);
 
-            FrameworkCommands.Create();
-            if (createUpdaterCommands) UpdaterCommands.Create();
 
-            TaskScheduler.UnobservedTaskException += (s, ea)
+            if (createCommands)
+            {
+                UpdaterCommands.Create();
+                FrameworkCommands.Create();
+            }
+
+                TaskScheduler.UnobservedTaskException += (s, ea)
                 => AssemblyFramework.logger.Log(
                     ea is null ?
                     "An UnobservedTaskException occured, but the exception cannot be identified" : 
@@ -118,7 +122,7 @@ namespace DGE
                     
                     await Commands.ExecuteCommand(command, arguments);
 
-                } while (command != "exit");
+                } while (command != Commands.exitCommand);
                 Stop();
             });
         }

@@ -15,13 +15,22 @@ namespace DGE
         static void Main(string[] args)
         {
             DGE.Main.Init(false); //We dont want to create commands for the updater, if this is the updater
+            DGE.Main.OnStopped += (s, e) =>
+            {
+                System.Console.WriteLine(UpdaterTags.PassthroughInfo + UpdaterTags.Stopped);
+                System.Console.WriteLine($"{UpdaterTags.GetLogTag(Logger.LogLevel.INFO)}Stopped Updater");
+            };
             DGEModules.RegisterModule(AssemblyUpdater.module);
 
             //TODO: Cannot get command feedback because ender engine is not well made enough, need interface so we can create our own logger to replace the command one (so it can send back the command execution result to DGE)
 
             DGE.Main.Run().GetAwaiter().GetResult();
 
-#if false
+        }
+
+        public static void StartUpdating()
+        {
+
             try
             {
                 ProjectInfosManager projectManager = new ProjectInfosManager(Paths.Get("Application") + "ProjectUpdateInfo.xml", Paths.Get("Application") + "ProjectInfoConfig.xml"); //Version info from each repository used in the project (to know if an update is needed)
@@ -51,7 +60,7 @@ namespace DGE
                                 //TODO: Move down, so it extracts the files, once every project is done downloading | Extract with priorities : the first project downloaded should overwrite others if they share files
 
                                 //Download and app shutdown was successful : Extracting zip
-                                
+
                                 //System.Console.WriteLine(UpdaterTags.PassthroughInfo + UpdaterTags.UpdateDownloadedTag);
                                 System.Console.WriteLine($"{UpdaterTags.GetLogTag(Logger.LogLevel.INFO)}Update downloaded successfully");
 
@@ -95,7 +104,6 @@ namespace DGE
             //TODO: Split main in different functions
             //TODO: Add a simple way to load DLL and check if a new release is available, without having to reference this project
             //TODO: maybe use EnderEngine for Paths?, logging
-#endif
         }
     }
 }
