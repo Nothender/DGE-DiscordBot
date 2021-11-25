@@ -6,6 +6,8 @@ using System.Reflection;
 using DGE.Core;
 using DGE.Updater;
 using EnderEngine;
+using System.Collections;
+using System.Collections.Generic;
 
 namespace DGE
 {
@@ -19,6 +21,10 @@ namespace DGE
             {
                 System.Console.WriteLine(UpdaterTags.PassthroughInfo + UpdaterTags.Stopped);
                 System.Console.WriteLine($"{UpdaterTags.GetLogTag(Logger.LogLevel.INFO)}Stopped Updater");
+            };
+            DGE.Main.OnStarted += (s, e) =>
+            {
+                StartUpdating();
             };
             DGEModules.RegisterModule(AssemblyUpdater.module);
 
@@ -50,6 +56,7 @@ namespace DGE
                         if (true || latestVersion.IsNewer(localVersion)) //If the version on the internet is newer than the local version
                         //We try to download it or ask for download
                         {
+
                             try
                             {
                                 System.Console.WriteLine($"{UpdaterTags.GetLogTag(Logger.LogLevel.INFO)}Update available, Attempting download");

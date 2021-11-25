@@ -5,6 +5,7 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <RootNamespace>DGE</RootNamespace>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <OutputPath>../DGEBotExampleProgram/bin/$(Configuration)</OutputPath>
   </PropertyGroup>
 
   <ItemGroup>
@@ -14,11 +15,5 @@
   <ItemGroup>
     <ProjectReference Include="..\DGEFramework\DGEFramework.csproj" />
   </ItemGroup>
-
-  <ItemGroup>
-    <Reference Include="EnderEngine">
-      <HintPath>..\..\EnderEngine\EnderEngine\bin\Debug\EnderEngine.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-
+  
 </Project>

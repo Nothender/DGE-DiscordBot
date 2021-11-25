@@ -9,7 +9,7 @@ namespace DGE.Core
     public static class AssemblyUpdater
     {
         public const string NAME = "DGE-Updater";
-        public const string VERSION = "0.0.5.4";
+        public const string VERSION = "0.0.5.7";
 
         public static readonly DGEModule module = new DGEModule(NAME, VERSION, Init);
 

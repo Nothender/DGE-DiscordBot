@@ -35,7 +35,9 @@ namespace DGE
             {
                 XmlNode node = nodes[i];
 
-                ProjectInfo p = projectInfos[i];
+                ProjectInfo p = new ProjectInfo();
+
+                projectInfos[i] = p;
 
                 p.DownloadLatestGet = node.SelectSingleNode("dl-latest").InnerText;
                 p.VersionLatestGet = node.SelectSingleNode("v-latest").InnerText;

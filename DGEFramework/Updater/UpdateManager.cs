@@ -38,6 +38,15 @@ namespace DGE.Updater
             updaterProcess.OutputDataReceived += OutputRecievedHandler;
             updaterProcess.ErrorDataReceived += OutputRecievedHandler;
 
+            Main.OnShutdown += (s, e) =>
+            {
+                try
+                {
+                    updaterInput.WriteLine("exit");
+                }
+                catch { }
+            };
+
             updaterProcess.Start();
             updaterProcess.BeginOutputReadLine();
             updaterProcess.BeginErrorReadLine();
