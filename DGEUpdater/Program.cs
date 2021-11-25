@@ -8,6 +8,7 @@ using DGE.Updater;
 using EnderEngine;
 using System.Collections;
 using System.Collections.Generic;
+using DGE.Console;
 
 namespace DGE
 {
@@ -51,7 +52,7 @@ namespace DGE
 
                         IVersion latestVersion = DGEVersion.FromString(FetcherCollection.FetchLatestVersion(info.VersionLatestGet.Split(sep))); //Latest version from website
                         IVersion localVersion = info.Version; //Local version calculated
-                        System.Console.WriteLine($"{UpdaterTags.GetLogTag(Logger.LogLevel.INFO)}\\nProject :\\n -> Latest version from website : {latestVersion}\\n -> Local version calculated : {localVersion}");
+                        UpdaterLogging.WriteToMain($"\nProject :\n -> Latest version from website : {latestVersion}\n -> Local version calculated : {localVersion}", Logger.LogLevel.INFO);
 
                         if (true || latestVersion.IsNewer(localVersion)) //If the version on the internet is newer than the local version
                         //We try to download it or ask for download
@@ -59,7 +60,7 @@ namespace DGE
 
                             try
                             {
-                                System.Console.WriteLine($"{UpdaterTags.GetLogTag(Logger.LogLevel.INFO)}Update available, Attempting download");
+                                UpdaterLogging.WriteToMain("Update available, Attempting download", Logger.LogLevel.INFO);
                                 System.Console.WriteLine(UpdaterTags.PassthroughInfo + UpdaterTags.UpdateAvailableTag);
 
                                 //FetcherCollection.DownloadLatestVersion(info.ProjectDlLatest[i].Split(sep));
@@ -69,7 +70,7 @@ namespace DGE
                                 //Download and app shutdown was successful : Extracting zip
 
                                 //System.Console.WriteLine(UpdaterTags.PassthroughInfo + UpdaterTags.UpdateDownloadedTag);
-                                System.Console.WriteLine($"{UpdaterTags.GetLogTag(Logger.LogLevel.INFO)}Update downloaded successfully");
+                                UpdaterLogging.WriteToMain("Update downloaded succesfully", Logger.LogLevel.INFO);
 
                                 //TODO: Fetch latest release, and put it in a seperate directory
                                 //TODO: If download successful, shutdown launching process, move files to process folder, rerun launching process
@@ -82,16 +83,16 @@ namespace DGE
                             }
                             catch (Exception e)
                             {
-                                System.Console.WriteLine($"{UpdaterTags.GetLogTag(Logger.LogLevel.ERROR)}Couldn't download or install latest version :\\n{e.Message}");
+                                UpdaterLogging.WriteToMain($"Couldn't download or install latest version :\n{e.Message}", Logger.LogLevel.ERROR);
                             }
                             //TODO: Try to download update/Ask if want to download
                             //If downloading new update -> shutdown application that ran the updater.
                         }
-                        else System.Console.WriteLine($"{UpdaterTags.GetLogTag(Logger.LogLevel.INFO)}No update required");
+                        else UpdaterLogging.WriteToMain("No update required", Logger.LogLevel.INFO);
                     }
                     catch (Exception e)
                     {
-                        System.Console.WriteLine($"{UpdaterTags.GetLogTag(Logger.LogLevel.ERROR)}Couldn't fetch the latest version of your project, maybe check if your repository is public (autoupdater doens't support logins yet) :\\n{e.Message}");
+                        UpdaterLogging.WriteToMain($"Couldn't fetch the latest version of your project, maybe check if your repository is public (autoupdater doens't support logins yet) :\n{e.Message}", Logger.LogLevel.ERROR);
                     }
                 }
 
@@ -99,12 +100,12 @@ namespace DGE
             }
             catch (Exception e)
             {
-                System.Console.WriteLine($"{UpdaterTags.GetLogTag(Logger.LogLevel.FATAL)}Error loading ProjectUpdate info and config file (you should try running the application first) :\\n{e.Message}");
+                UpdaterLogging.WriteToMain($"Error loading ProjectUpdate info and config file (you should try running the application first) :\n{e.Message}", Logger.LogLevel.FATAL);
             }
 
             System.Console.WriteLine(UpdaterTags.PassthroughInfo + UpdaterTags.Stopped);
 
-            System.Console.WriteLine($"{UpdaterTags.GetLogTag(Logger.LogLevel.INFO)}Stopped Updater");
+            UpdaterLogging.WriteToMain("Stopped Updater", Logger.LogLevel.INFO);
 
             //If there are no updates application shutdown
 

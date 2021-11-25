@@ -40,11 +40,8 @@ namespace DGE.Updater
 
             Main.OnShutdown += (s, e) =>
             {
-                try
-                {
-                    updaterInput.WriteLine("exit");
-                }
-                catch { }
+                if (updaterInput is null) return;
+                updaterInput.WriteLine("exit")
             };
 
             updaterProcess.Start();
