@@ -7,6 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Remora.Discord" Version="4.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\DGEFramework\DGEFramework.csproj" />
   </ItemGroup>
 

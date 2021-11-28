@@ -33,6 +33,14 @@ namespace DGE
             DGEModules.RegisterModule(AssemblyRemora.module);
             DGEModules.RegisterModule(AssemblyEngine.module);
 
+            string[] infos = File.ReadAllLines("config-exp.txt"); //Running experimental config
+
+            Remora.Bot rbot = new Remora.Bot(infos[0]);
+
+            ApplicationManager.Add(rbot);
+            
+            DGE.Main.OnStarted += (s, e) => rbot.Start(); //The bot automatically starts when the app is on
+
             Task main = DGE.Main.Run();
             main.Wait();
         }
