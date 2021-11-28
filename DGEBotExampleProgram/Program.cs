@@ -24,7 +24,11 @@ namespace DGE
     {
         private static void Main(string[] args)
         {
+            DiscordBotMain();
+        }
 
+        private static void DiscordBotMain()
+        {
             //TODO: This will be fixed to be cleaner
 #if DEBUG
             string[] infos = File.ReadAllLines("config-exp.txt"); //Running experimental config
@@ -43,7 +47,7 @@ namespace DGE
             bot1.OnStarted += (s, e) => ProgramModule.RestoreSavedPrograms(bot1);
 
             //DGE.Main.OnStarted += (s, e) => bot1.Start(); //The bot automatically starts when the app is on
-            
+
             bot1.RegisterCommandModule(typeof(DevCommands));
             bot1.RegisterCommandModule(typeof(DebugCommands));
             bot1.RegisterCommandModule(typeof(Commands));
@@ -53,7 +57,7 @@ namespace DGE
             bot1.RegisterCommandModule(typeof(FrameBufferCommands));
             bot1.RegisterCommandModule(typeof(ProgramsCommands));
             bot1.RegisterCommandModule(typeof(FractalCommands));
-            
+
             Task main = DGE.Main.Run();
             main.Wait();
 
