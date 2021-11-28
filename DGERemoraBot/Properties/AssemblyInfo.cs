@@ -7,12 +7,12 @@ using DGE.Core;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("DGE-Updater")]
-[assembly: AssemblyDescription("Auto Updater for DGE Framework applications")]
+[assembly: AssemblyTitle("DGE-Remora")]
+[assembly: AssemblyDescription("Discord bot implementation using Remora")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Nothender")]
 [assembly: AssemblyProduct(AssemblyRemora.NAME)]
-[assembly: AssemblyCopyright("Copyright ©  2020")]
+[assembly: AssemblyCopyright("Copyright ©  2021")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -22,7 +22,7 @@ using DGE.Core;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("2d1e8c47-e16c-43e1-81df-c98ce66aab21")]
+[assembly: Guid("ee4aee40-f75b-49cc-9ee8-ca399dbecb8c")]
 
 // Version information for an assembly consists of the following four values:
 //

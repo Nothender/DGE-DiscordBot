@@ -14,6 +14,7 @@
     <ProjectReference Include="..\DGEBot\DGEBot.csproj" />
     <ProjectReference Include="..\DGEEngine\DGEEngine.csproj" />
     <ProjectReference Include="..\DGEFramework\DGEFramework.csproj" />
+    <ProjectReference Include="..\DGERemoraBot\DGERemoraBot.csproj" />
     <ProjectReference Include="..\DGEUpdater\DGEUpdater.csproj" />
   </ItemGroup>
   
