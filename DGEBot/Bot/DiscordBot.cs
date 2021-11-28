@@ -16,7 +16,7 @@ using Discord.Commands;
 
 namespace DGE.Bot
 {
-    public class DiscordBot : Application.Application, IBot
+    public class DiscordBot : ApplicationBase, IBot
     {
         #region IApplication
 

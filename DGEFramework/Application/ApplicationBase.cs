@@ -5,7 +5,7 @@ using System.Text;
 
 namespace DGE.Application
 {
-    public abstract class Application : IApplication
+    public abstract class ApplicationBase : IApplication
     {
 
         public int Id { get; internal set; }
