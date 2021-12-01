@@ -32,7 +32,7 @@ namespace DGE.Remora.Responders
                 return Result.FromSuccess();
             }
 
-            var embed = new Embed(Description: "Pong!", Colour: Color.LawnGreen);
+            var embed = new Embed(Description: $"Pong\nLatency: {(DateTime.Now - gatewayEvent.Timestamp).TotalMilliseconds}ms", Colour: Color.LawnGreen);
             var replyResult = await _channelAPI.CreateMessageAsync
             (
                 gatewayEvent.ChannelID,

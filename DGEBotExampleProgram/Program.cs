@@ -24,6 +24,7 @@ namespace DGE
     {
         private static void Main(string[] args)
         {
+            //DiscordBotMain();
             DiscordRemoraBotMain();
         }
 

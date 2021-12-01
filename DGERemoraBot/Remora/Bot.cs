@@ -31,6 +31,8 @@ namespace DGE.Remora
 
         private string Token;
 
+        private CancellationTokenSource cancellationSource;
+
         public Bot(string Token)
         {
             this.Token = Token;
@@ -44,19 +46,23 @@ namespace DGE.Remora
             Task.Run(Main);
         }
 
-        public override void Stop() { }
+        public override void Stop()
+        {
+            cancellationSource.Cancel();
+        }
 
         public override void Dispose() { }
 
         public async Task Main()
         {
-            var cancellationSource = new CancellationTokenSource();
+            cancellationSource = new CancellationTokenSource();
 
             System.Console.CancelKeyPress += (sender, eventArgs) =>
             {
                 eventArgs.Cancel = true;
                 cancellationSource.Cancel();
             };
+
 
             var botToken = Token;
             // Do not place your bot token in the source code of your program
@@ -74,8 +80,10 @@ namespace DGE.Remora
             var gatewayClient = services.GetRequiredService<DiscordGatewayClient>();
             var log = services.GetRequiredService<ILogger<Bot>>();
 
-            var runResult = await gatewayClient.RunAsync(cancellationSource.Token);
             
+
+            var runResult = await gatewayClient.RunAsync(cancellationSource.Token);
+
             if (!runResult.IsSuccess)
             {
                 switch (runResult.Error)
