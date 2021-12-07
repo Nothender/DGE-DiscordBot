@@ -52,6 +52,8 @@ namespace DGE
                     if(!(moduleVersion is null)) projectVersion += moduleVersion;
                 }
 
+                projectVersion.name = node.SelectSingleNode("name").InnerText.Trim();
+
                 p.Version = projectVersion;
             }
 
