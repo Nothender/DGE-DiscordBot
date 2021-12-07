@@ -8,14 +8,14 @@ namespace DGE.Application
     public static class ApplicationManager
     {
 
-        private static List<Application> applications = new List<Application>();
+        private static List<ApplicationBase> applications = new List<ApplicationBase>();
 
         /// <summary>
         /// Adds an application and returns its Id, returns -1 if it was already added (The app will be automatically shutdown when the main app is shutdown)
         /// </summary>
         /// <param name="application"></param>
         /// <returns>The id of the IApplication</returns>
-        public static int Add(Application application)
+        public static int Add(ApplicationBase application)
         {
             if (applications.Contains(application))
                 return -1;
@@ -26,14 +26,14 @@ namespace DGE.Application
             return application.Id;
         }
 
-        public static Application Get(int id)
+        public static ApplicationBase Get(int id)
         {
             if (id < 0 || id >= applications.Count)
                 throw new Exception($"No application of id {id} exists");
             return applications[id];
         }
 
-        public static Application[] GetAll()
+        public static ApplicationBase[] GetAll()
         {
             return applications.ToArray();
         }
@@ -50,8 +50,6 @@ namespace DGE.Application
                 app.Dispose();
             applications.Clear();
             AssemblyFramework.logger.Log($"Disposed of {c} applications", EnderEngine.Logger.LogLevel.INFO);
-
-
         }
     }
 }
