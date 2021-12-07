@@ -67,12 +67,12 @@ namespace DGE
 
         }
 
-        public static async Task Run(MainRunMode mode = MainRunMode.CONSOLE)
+        public static async Task Run(bool autoCreateUpdateInfoFile = true, MainRunMode mode = MainRunMode.CONSOLE)
         {
             
             OnStarting?.Invoke(sender, EventArgs.Empty);
             
-            Updater.ProjectUpdateInfoWriter.CreateXMLFile(); //Saving information on the current running project for DGEUpdater to check for updates
+            if(autoCreateUpdateInfoFile) Updater.ProjectUpdateInfoWriter.CreateXMLFile(); //Saving information on the current running project for DGEUpdater to check for updates
 
             //Start code
             if (mode == MainRunMode.CONSOLE)

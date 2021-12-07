@@ -21,28 +21,36 @@ namespace DGE
             DGE.Main.OnStopped += (s, e) =>
             {
                 System.Console.WriteLine(UpdaterTags.PassthroughInfo + UpdaterTags.Stopped);
-                System.Console.WriteLine($"{UpdaterTags.GetLogTag(Logger.LogLevel.INFO)}Stopped Updater");
+                Console.UpdaterLogging.WriteToMain("Stopped Updater", Logger.LogLevel.INFO);
             };
             DGE.Main.OnStarted += (s, e) =>
             {
-                StartUpdating();
+                StartUpdater();
             };
             DGEModules.RegisterModule(AssemblyUpdater.module);
 
             //TODO: Cannot get command feedback because ender engine is not well made enough, need interface so we can create our own logger to replace the command one (so it can send back the command execution result to DGE)
 
-            DGE.Main.Run().GetAwaiter().GetResult();
+            DGE.Main.Run(false).GetAwaiter().GetResult();
 
         }
 
-        public static void StartUpdating()
+        public static ProjectInfosManager ProjectInfos;
+
+        /// <summary>
+        /// Starts the updater - loads projects into memory
+        /// </summary>
+        public static void StartUpdater()
         {
 
             try
             {
-                ProjectInfosManager projectManager = new ProjectInfosManager(Paths.Get("Application") + "ProjectUpdateInfo.xml", Paths.Get("Application") + "ProjectInfoConfig.xml"); //Version info from each repository used in the project (to know if an update is needed)
+                ProjectInfos = new ProjectInfosManager(Paths.Get("Application") + "ProjectUpdateInfo.xml", Paths.Get("Application") + "ProjectInfoConfig.xml"); //Version info from each repository used in the project (to know if an update is needed)
 
-                foreach (ProjectInfo info in projectManager.projectInfos) //TODO: way to enumerate over ProjectInfos (IProjectInfo to create) for cleaner code instead of keeping track of the index for the version and url
+                UpdaterLogging.WriteToMain($"Loaded {ProjectInfos.projectInfos.Length} project(s) :\n - {string.Join<ProjectInfo>("\n - ", ProjectInfos.projectInfos)}", Logger.LogLevel.INFO);
+
+                return;
+                foreach (ProjectInfo info in ProjectInfos.projectInfos) //TODO: way to enumerate over ProjectInfos (IProjectInfo to create) for cleaner code instead of keeping track of the index for the version and url
                 {
                     try
                     {
@@ -52,7 +60,7 @@ namespace DGE
 
                         IVersion latestVersion = DGEVersion.FromString(FetcherCollection.FetchLatestVersion(info.VersionLatestGet.Split(sep))); //Latest version from website
                         IVersion localVersion = info.Version; //Local version calculated
-                        UpdaterLogging.WriteToMain($"\nProject :\n -> Latest version from website : {latestVersion}\n -> Local version calculated : {localVersion}", Logger.LogLevel.INFO);
+                        UpdaterLogging.WriteToMain($"\nProject {info.Version.name} :\n -> Latest version from website : {latestVersion}\n -> Local version calculated : {localVersion}", Logger.LogLevel.INFO);
 
                         if (true || latestVersion.IsNewer(localVersion)) //If the version on the internet is newer than the local version
                         //We try to download it or ask for download
@@ -102,11 +110,6 @@ namespace DGE
             {
                 UpdaterLogging.WriteToMain($"Error loading ProjectUpdate info and config file (you should try running the application first) :\n{e.Message}", Logger.LogLevel.FATAL);
             }
-
-            System.Console.WriteLine(UpdaterTags.PassthroughInfo + UpdaterTags.Stopped);
-
-            UpdaterLogging.WriteToMain("Stopped Updater", Logger.LogLevel.INFO);
-
             //If there are no updates application shutdown
 
             //TODO: Split main in different functions
