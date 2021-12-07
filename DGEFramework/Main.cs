@@ -72,7 +72,7 @@ namespace DGE
             
             OnStarting?.Invoke(sender, EventArgs.Empty);
             
-            ProjectUpdateInfoWriter.CreateXMLFile(); //Saving information on the current running project for DGEUpdater to check for updates
+            Updater.ProjectUpdateInfoWriter.CreateXMLFile(); //Saving information on the current running project for DGEUpdater to check for updates
 
             //Start code
             if (mode == MainRunMode.CONSOLE)

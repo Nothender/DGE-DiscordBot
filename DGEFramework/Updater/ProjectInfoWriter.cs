@@ -1,9 +1,10 @@
-﻿using System;
+﻿using DGE.Core;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Xml;
 
-namespace DGE.Core
+namespace DGE.Updater
 {
     internal static class ProjectUpdateInfoWriter
     {
