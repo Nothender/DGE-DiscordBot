@@ -4,11 +4,11 @@ using System.IO;
 using System.IO.Compression;
 using System.Reflection;
 using DGE.Core;
-using DGE.Updater;
 using EnderEngine;
 using System.Collections;
 using System.Collections.Generic;
 using DGE.Console;
+using DGE.Updater;
 
 namespace DGE
 {
@@ -57,9 +57,9 @@ namespace DGE
                     {
                         char sep = '>';
 
-                        FetcherCollection.InitFetcher(info.FetcherOption.Split(sep));
+                        FetcherCollection.InitFetcher(info.FetcherOptions);
 
-                        IVersion latestVersion = DGEVersion.FromString(FetcherCollection.FetchLatestVersion(info.VersionLatestGet.Split(sep))); //Latest version from website
+                        IVersion latestVersion = DGEVersion.FromString(FetcherCollection.FetchLatestVersion(info.VersionLatestGet)); //Latest version from website
                         IVersion localVersion = info.Version; //Local version calculated
                         UpdaterLogging.WriteToMain($"\nProject {info.Version.name} :\n -> Latest version from website : {latestVersion}\n -> Local version calculated : {localVersion}", Logger.LogLevel.INFO);
 
@@ -110,6 +110,7 @@ namespace DGE
             catch (Exception e)
             {
                 UpdaterLogging.WriteToMain($"Error loading ProjectUpdate info and config file (you should try running the application first) :\n{e.Message}", Logger.LogLevel.FATAL);
+                DGE.Main.Stop();
             }
             //If there are no updates application shutdown
 
