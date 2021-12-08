@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- This is the project config, Edit if you use a different repository than DGE-DiscordBot, or multiple ones -->
-<separator>></separator> <!-- The separator character used for the v-latest, dl-latest, and options splitting -->
 <project>
+    <separator>></separator> <!-- The separator character used for the v-latest, dl-latest, and options splitting -->
     <repos>
         <name>DGE-Bot</name>
         <v-latest>github>Nothender>EnderEngine</v-latest> <!-- The repository from which the latest project version is fetched; note the separation is done with '>' -->

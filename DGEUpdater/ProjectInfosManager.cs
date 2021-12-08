@@ -27,7 +27,7 @@ namespace DGE
             }
             
             xmlDoc.Load(projectConfigFile);
-            string separator = xmlDoc.SelectSingleNode("separator").InnerText;
+            string separator = xmlDoc.SelectSingleNode("/project/separator").InnerText;
             nodes = xmlDoc.DocumentElement.SelectNodes("/project/repos");
 
             projectInfos = new ProjectInfo[nodes.Count];
