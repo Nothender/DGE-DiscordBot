@@ -27,6 +27,7 @@ namespace DGE
             }
             
             xmlDoc.Load(projectConfigFile);
+            string separator = xmlDoc.SelectSingleNode("separator").InnerText;
             nodes = xmlDoc.DocumentElement.SelectNodes("/project/repos");
 
             projectInfos = new ProjectInfo[nodes.Count];
@@ -39,9 +40,9 @@ namespace DGE
 
                 projectInfos[i] = p;
 
-                p.DownloadLatestGet = node.SelectSingleNode("dl-latest").InnerText;
-                p.VersionLatestGet = node.SelectSingleNode("v-latest").InnerText;
-                p.FetcherOption = node.SelectSingleNode("options").InnerText;
+                p.DownloadLatestGet = node.SelectSingleNode("dl-latest").InnerText.Split(separator);
+                p.VersionLatestGet = node.SelectSingleNode("v-latest").InnerText.Split(separator);
+                p.FetcherOptions = node.SelectSingleNode("options").InnerText.Split(separator);
 
                 DGEVersion projectVersion = new DGEVersion("0.0.0.0");
 
