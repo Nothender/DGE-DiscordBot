@@ -8,7 +8,7 @@ using DGE.Exceptions;
 
 namespace DGE.Console
 {
-    public static class UpdaterCommands
+    public static class AUpdaterCommands
     {
 
         public static void CreateCommands()
@@ -21,9 +21,16 @@ namespace DGE.Console
                 helpMessage += "\n- " + string.Join("\n- ", Commands.GetCommands());
                 return helpMessage; // Shows every existing commands, doesn't detail anything
             });
-            Commands.CreateCommand("download", (a) =>
+            Commands.CreateCommand("fetch", (a) => // Fetches the latest releases for the corresponding projects/modules
             {
+                if (a.Length < 1 || a[0] == "all") // Fetch all the versions by default
+                {
+                    foreach(ProjectInfo info in Program.ProjectInfos.projectInfos)
+                    {
 
+                        FetcherCollection.InitFetcher(info.FetcherOption.Split());
+                    }
+                }
                 return null;
             });
         }

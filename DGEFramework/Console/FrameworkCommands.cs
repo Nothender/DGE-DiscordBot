@@ -13,6 +13,7 @@ namespace DGE.Console
 {
     public static class FrameworkCommands
     {
+
         public static void Create()
         {
             //TODO: Commands may need to be improved (with structs or classes or attributes, with automatic TypeCasting and arguments passing)

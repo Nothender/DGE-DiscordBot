@@ -25,6 +25,7 @@ namespace DGE
             };
             DGE.Main.OnStarted += (s, e) =>
             {
+                AUpdaterCommands.CreateCommands();
                 StartUpdater();
             };
             DGEModules.RegisterModule(AssemblyUpdater.module);
@@ -47,7 +48,7 @@ namespace DGE
             {
                 ProjectInfos = new ProjectInfosManager(Paths.Get("Application") + "ProjectUpdateInfo.xml", Paths.Get("Application") + "ProjectInfoConfig.xml"); //Version info from each repository used in the project (to know if an update is needed)
 
-                UpdaterLogging.WriteToMain($"Loaded {ProjectInfos.projectInfos.Length} project(s) :\n - {string.Join<ProjectInfo>("\n - ", ProjectInfos.projectInfos)}", Logger.LogLevel.INFO);
+                UpdaterLogging.WriteToMain($"Discovered {ProjectInfos.projectInfos.Length} project(s) :\n - {string.Join<ProjectInfo>("\n - ", ProjectInfos.projectInfos)}", Logger.LogLevel.INFO);
 
                 return;
                 foreach (ProjectInfo info in ProjectInfos.projectInfos) //TODO: way to enumerate over ProjectInfos (IProjectInfo to create) for cleaner code instead of keeping track of the index for the version and url

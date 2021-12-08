@@ -77,7 +77,7 @@ namespace DGE
             //Start code
             if (mode == MainRunMode.CONSOLE)
                 _ = StartConsoleIO();
-            
+
             OnStarted?.Invoke(sender, EventArgs.Empty);
             while (!stopRequest)
                 await Task.Delay(100);

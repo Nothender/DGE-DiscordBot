@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- This is the project config, Edit if you use a different repository than DGE-DiscordBot, or multiple ones -->
+<separator>></separator> <!-- The separator character used for the v-latest, dl-latest, and options splitting -->
 <project>
     <repos>
         <name>DGE-Bot</name>
