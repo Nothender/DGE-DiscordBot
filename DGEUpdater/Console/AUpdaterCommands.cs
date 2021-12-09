@@ -33,7 +33,20 @@ namespace DGE.Console
                 else
                     throw new ArgumentException("The argument does not fit any use");
 
-                return "Fetched versions";
+                return "Successfully fetched versions";
+            });
+            Commands.CreateCommand("download", (a) => // Fetches the latest releases for the corresponding projects/modules
+            {
+                if (a.Length < 1 || a[0] == "all") // Fetch all the versions by default
+                    UpdaterProgram.DownloadVersions(-1);
+                else if (int.TryParse(a[0], out int i))
+                    UpdaterProgram.DownloadVersions(i);
+                else if (Program.ProjectInfos.projectInfos.Any(p => p.Version.name.ToLower() == a[0]))
+                    UpdaterProgram.DownloadVersions(Array.FindIndex(Program.ProjectInfos.projectInfos, p => p.Version.name.ToLower() == a[0]));
+                else
+                    throw new ArgumentException("The argument does not fit any use");
+
+                return "Succesfully (or at least attempted) downloaded project";
             });
         }
 
