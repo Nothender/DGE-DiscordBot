@@ -54,5 +54,19 @@ namespace DGE.Core
             Directory.CreateDirectory(dirPath);
         }
 
+        /// <summary>
+        /// Deletes all the files from a directory
+        /// </summary>
+        /// <param name="name"> The key to access the path </param>
+        public static void ClearPath(string name)
+        {
+            string path = Get(name);
+            if (Directory.Exists(path)) // If the path leads to a directory, and it exists
+            {
+                Directory.Delete(path, true);
+                Directory.CreateDirectory(path);
+            }
+        }
+
     }
 }

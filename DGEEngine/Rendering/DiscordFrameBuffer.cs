@@ -56,8 +56,7 @@ namespace DGE.Rendering
         }
         public static void ClearStoredImageBuffers()
         {
-            Directory.Delete(Paths.Get("ImageBuffers"), true);
-            Paths.CheckForDir(Paths.Get("ImageBuffers"));
+            Paths.ClearPath("ImageBuffers");
         }
 
         public void ClearStoredImageBuffer()
