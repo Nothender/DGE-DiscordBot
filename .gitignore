@@ -1,0 +1,17 @@
+
+.vs
+
+DGE old/
+DGEMinecraft/
+DGENothenderProgram/
+
+**/obj
+**/bin
+
+config-exp.txt
+config.txt
+
+pyUtils.py
+
+TestMinecraftServer/
+minecraftServerStart.bat
