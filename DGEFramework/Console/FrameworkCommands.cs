@@ -71,6 +71,14 @@ namespace DGE.Console
 
                 return "Restarting";
             });
+            Commands.CreateCommand("pack", (a) =>
+            {
+                if (a.Length != 0) throw new InvalidArgumentCountException("pack", 0, a.Length);
+
+                Updater.ProjectPacker.Pack("DGE-Framework-latest");
+
+                return $"Packed application in `{Paths.Get("Application")}DGE-Framework-latest.zip`";
+            });
         }
     }
 }
