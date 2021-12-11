@@ -36,14 +36,17 @@ namespace DGE.Console
                 arguments = new string[0];
             try
             {
-                logger.Log(commands[commandName](arguments), Logger.LogLevel.INFO);
+                if (!commands.TryGetValue(commandName, out Func<string[], string> commandFunction))
+                {
+                    logger.Log($"The command \"{commandName}\" does not exist", Logger.LogLevel.WARN);
+                    return Task.CompletedTask;
+                }
+
+                logger.Log(commandFunction(arguments), Logger.LogLevel.INFO);
             }
             catch (Exception e)
             {
-                if (e is KeyNotFoundException) //Can cause problems if the command has a KeyNotFoundException
-                    logger.Log($"The command \"{commandName}\" does not exist", Logger.LogLevel.WARN);
-                else
-                    logger.Log(e.Message, Logger.LogLevel.ERROR);
+                logger.Log(e.Message, Logger.LogLevel.ERROR);
             }
             return Task.CompletedTask;
         }
