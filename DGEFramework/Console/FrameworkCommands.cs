@@ -73,11 +73,14 @@ namespace DGE.Console
             });
             Commands.CreateCommand("pack", (a) =>
             {
-                if (a.Length != 0) throw new InvalidArgumentCountException("pack", 0, a.Length);
+                string fileName = "DGE-Framework-latest";
 
-                Updater.ProjectPacker.Pack("DGE-Framework-latest");
+                if (a.Length > 0) // If the user wants to define his own file name
+                    fileName = string.Join('-', a);
 
-                return $"Packed application in `{Paths.Get("Application")}DGE-Framework-latest.zip`";
+                string filePath = Updater.ProjectPacker.Pack(fileName);
+
+                return $"Packed application in `{filePath}`";
             });
         }
     }
