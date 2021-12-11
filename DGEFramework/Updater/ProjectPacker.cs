@@ -28,16 +28,33 @@ namespace DGE.Updater
         /// <summary>
         /// Creates a .zip file containing all the important files for release (application.exe)
         /// </summary>
-        public static void Pack(string fileName)
+        /// <returns> The FilePath to the .zip </returns>
+        public static string Pack(string fileName)
         {
             // Remark : does not yet pack a config example file - see configuration handling
 
             string[] filesToInclude = SelectFiles();
 
-            Directory.CreateDirectory(Paths.Get("Application") + "Temp/" + $"TPD-{fileName}/");
+            string temp_dir = Paths.Get("Application") + "Temp/" + $"TPD-{fileName}/";
+            string output_path = Paths.Get("Application") + $"{fileName}.zip";
+            
+            if (Directory.Exists(temp_dir))
+                Directory.Delete(temp_dir, true);
 
-            Directory.Delete(Paths.Get("Application") + "Temp/" + $"TPD-{fileName}/");
+            Directory.CreateDirectory(temp_dir);
 
+            foreach(string file in filesToInclude)
+            {
+                string temp_file = Path.Combine(temp_dir, Path.GetFileName(file));
+                File.Copy(file, temp_file);
+            }
+
+            if (File.Exists(output_path)) File.Delete(output_path); // Overriding if exists
+            ZipFile.CreateFromDirectory(temp_dir, output_path);
+
+            Directory.Delete(temp_dir, true); // Cleaning
+
+            return output_path;
         }
 
         /// <summary>
