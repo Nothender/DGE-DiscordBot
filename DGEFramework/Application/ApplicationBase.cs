@@ -19,6 +19,14 @@ namespace DGE.Application
         public abstract event EventHandler OnShutdown;
         public abstract event EventHandler OnStopped;
 
+        public ApplicationBase()
+        {
+            OnStarting += (s, e) => status = ApplicationStatus.STARTING;
+            OnStarted += (s, e) => status = ApplicationStatus.ON;
+            OnShutdown += (s, e) => status = ApplicationStatus.STOPPING;
+            OnStopped += (s, e) => status = ApplicationStatus.OFF;
+        }
+
         public abstract void Dispose();
 
         public abstract void Start();
