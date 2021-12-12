@@ -67,12 +67,12 @@ namespace DGE
 
         }
 
-        public static async Task Run(bool autoCreateUpdateInfoFile = true, MainRunMode mode = MainRunMode.CONSOLE)
+        public static async Task Run(bool createUpdateInfoFile = true, MainRunMode mode = MainRunMode.CONSOLE)
         {
             
             OnStarting?.Invoke(sender, EventArgs.Empty);
             
-            if(autoCreateUpdateInfoFile) Updater.ProjectUpdateInfoWriter.CreateXMLFile(); //Saving information on the current running project for DGEUpdater to check for updates
+            if(createUpdateInfoFile) Updater.ProjectUpdateInfoWriter.CreateXMLFile(); //Saving information on the current running project for DGEUpdater to check for updates
 
             //Start code
             if (mode == MainRunMode.CONSOLE)
@@ -115,7 +115,9 @@ namespace DGE
                     expression = System.Console.ReadLine().ToLower().Split(' ');
                     if (expression.Length < 1)
                         continue;
-                    command = expression[0];
+                    command = expression[0].Trim(' ', '\t', '\n');
+                    if (command.Length == 0)
+                        continue; // Doenst run the command if nothing is written
                     arguments = null;
                     if (expression.Length > 1)
                         arguments = expression.Skip(1).ToArray();
