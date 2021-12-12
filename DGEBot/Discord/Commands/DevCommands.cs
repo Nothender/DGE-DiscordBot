@@ -14,6 +14,7 @@ using Discord.Addons.Interactive;
 using Discord.Addons;
 using System.Linq;
 using DGE.Core.OperatingSystem;
+using DGE.Updater;
 
 namespace DGE.Discord.Commands
 {
@@ -121,6 +122,47 @@ namespace DGE.Discord.Commands
             Scripts.RunApp.CreateProcess(Process.GetCurrentProcess().MainModule.FileName);
             Main.OnStopped += (s, e) => Scripts.RunApp.Run();
             Main.Stop();
+        }
+
+        [Command("Updater")]
+        [Alias("Update")]
+        [RequireOwner]
+        [Summary("Runs the update procedure")]
+        public async Task CommandUpdate(params string[] args)
+        {
+            
+
+            if (args.Length > 0)
+            {
+                string arg0 = args[0].ToLower().Trim();
+
+                if(arg0 == "s" || arg0 == "start")
+                {
+                    logCallbackChannel = Context.Channel;
+                    UpdateManager.StartUpdater(LogCallback);
+                }
+                else if (arg0 == "wau")
+                {
+                    await ReplyAsync(UpdateManager.WriteToUpdater(string.Join(' ', args, 1, args.Length - 1)));
+                }
+            }
+            else // Run interactive procedure
+            {
+                
+            }
+
+
+        }
+
+        private IMessageChannel logCallbackChannel;
+
+        private void LogCallback(string message, EnderEngine.Logger.LogLevel level)
+        {
+            EmbedBuilder bembed = new EmbedBuilder();
+            bembed.WithTitle($"AU Log - {level}"); //TODO: <- setting to the level string from the logger would be more useful (EE Update ofc)
+            // bembed.WithColor() <- the color corresponding to the log level
+            bembed.WithDescription(message);
+            logCallbackChannel.SendMessageAsync(null, false, bembed.Build());
         }
 
     }
