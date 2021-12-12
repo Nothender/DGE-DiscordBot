@@ -7,6 +7,7 @@ using System.Diagnostics;
 using System.Text;
 using System.Linq;
 using System.IO;
+using System.Threading;
 
 namespace DGE.Updater
 {
@@ -16,10 +17,23 @@ namespace DGE.Updater
 
         private static bool isUpdateAndRestartRequired = false;
 
+        private static Action<string, Logger.LogLevel> LogCallback;
+
         public static StreamWriter updaterInput { get; private set; }
 
-        public static void StartUpdater()
+        /// <summary>
+        /// Starts the updater process - Restarts it if it already exist
+        /// </summary>
+        /// <param name="LogCallback"> Action triggered when recieving Logs from the application, the input string is the message </param>
+        public static void StartUpdater(Action<string, Logger.LogLevel> logCallback = null)
         {
+
+            if (!(updaterInput is null))
+            {
+                updaterInput.WriteLine("exit");
+                Thread.Sleep(1000); // Sleeping arbitrary value to 'ensure' the process is shutdown
+            }
+
             ProcessStartInfo startInfo = new ProcessStartInfo
             {
                 FileName = "DGEUpdater.exe",
@@ -44,6 +58,8 @@ namespace DGE.Updater
                 updaterInput.WriteLine("exit");
             };
 
+            LogCallback = logCallback;
+
             updaterProcess.Start();
             updaterProcess.BeginOutputReadLine();
             updaterProcess.BeginErrorReadLine();
@@ -57,7 +73,11 @@ namespace DGE.Updater
             if (line.Data.Contains(UpdaterTags.log))
             {
                 int st = UpdaterTags.log.Length + 1;
-                logger.Log(line.Data.Substring(st).Replace("\\n", "\n"), UpdaterTags.GetLogLevel(line.Data.Substring(0, st)));
+                string message = line.Data.Substring(st).Replace("\\n", "\n");
+                Logger.LogLevel level = UpdaterTags.GetLogLevel(line.Data.Substring(0, st));
+                logger.Log(message, level);
+                try { LogCallback?.Invoke(message, level); } 
+                catch (Exception e) { logger.Log("Error at log callback : " + e.Message, Logger.LogLevel.WARN); }
             }
             if (line.Data.Contains(UpdaterTags.PassthroughInfo))
                 ProcessData(line.Data);

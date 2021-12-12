@@ -46,7 +46,7 @@ namespace DGE
 
             bot1.OnStarted += (s, e) => ProgramModule.RestoreSavedPrograms(bot1);
 
-            //DGE.Main.OnStarted += (s, e) => bot1.Start(); //The bot automatically starts when the app is on
+            DGE.Main.OnStarted += (s, e) => bot1.Start(); //The bot automatically starts when the app is on
 
             bot1.RegisterCommandModule(typeof(DevCommands));
             bot1.RegisterCommandModule(typeof(DebugCommands));
