@@ -106,5 +106,16 @@ namespace DGE.Updater
             //Seems to be a UB, as PDB files are sometimes moved
         }
 
+        public static string WriteToUpdater(string command)
+        {
+            if (updaterInput is null)
+                return "Cannot write to the AutoUpdater as it is not running";
+
+            Updater.UpdateManager.updaterInput.WriteLine(command);
+
+            return $"Wrote command `{command}` to the AutoUpdater process";
+        }
+
+
     }
 }

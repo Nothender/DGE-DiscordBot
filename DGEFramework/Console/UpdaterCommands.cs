@@ -21,14 +21,7 @@ namespace DGE.Console
             {
                 if (a.Length < 1) throw new InvalidArgumentCountException("wau", 1, a.Length, true);
 
-                if (Updater.UpdateManager.updaterInput is null)
-                    return "Cannot write to the AutoUpdater as it is not running";
-
-                string command = string.Join(' ', a);
-
-                Updater.UpdateManager.updaterInput.WriteLine(command);
-
-                return $"Wrote command `{string.Join(' ', a)}` to the AutoUpdater process";
+                return Updater.UpdateManager.WriteToUpdater(string.Join(' ', a));
             });
         }
     }
