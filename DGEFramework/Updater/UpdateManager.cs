@@ -8,6 +8,7 @@ using System.Text;
 using System.Linq;
 using System.IO;
 using System.Threading;
+using DGE.Processes;
 
 namespace DGE.Updater
 {
@@ -19,7 +20,53 @@ namespace DGE.Updater
 
         private static Action<string, Logger.LogLevel> LogCallback;
 
+        private static ApplicationProcess process;
+
         public static StreamWriter updaterInput { get; private set; }
+
+        static UpdateManager()
+        {
+            ProcessStartInfo startInfo = new ProcessStartInfo
+            {
+                FileName = "DGEUpdater.exe",
+                UseShellExecute = false,
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                RedirectStandardInput = true,
+                CreateNoWindow = true
+            };
+
+            process = new ApplicationProcess(startInfo, SafeProcessStop);
+
+            process.OnStarting += (s, e) =>
+            {
+                process.process.OutputDataReceived += OutputRecievedHandler;
+                process.process.ErrorDataReceived += OutputRecievedHandler;
+            };
+            process.OnStarted += (s, e) =>
+            {
+                try
+                {
+                    process.process.BeginOutputReadLine();
+                    process.process.BeginErrorReadLine();
+                }
+                catch(Exception ex)
+                {
+                    logger.Log("Error trying to start reading process Output" + ex.Message, Logger.LogLevel.WARN);
+                }
+                updaterInput = process.process.StandardInput;
+            };
+        }
+
+        private static void SafeProcessStop(ApplicationProcess ap)
+        {
+            if (ap.process is null)
+                return;
+            if (ap.process.StandardInput is null)
+                ap.process.Kill();
+            else
+                ap.process.StandardInput.WriteLine("exit");
+        }
 
         /// <summary>
         /// Starts the updater process - Restarts it if it already exist
@@ -34,42 +81,15 @@ namespace DGE.Updater
                 Thread.Sleep(1000); // Sleeping arbitrary value to 'ensure' the process is shutdown
             }
 
-            ProcessStartInfo startInfo = new ProcessStartInfo
-            {
-                FileName = "DGEUpdater.exe",
-                Arguments = Process.GetCurrentProcess().Id.ToString(),
-                UseShellExecute = false,
-                RedirectStandardOutput = true,
-                RedirectStandardError = true,
-                RedirectStandardInput = true,
-                CreateNoWindow = true
-            };
-
-            Process updaterProcess = new Process
-            {
-                StartInfo = startInfo
-            };
-            updaterProcess.OutputDataReceived += OutputRecievedHandler;
-            updaterProcess.ErrorDataReceived += OutputRecievedHandler;
-
-            Main.OnShutdown += (s, e) =>
-            {
-                if (updaterInput is null) return;
-                updaterInput.WriteLine("exit");
-            };
-
             LogCallback = logCallback;
 
-            updaterProcess.Start();
-            updaterProcess.BeginOutputReadLine();
-            updaterProcess.BeginErrorReadLine();
-            updaterInput = updaterProcess.StandardInput;
+            process.Start();
+
         }
 
         private static void OutputRecievedHandler(object sender, DataReceivedEventArgs line)
         {
             if (line is null || line.Data is null) return;
-            //System.Console.WriteLine(line.Data);//TODO: To remove, proper logging, remove logging from DGEUpdater program
             if (line.Data.Contains(UpdaterTags.log))
             {
                 int st = UpdaterTags.log.Length + 1;
