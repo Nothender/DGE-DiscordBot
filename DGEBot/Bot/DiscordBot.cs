@@ -58,14 +58,9 @@ namespace DGE.Bot
 
         private ulong feedbackChannelId;
 
-        public DiscordBot(string token, string commandPrefix, ulong feedbackChannelId)
+        public DiscordBot(string token, string commandPrefix, ulong feedbackChannelId) : base()
         {
             appCount++;
-
-            OnStarting += (s, e) => status = ApplicationStatus.STARTING;
-            OnStarted += (s, e) => status = ApplicationStatus.ON;
-            OnShutdown += (s, e) => status = ApplicationStatus.STOPPING;
-            OnStopped += (s, e) => status = ApplicationStatus.OFF;
 
             this.commandPrefix = commandPrefix;
             this.feedbackChannelId = feedbackChannelId;
@@ -124,8 +119,8 @@ namespace DGE.Bot
         public override void Stop()
         {
             OnShutdown?.Invoke(this, EventArgs.Empty);
-
-            client.StopAsync().GetAwaiter().GetResult();
+            if (status == ApplicationStatus.ON || status == ApplicationStatus.STARTING)
+                client.StopAsync().GetAwaiter().GetResult();
 
             OnStopped?.Invoke(this, EventArgs.Empty);
         }
