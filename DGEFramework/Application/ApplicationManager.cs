@@ -11,7 +11,7 @@ namespace DGE.Application
         private static List<ApplicationBase> applications = new List<ApplicationBase>();
 
         /// <summary>
-        /// Adds an application and returns its Id, returns -1 if it was already added (The app will be automatically shutdown when the main app is shutdown)
+        /// Adds an application, sets and returns its Id, returns -1 if it was already added (The app will be automatically shutdown when the main app is shutdown)
         /// </summary>
         /// <param name="application"></param>
         /// <returns>The id of the IApplication</returns>
