@@ -12,6 +12,21 @@ namespace DGE.Console
     public static class AUpdaterCommands
     {
 
+        private static int IndexFromArgument(string arg)
+        {
+            if (arg == "all") // Fetch all the versions by default
+                return -1;
+            else if (int.TryParse(arg, out int i))
+                return i;
+            else
+            {
+                int index = Array.FindIndex(Program.ProjectInfos.projectInfos, p => p.Version.name.ToLower() == arg);
+                if (index == -1)
+                    throw new ArgumentException($"The argument `{arg}` does not fit any use");
+                return index;
+            }
+        }
+
         public static void CreateCommands()
         {
             Commands.CreateCommand("help", (a) =>
@@ -24,27 +39,17 @@ namespace DGE.Console
             });
             Commands.CreateCommand("fetch", (a) => // Fetches the latest releases for the corresponding projects/modules
             {
-                if (a.Length < 1 || a[0] == "all") // Fetch all the versions by default
-                    UpdaterProgram.FetchVersions(-1);
-                else if (int.TryParse(a[0], out int i))
-                    UpdaterProgram.FetchVersions(i);
-                else if (Program.ProjectInfos.projectInfos.Any(p => p.Version.name.ToLower() == a[0]))
-                    UpdaterProgram.FetchVersions(Array.FindIndex(Program.ProjectInfos.projectInfos, p => p.Version.name.ToLower() == a[0]));
-                else
-                    throw new ArgumentException("The argument does not fit any use");
+                if (a.Length != 1) throw new InvalidArgumentCountException("fetch", 1, a.Length);
+
+                UpdaterProgram.FetchVersions(IndexFromArgument(a[0]));
 
                 return "Successfully fetched versions";
             });
-            Commands.CreateCommand("download", (a) => // Fetches the latest releases for the corresponding projects/modules
+            Commands.CreateCommand("download", (a) => // Downloads the latest version of the project and extracts it
             {
-                if (a.Length < 1 || a[0] == "all") // Fetch all the versions by default
-                    UpdaterProgram.DownloadVersions(-1);
-                else if (int.TryParse(a[0], out int i))
-                    UpdaterProgram.DownloadVersions(i);
-                else if (Program.ProjectInfos.projectInfos.Any(p => p.Version.name.ToLower() == a[0]))
-                    UpdaterProgram.DownloadVersions(Array.FindIndex(Program.ProjectInfos.projectInfos, p => p.Version.name.ToLower() == a[0]));
-                else
-                    throw new ArgumentException("The argument does not fit any use");
+                if (a.Length != 1) throw new InvalidArgumentCountException("fetch", 1, a.Length);
+
+                UpdaterProgram.DownloadVersions(IndexFromArgument(a[0]));
 
                 return "Succesfully (or at least attempted) downloaded project";
             });
