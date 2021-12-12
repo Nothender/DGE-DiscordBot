@@ -143,7 +143,7 @@ namespace DGE.Discord.Commands
                 }
                 else if (arg0 == "wau")
                 {
-                    await ReplyAsync(UpdateManager.WriteToUpdater(string.Join(' ', args, 1, args.Length - 1)));
+                    UpdateManager.WriteToUpdater(string.Join(' ', args, 1, args.Length - 1));
                 }
             }
             else // Run interactive procedure
