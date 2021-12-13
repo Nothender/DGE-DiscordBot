@@ -51,7 +51,9 @@ namespace DGE
             OnStopped += (s, e) => AssemblyFramework.logger.Log("Stopped DGE Main", EnderEngine.Logger.LogLevel.INFO);
 
             DGEModules.RegisterModule(AssemblyFramework.module);
-            
+
+            AppDomain.CurrentDomain.ProcessExit += (s, e) => Stop();
+
             if (createCommands)
             {
                 UpdaterCommands.Create();
