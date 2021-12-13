@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Linq;
 using DGE.Console;
 using DGE.Application;
+using System.Runtime.InteropServices;
 
 namespace DGE
 {
@@ -50,8 +51,7 @@ namespace DGE
             OnStopped += (s, e) => AssemblyFramework.logger.Log("Stopped DGE Main", EnderEngine.Logger.LogLevel.INFO);
 
             DGEModules.RegisterModule(AssemblyFramework.module);
-
-
+            
             if (createCommands)
             {
                 UpdaterCommands.Create();
@@ -80,7 +80,7 @@ namespace DGE
 
             OnStarted?.Invoke(sender, EventArgs.Empty);
             while (!stopRequest)
-                await Task.Delay(100);
+                await Task.Delay(50);
             Stop();
         }
 
@@ -105,6 +105,7 @@ namespace DGE
 
         private static Task StartConsoleIO()
         {
+
             return Task.Run(async () =>
             {
                 string command = "";
