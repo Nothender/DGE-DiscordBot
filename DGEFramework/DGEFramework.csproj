@@ -15,10 +15,4 @@
     <PackageReference Include="NothenderEnderEngine" Version="1.0.0" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Reference Include="EnderEngine">
-      <HintPath>Assemblies\EnderEngine\EnderEngine.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-
 </Project>
