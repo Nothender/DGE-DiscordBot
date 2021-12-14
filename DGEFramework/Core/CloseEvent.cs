@@ -37,7 +37,7 @@ namespace DGE.Core
                     Main.Stop();
                     return false;
                 default:
-                    return true;
+                    return false;
             }
         }
 

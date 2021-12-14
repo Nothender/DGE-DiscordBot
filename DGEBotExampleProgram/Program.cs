@@ -16,6 +16,7 @@ using DGE.Rendering;
 using System.Drawing;
 
 using System.Diagnostics;
+using static DGE.Core.CloseEvent;
 
 namespace DGE
 {

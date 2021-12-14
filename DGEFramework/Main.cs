@@ -34,6 +34,8 @@ namespace DGE
 
         private static readonly object sender = null;
 
+        private static CloseEvent.CtrlEventHandler handler;
+
         /// <summary>
         /// Inits DGE-Framework, and main app
         /// </summary>
@@ -51,7 +53,11 @@ namespace DGE
             OnStopped += (s, e) => AssemblyFramework.logger.Log("Stopped DGE Main", EnderEngine.Logger.LogLevel.INFO);
 
             DGEModules.RegisterModule(AssemblyFramework.module);
-            
+            handler = CloseEvent.Handler;
+
+
+            CloseEvent.SetConsoleCtrlHandler(handler, true);
+
             if (createCommands)
             {
                 UpdaterCommands.Create();
@@ -109,11 +115,15 @@ namespace DGE
             return Task.Run(async () =>
             {
                 string command = "";
+                string lineRead;
                 string[] expression;
                 string[] arguments;
                 do
                 {
-                    expression = System.Console.ReadLine().ToLower().Split(' ');
+                    lineRead = System.Console.ReadLine();
+                    if (lineRead is null)
+                        break;
+                    expression = lineRead.ToLower().Split(' ');
                     if (expression.Length < 1)
                         continue;
                     command = expression[0].Trim(' ', '\t', '\n');
