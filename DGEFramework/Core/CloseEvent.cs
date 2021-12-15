@@ -24,30 +24,5 @@ namespace DGE.Core
             CTRL_LOGOFF_EVENT = 5,
             CTRL_SHUTDOWN_EVENT = 6
         }
-
-        public static bool Handler(CtrlType ctrlType)
-        {
-            switch (ctrlType)
-            {
-                case CtrlType.CTRL_BREAK_EVENT:
-                case CtrlType.CTRL_C_EVENT:
-                case CtrlType.CTRL_LOGOFF_EVENT:
-                case CtrlType.CTRL_SHUTDOWN_EVENT:
-                case CtrlType.CTRL_CLOSE_EVENT:
-                    Main.Stop();
-                    return false;
-                default:
-                    return false;
-            }
-        }
-
-        /// <summary>
-        /// Sets up the default stop crontrol event
-        /// </summary>
-        public static void SetupDefault()
-        {
-            SetConsoleCtrlHandler(Handler, true); // So it calls Main.Stop when user closes window or kills the application
-        }
-
     }
 }

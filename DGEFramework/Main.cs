@@ -7,6 +7,7 @@ using System.Linq;
 using DGE.Console;
 using DGE.Application;
 using System.Runtime.InteropServices;
+using static DGE.Core.CloseEvent;
 
 namespace DGE
 {
@@ -31,10 +32,11 @@ namespace DGE
         public static event EventHandler OnStopped;
 
         private static bool stopRequest = false;
+        internal static bool trueStopInEx = false; // If the true stop method is being run by a more important method, to prevent out of scope errors / GC errors
 
         private static readonly object sender = null;
 
-        private static CloseEvent.CtrlEventHandler handler;
+        private static CloseEvent.CtrlEventHandler handler = DefaultHandler;
 
         /// <summary>
         /// Inits DGE-Framework, and main app
@@ -53,8 +55,6 @@ namespace DGE
             OnStopped += (s, e) => AssemblyFramework.logger.Log("Stopped DGE Main", EnderEngine.Logger.LogLevel.INFO);
 
             DGEModules.RegisterModule(AssemblyFramework.module);
-            handler = CloseEvent.Handler;
-
 
             CloseEvent.SetConsoleCtrlHandler(handler, true);
 
@@ -85,21 +85,20 @@ namespace DGE
                 _ = StartConsoleIO();
 
             OnStarted?.Invoke(sender, EventArgs.Empty);
+
             while (!stopRequest)
                 await Task.Delay(50);
-            Stop();
+
+            TrueStop();
         }
 
         /// <summary>
-        /// Shutdowns the entire application framework (automatically stops every app)
+        /// Forces the stop execution
         /// </summary>
-        public static void Stop()
+        internal static void TrueStop()
         {
-            if (!stopRequest)
-            {
-                stopRequest = true;
-                return;
-            }
+
+            trueStopInEx = true;
 
             OnShutdown?.Invoke(sender, EventArgs.Empty);
 
@@ -107,6 +106,17 @@ namespace DGE
 
             OnStopped?.Invoke(sender, EventArgs.Empty);
 
+            Environment.Exit(0);
+        }
+
+        /// <summary>
+        /// Shutdowns the entire application framework (automatically stops every app)
+        /// </summary>
+        public static void Stop()
+        {
+            if (stopRequest)
+                return;
+            stopRequest = true;
         }
 
         private static Task StartConsoleIO()
@@ -140,11 +150,30 @@ namespace DGE
             });
         }
 
+        private static bool DefaultHandler(CtrlType ctrlType)
+        {
+            switch (ctrlType)
+            {
+                case CtrlType.CTRL_BREAK_EVENT:
+                case CtrlType.CTRL_C_EVENT:
+                case CtrlType.CTRL_LOGOFF_EVENT:
+                case CtrlType.CTRL_SHUTDOWN_EVENT:
+                case CtrlType.CTRL_CLOSE_EVENT:
+                    if (trueStopInEx) // If the Framework is already true stopping we skip
+                        return false;
+                    TrueStop();
+                    return false;
+                default:
+                    return false;
+            }
+        }
+
     }
 
     public enum MainRunMode
     {
         CONSOLE
     }
+
 
 }
