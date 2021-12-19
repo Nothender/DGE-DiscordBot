@@ -70,7 +70,7 @@ namespace DGE.Processes
         {
             OnShutdown?.Invoke(this, EventArgs.Empty);
 
-            if (ProcessExitedCleanUp() || status >= ApplicationStatus.ON) // If the process quit already
+            if (ProcessExitedCleanUp() || status <= ApplicationStatus.STOPPING) // If the process quit already
                 return;
 
             try
