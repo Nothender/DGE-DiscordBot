@@ -44,13 +44,8 @@ namespace DGE.Processes
 
         public override void Start()
         {
-            if (!(process is null))
-            {
-                if (process.HasExited) // In case the process exited but wasn't removed
-                    ProcessExitedCleanUp();
-                else // If it is still running
-                    return;
-            }
+            if (!ProcessExitedCleanUp() || status >= ApplicationStatus.ON)
+                return;
 
             process = new Process { StartInfo = startInfo };
             process.EnableRaisingEvents = true;
@@ -75,6 +70,9 @@ namespace DGE.Processes
         {
             OnShutdown?.Invoke(this, EventArgs.Empty);
 
+            if (ProcessExitedCleanUp() || status >= ApplicationStatus.ON) // If the process quit already
+                return;
+
             try
             {
                 if (safeStopMethod is null)
@@ -87,7 +85,7 @@ namespace DGE.Processes
             }
             catch (Exception e)
             {
-                logger.Log($"Stop failed (Is the process dead already ?) : {e.Message}", EnderEngine.Logger.LogLevel.ERROR);
+                logger.Log($"Stop failed (Is the process exited already ?) : {e.Message}", EnderEngine.Logger.LogLevel.ERROR);
             }
 
             ProcessExitedCleanUp();
@@ -95,10 +93,21 @@ namespace DGE.Processes
             OnStopped?.Invoke(this, EventArgs.Empty);
         }
 
-        private void ProcessExitedCleanUp()
+        /// <summary>
+        /// Cleans up pocess memory usage if it has exited
+        /// </summary>
+        /// <returns> Returns if it could clean up memory / or it is already cleaned up, false if it couldn't (could mean the process is still running) </returns>
+        private bool ProcessExitedCleanUp() //This function is used redondently to prevent bugs
         {
-            process?.Dispose();
-            process = null;
+            if (process is null)
+                return true;
+            if (process.HasExited)
+            {
+                process?.Dispose();
+                process = null;
+                return true;
+            }
+            return false;
         }
 
     }
