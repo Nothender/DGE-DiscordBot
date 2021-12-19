@@ -68,10 +68,11 @@ namespace DGE.Processes
 
         public override void Stop()
         {
-            OnShutdown?.Invoke(this, EventArgs.Empty);
 
             if (ProcessExitedCleanUp() || status <= ApplicationStatus.STOPPING) // If the process quit already
                 return;
+
+            OnShutdown?.Invoke(this, EventArgs.Empty);
 
             try
             {
