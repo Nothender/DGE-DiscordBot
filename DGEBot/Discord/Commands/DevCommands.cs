@@ -145,6 +145,10 @@ namespace DGE.Discord.Commands
                 {
                     UpdateManager.WriteToUpdater(string.Join(' ', args, 1, args.Length - 1));
                 }
+                else if (arg0 == "q" || arg0 == "stop" || arg0 == "quit")
+                {
+                    UpdateManager.StopUpdater();
+                }
             }
             else // Run interactive procedure
             {

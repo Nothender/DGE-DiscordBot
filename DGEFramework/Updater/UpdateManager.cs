@@ -9,6 +9,7 @@ using System.Linq;
 using System.IO;
 using System.Threading;
 using DGE.Processes;
+using DGE.Application;
 
 namespace DGE.Updater
 {
@@ -21,8 +22,6 @@ namespace DGE.Updater
         private static Action<string, Logger.LogLevel> LogCallback;
 
         private static ApplicationProcess process;
-
-        public static StreamWriter updaterInput { get; private set; }
 
         static UpdateManager()
         {
@@ -54,7 +53,6 @@ namespace DGE.Updater
                 {
                     logger.Log("Error trying to start reading process Output" + ex.Message, Logger.LogLevel.WARN);
                 }
-                updaterInput = process.process.StandardInput;
             };
         }
 
@@ -65,26 +63,35 @@ namespace DGE.Updater
             if (ap.process.StandardInput is null)
                 ap.process.Kill();
             else
+            {
                 ap.process.StandardInput.WriteLine("exit");
+                ap.process.WaitForExit(100); // Arbitrary timeout for application process clean up
+            }
+               
         }
 
         /// <summary>
-        /// Starts the updater process - Restarts it if it already exist
+        /// Starts the updater process
         /// </summary>
         /// <param name="LogCallback"> Action triggered when recieving Logs from the application, the input string is the message </param>
         public static void StartUpdater(Action<string, Logger.LogLevel> logCallback = null)
         {
 
-            if (!(updaterInput is null))
-            {
-                updaterInput.WriteLine("exit");
-                Thread.Sleep(1000); // Sleeping arbitrary value to 'ensure' the process is shutdown
-            }
-
             LogCallback = logCallback;
+
+            if (process.status >= ApplicationStatus.ON) // If the application is ON or STARTING
+                return;
 
             process.Start();
 
+        }
+
+        /// <summary>
+        /// Stops the updater process
+        /// </summary>
+        public static void StopUpdater()
+        {
+            process.Stop();
         }
 
         private static void OutputRecievedHandler(object sender, DataReceivedEventArgs line)
@@ -111,11 +118,8 @@ namespace DGE.Updater
 
         private static void UpdaterProgramStopped()
         {
-            if (isUpdateAndRestartRequired) StartUpdateScript();
-            //Resetting input media
-            updaterInput?.Close();
-            updaterInput?.Dispose();
-            updaterInput = null;
+            //if (isUpdateAndRestartRequired)
+            //    StartUpdateScript();
         }
 
         private static void StartUpdateScript()
@@ -128,10 +132,10 @@ namespace DGE.Updater
 
         public static string WriteToUpdater(string command)
         {
-            if (updaterInput is null)
+            if (process.status <= ApplicationStatus.STOPPING) // Application process is OFF or STOPPING
                 return "Cannot write to the AutoUpdater as it is not running";
 
-            Updater.UpdateManager.updaterInput.WriteLine(command);
+            process.process.StandardInput.WriteLine(command);
 
             return $"Wrote command `{command}` to the AutoUpdater process";
         }
