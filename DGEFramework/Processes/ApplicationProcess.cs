@@ -28,6 +28,8 @@ namespace DGE.Processes
 
         public ApplicationProcess(ProcessStartInfo startInfo, Action<ApplicationProcess> safeStopMethod = null) : base()
         {
+            logger = new EnderEngine.Logger($"Process:{Id}");
+
             this.startInfo = startInfo;
             if (!(safeStopMethod is null))
                 this.safeStopMethod = safeStopMethod;
@@ -67,10 +69,18 @@ namespace DGE.Processes
         {
             OnShutdown?.Invoke(this, EventArgs.Empty);
 
-            if (safeStopMethod is null)
-                process?.Kill();
-            else
-                safeStopMethod(this);
+            try
+            {
+
+                if (safeStopMethod is null)
+                    process?.Kill();
+                else
+                    safeStopMethod(this);
+            }
+            catch (Exception e)
+            {
+                logger.Log($"ApplicationProcess (id {Id}) - Stop failed (Is the process dead already ?) : {e.Message}", EnderEngine.Logger.LogLevel.ERROR);
+            }
 
             process?.Dispose();
             process = null;
