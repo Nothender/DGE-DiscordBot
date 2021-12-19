@@ -41,8 +41,10 @@ namespace DGE.Console
                     logger.Log($"The command \"{commandName}\" does not exist", Logger.LogLevel.WARN);
                     return Task.CompletedTask;
                 }
-
-                logger.Log(commandFunction(arguments), Logger.LogLevel.INFO);
+                string result = commandFunction(arguments);
+                if (result is null)
+                    return Task.CompletedTask;
+                logger.Log(result, Logger.LogLevel.INFO);
             }
             catch (Exception e)
             {

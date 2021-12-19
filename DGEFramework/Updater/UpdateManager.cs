@@ -80,10 +80,14 @@ namespace DGE.Updater
             LogCallback = logCallback;
 
             if (process.status >= ApplicationStatus.ON) // If the application is ON or STARTING
+            {
+                logger.Log($"An ApplicationProcess (id: {process.Id}) is already running", Logger.LogLevel.INFO);
                 return;
+            }
 
             process.Start();
 
+            logger.Log($"Started updater as ApplicationProcess (id: {process.Id})", Logger.LogLevel.INFO);
         }
 
         /// <summary>

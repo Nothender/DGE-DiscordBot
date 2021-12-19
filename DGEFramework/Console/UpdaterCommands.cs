@@ -15,7 +15,7 @@ namespace DGE.Console
 
                 Updater.UpdateManager.StartUpdater();
 
-                return "Started auto-updater";
+                return null;
             });
             Commands.CreateCommand("wau", (a) => //Write to auto updater
             {
