@@ -28,13 +28,13 @@ namespace DGE.Processes
 
         public ApplicationProcess(ProcessStartInfo startInfo, Action<ApplicationProcess> safeStopMethod = null) : base()
         {
-            logger = new EnderEngine.Logger($"Process:{Id}");
-
             this.startInfo = startInfo;
             if (!(safeStopMethod is null))
                 this.safeStopMethod = safeStopMethod;
 
             ApplicationManager.Add(this);
+
+            logger = new EnderEngine.Logger($"Process:{Id}");
         }
 
         public override void Dispose()
@@ -46,17 +46,15 @@ namespace DGE.Processes
         {
             if (!(process is null))
             {
-                if (process.HasExited)
-                {
-                    process?.Dispose();
-                    process = null;
-                }
-                else
+                if (process.HasExited) // In case the process exited but wasn't removed
+                    ProcessExitedCleanUp();
+                else // If it is still running
                     return;
             }
 
             process = new Process { StartInfo = startInfo };
             process.EnableRaisingEvents = true;
+            process.Exited += (s, e) => ProcessExitedCleanUp();
             process.Exited += OnStopped;
 
             OnStarting?.Invoke(this, EventArgs.Empty);
@@ -79,21 +77,29 @@ namespace DGE.Processes
 
             try
             {
-
                 if (safeStopMethod is null)
                     process?.Kill();
                 else
+                {
+                    logger.Log($"Invoking existing process SafeStop method", EnderEngine.Logger.LogLevel.INFO);
                     safeStopMethod(this);
+                }
             }
             catch (Exception e)
             {
-                logger.Log($"ApplicationProcess (id {Id}) - Stop failed (Is the process dead already ?) : {e.Message}", EnderEngine.Logger.LogLevel.ERROR);
+                logger.Log($"Stop failed (Is the process dead already ?) : {e.Message}", EnderEngine.Logger.LogLevel.ERROR);
             }
 
-            process?.Dispose();
-            process = null;
+            ProcessExitedCleanUp();
 
             OnStopped?.Invoke(this, EventArgs.Empty);
         }
+
+        private void ProcessExitedCleanUp()
+        {
+            process?.Dispose();
+            process = null;
+        }
+
     }
 }
