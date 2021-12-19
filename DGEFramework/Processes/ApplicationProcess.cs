@@ -45,7 +45,15 @@ namespace DGE.Processes
         public override void Start()
         {
             if (!(process is null))
-                return;
+            {
+                if (process.HasExited)
+                {
+                    process?.Dispose();
+                    process = null;
+                }
+                else
+                    return;
+            }
 
             process = new Process { StartInfo = startInfo };
             process.EnableRaisingEvents = true;
