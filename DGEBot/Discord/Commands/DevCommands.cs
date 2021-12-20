@@ -15,6 +15,7 @@ using Discord.Addons;
 using System.Linq;
 using DGE.Core.OperatingSystem;
 using DGE.Updater;
+using DGE.Console;
 
 namespace DGE.Discord.Commands
 {
@@ -130,31 +131,15 @@ namespace DGE.Discord.Commands
         [Summary("Runs the update procedure")]
         public async Task CommandUpdate(params string[] args)
         {
-            
 
             if (args.Length > 0)
             {
-                string arg0 = args[0].ToLower().Trim();
-
-                if(arg0 == "s" || arg0 == "start")
-                {
-                    logCallbackChannel = Context.Channel;
-                    UpdateManager.StartUpdater(LogCallback);
-                }
-                else if (arg0 == "wau")
-                {
-                    UpdateManager.WriteToUpdater(string.Join(' ', args, 1, args.Length - 1));
-                }
-                else if (arg0 == "q" || arg0 == "stop" || arg0 == "quit")
-                {
-                    UpdateManager.StopUpdater();
-                }
+                UpdaterCommands.Execute(args, LogCallback);
             }
             else // Run interactive procedure
             {
-                
+                await ReplyAsync("Interactive update procedure was not implemented yet");
             }
-
 
         }
 

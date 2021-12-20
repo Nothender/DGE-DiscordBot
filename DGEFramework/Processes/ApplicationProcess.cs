@@ -80,7 +80,7 @@ namespace DGE.Processes
                     process?.Kill();
                 else
                 {
-                    logger.Log($"Invoking existing process SafeStop method", EnderEngine.Logger.LogLevel.INFO);
+                    logger.Log($"Invoking process existing SafeStop method", EnderEngine.Logger.LogLevel.INFO);
                     safeStopMethod(this);
                 }
             }
