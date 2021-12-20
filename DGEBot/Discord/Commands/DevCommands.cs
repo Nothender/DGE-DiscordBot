@@ -131,9 +131,9 @@ namespace DGE.Discord.Commands
         [Summary("Runs the update procedure")]
         public async Task CommandUpdate(params string[] args)
         {
-
             if (args.Length > 0)
             {
+                logCallbackChannel = Context.Channel;
                 UpdaterCommands.Execute(args, LogCallback);
             }
             else // Run interactive procedure
