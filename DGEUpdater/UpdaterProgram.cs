@@ -50,15 +50,17 @@ namespace DGE
                 {
                     FetcherCollection.InitFetcher(info.FetcherOptions);
                     //FetcherCollection.DownloadLatestVersion(info.FetcherOptions);
-
+                    
                     DirectoryInfo di = new DirectoryInfo(Paths.Get("Downloads"));
                     FileInfo file = di.GetFiles().OrderBy(p => p.CreationTime).ToArray().Last();
 
                     if (file.Extension == ".zip")
                         ZipFile.ExtractToDirectory(file.FullName, Paths.Get("Contents"), true);
                     else
-                        UpdaterLogging.WriteToMain($"Failed to download project {info}, file was not a compressed object", Logger.LogLevel.INFO);
-                        
+                        UpdaterLogging.WriteToMain($"Failed to download project {info}, file was not a compressed object", Logger.LogLevel.WARN);
+                    
+                    UpdaterLogging.WriteToMain($"Downloaded and extracted project {info}", Logger.LogLevel.INFO);
+
                 }
             }
             finally

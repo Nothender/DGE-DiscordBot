@@ -126,7 +126,10 @@ namespace DGE.Updater
             //    StartUpdateScript();
         }
 
-        private static void StartUpdateScript()
+        /// <summary>
+        /// Installs newly downloaded content then restarts the application
+        /// </summary>
+        public static void StartUpdateScript()
         {
             Scripts.UpdateRestartApp.CreateProcess(Process.GetCurrentProcess().MainModule.FileName);
             Main.OnStopped += (s, e) => Scripts.UpdateRestartApp.Run();
@@ -143,7 +146,6 @@ namespace DGE.Updater
 
             return $"Wrote command `{command}` to the AutoUpdater process";
         }
-
 
     }
 }
