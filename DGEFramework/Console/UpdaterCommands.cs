@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using DGE.Core;
 
 namespace DGE.Console
 {
@@ -11,15 +12,40 @@ namespace DGE.Console
         {
             Commands.CreateCommand("au", (a) =>
             {
-                return Execute(a);
+                string result = Execute(a, out bool interactive);
+
+                if (interactive)
+                {
+                    if (a is null || a.Length == 0)
+                    {
+                        // Interactive update
+                        throw new NotImplementedException("Interactive updating is not implemented yet");
+                    }
+                    else if (a.Length > 0)
+                    {
+                        string action = a[0].ToLower().Trim();
+                        if (action == "i" || action == "install")
+                        {
+                            Commands.logger.Log("Running interactive install procedure : Do you want to restart the application ? (y/n)", EnderEngine.Logger.LogLevel.WARN);
+                            if (System.Console.ReadKey().Key == ConsoleKey.Y)
+                                Updater.UpdateManager.StartUpdateScript();
+                            else
+                                return "Canceled interactive procedure";
+                        }
+                    }
+                }
+
+                return result;
             });
         }
 
-        public static string Execute(string[] args, Action<string, EnderEngine.Logger.LogLevel> logCallback = null)
+        public static string Execute(string[] args, out bool interactive, Action<string, EnderEngine.Logger.LogLevel> logCallback = null)
         {
+            interactive = false;
             if (args is null || args.Length == 0)
             {
-                return "No args were entered, action not implemented";
+                interactive = true;
+                return "Base interactive procedure";
             }
             else if (args.Length > 0)
             {
@@ -38,6 +64,11 @@ namespace DGE.Console
                 {
                     Updater.UpdateManager.StopUpdater();
                     return null;
+                }
+                else if (action == "i" || action == "install")
+                {
+                    interactive = true;
+                    return "Install interactive procedure";
                 }
             }
             return "A problem occured parsing arguments";

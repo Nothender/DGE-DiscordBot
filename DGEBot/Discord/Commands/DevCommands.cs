@@ -134,7 +134,7 @@ namespace DGE.Discord.Commands
             if (args.Length > 0)
             {
                 logCallbackChannel = Context.Channel;
-                UpdaterCommands.Execute(args, LogCallback);
+                UpdaterCommands.Execute(args, out bool interactive, LogCallback);
             }
             else // Run interactive procedure
             {

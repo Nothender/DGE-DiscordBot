@@ -15,7 +15,7 @@ namespace DGE.Console
     public static class Commands
     {
         internal static readonly Dictionary<string, Func<string[], string>> commands = new Dictionary<string, Func<string[], string>>();
-        private static readonly Logger logger = new Logger("DGE-CC"); //DGE-CC for DGE ConsoleCommands
+        public static readonly Logger logger = new Logger("DGE-CC"); //DGE-CC for DGE ConsoleCommands
 
         internal static string exitCommand = "exit";
 
