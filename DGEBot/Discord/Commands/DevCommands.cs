@@ -125,7 +125,7 @@ namespace DGE.Discord.Commands
             Main.Stop();
         }
 
-        [Command("Updater")]
+        [Command("Updater", RunMode = RunMode.Async)]
         [Alias("Update")]
         [RequireOwner]
         [Summary("Runs the update procedure")]
@@ -135,12 +135,32 @@ namespace DGE.Discord.Commands
             {
                 logCallbackChannel = Context.Channel;
                 UpdaterCommands.Execute(args, out bool interactive, LogCallback);
+                if (interactive)
+                {
+                    string action = args[0].ToLower().Trim();
+                    if (action == "i" || action == "install")
+                    {
+                        await ReplyAsync("This will restart the application, are you sure you want to continue ? (y/n)");
+                        IMessage answer = await NextMessageAsync();
+                        if(!(answer is null))
+                        {
+                            string content = answer.Content.ToLower().Trim();
+                            if (content == "y" || content == "yes")
+                            {
+                                await ReplyAsync("Installing new update - Rebooting");
+                                AssemblyBot.logger.Log("User is running Interactive install procedure - Rebooting", EnderEngine.Logger.LogLevel.INFO);
+                                UpdateManager.StartUpdateScript();
+                            }
+                            else
+                                await ReplyAsync("Canceled interactive install procedure");
+                        }
+                    }
+                }
             }
             else // Run interactive procedure
             {
                 await ReplyAsync("Interactive update procedure was not implemented yet");
             }
-
         }
 
         private IMessageChannel logCallbackChannel;
