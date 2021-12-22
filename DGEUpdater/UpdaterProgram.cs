@@ -28,16 +28,25 @@ namespace DGE
 
         public static void FetchVersions(int index)
         {
-            foreach (ProjectInfo info in GetProjectsByIndex(index))
+            try
             {
-                FetcherCollection.InitFetcher(info.FetcherOptions);
-                DGEVersion version = DGEVersion.FromString(FetcherCollection.FetchLatestVersion(info.VersionLatestGet));
-                if (version.IsNewer(info.Version))
-                    UpdaterLogging.WriteToMain($"A new version ({version.version}) is available for the project {info}", Logger.LogLevel.INFO);
-                else
-                    UpdaterLogging.WriteToMain($"No new version exist for the project {info}", Logger.LogLevel.INFO);
+                foreach (ProjectInfo info in GetProjectsByIndex(index))
+                {
+                    FetcherCollection.InitFetcher(info.FetcherOptions);
+                    DGEVersion version = DGEVersion.FromString(FetcherCollection.FetchLatestVersion(info.VersionLatestGet));
+                    if (version.IsNewer(info.Version))
+                    {
+                        UpdaterLogging.WriteToMain($"A new version ({version.version}) is available for the project {info}", Logger.LogLevel.INFO);
+                        System.Console.WriteLine($"{Updater.UpdaterTags.PassthroughInfo}{Updater.UpdaterTags.UpdateAvailableTag}");
+                    }
+                    else
+                        UpdaterLogging.WriteToMain($"No new version exist for the project {info}", Logger.LogLevel.INFO);
+                }
             }
-
+            finally
+            {
+                System.Console.WriteLine($"{Updater.UpdaterTags.PassthroughInfo}{Updater.UpdaterTags.FetchedTag}");
+            }
         }
 
         public static void DownloadVersions(int index)
@@ -60,12 +69,14 @@ namespace DGE
                         UpdaterLogging.WriteToMain($"Failed to download project {info}, file was not a compressed object", Logger.LogLevel.WARN);
                     
                     UpdaterLogging.WriteToMain($"Downloaded and extracted project {info}", Logger.LogLevel.INFO);
+                    System.Console.WriteLine($"{Updater.UpdaterTags.PassthroughInfo}{Updater.UpdaterTags.UpdateDownloadedTag}");
 
                 }
             }
             finally
             {
                 //Paths.ClearPath("Downloads");
+                System.Console.WriteLine($"{Updater.UpdaterTags.PassthroughInfo}{Updater.UpdaterTags.AttemptedDownloadTag}");
             }
 
         }

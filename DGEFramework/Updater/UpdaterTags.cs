@@ -39,6 +39,9 @@ namespace DGE.Updater
         public static readonly string UpdateAvailableTag = "UA";
         public static readonly string UpdateDownloadedTag = "UD";
         public static readonly string Stopped = "SU";
+        public static readonly string FetchedTag = "UF";
+        public static readonly string AttemptedDownloadTag = "UAD";
+
 
 
 

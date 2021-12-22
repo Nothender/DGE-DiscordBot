@@ -17,11 +17,22 @@ namespace DGE.Updater
     {
         private static Logger logger = new Logger("DGE-Updater");
 
-        private static bool isUpdateAndRestartRequired = false;
+        public static bool isUpdateAndRestartRequired = false;
+        public static bool isUpdateAvailable = false;
+        public static bool fetched = false;
+        public static bool downloaded = false;
 
         private static Action<string, Logger.LogLevel> LogCallback;
 
         private static ApplicationProcess process;
+
+        private static void ResetBools()
+        {
+            isUpdateAndRestartRequired = false;
+            isUpdateAvailable = false;
+            fetched = false;
+            downloaded = false;
+        }
 
         static UpdateManager()
         {
@@ -85,9 +96,28 @@ namespace DGE.Updater
                 return;
             }
 
+            ResetBools();
+
             process.Start();
 
             logger.Log($"Started updater as ApplicationProcess (id: {process.Id})", Logger.LogLevel.INFO);
+        }
+
+        public static void Download(string args)
+        {
+            WriteToUpdater($"download {args}");
+            while (downloaded!)
+                Thread.Sleep(10);
+        }
+
+        /// <summary>
+        /// Fetches the latest version
+        /// </summary>
+        public static void Fetch(string args)
+        {
+            WriteToUpdater($"fetch {args}");
+            while (!fetched)
+                Thread.Sleep(10);
         }
 
         /// <summary>
@@ -117,13 +147,14 @@ namespace DGE.Updater
         private static void ProcessData(string res)
         {
             if (res.Contains(UpdaterTags.UpdateDownloadedTag)) isUpdateAndRestartRequired = true;
+            if (res.Contains(UpdaterTags.UpdateAvailableTag)) isUpdateAvailable = true;
             if (res.Contains(UpdaterTags.Stopped)) UpdaterProgramStopped();
+            if (res.Contains(UpdaterTags.FetchedTag)) fetched = true;
+            if (res.Contains(UpdaterTags.AttemptedDownloadTag)) downloaded = true;
         }
 
         private static void UpdaterProgramStopped()
         {
-            //if (isUpdateAndRestartRequired)
-            //    StartUpdateScript();
         }
 
         /// <summary>
@@ -132,6 +163,7 @@ namespace DGE.Updater
         public static void StartUpdateScript()
         {
             Scripts.UpdateRestartApp.CreateProcess(Process.GetCurrentProcess().MainModule.FileName);
+
             Main.OnStopped += (s, e) => Scripts.UpdateRestartApp.Run();
             Main.Stop(); //TODO: PDB Files from DGEExampleProgram and deps are not moved (access denied) maybe ensure the app is running by detaching the process ?
             //Seems to be a UB, as PDB files are sometimes moved

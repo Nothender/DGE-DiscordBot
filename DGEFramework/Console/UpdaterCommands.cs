@@ -18,8 +18,7 @@ namespace DGE.Console
                 {
                     if (a is null || a.Length == 0)
                     {
-                        // Interactive update
-                        throw new NotImplementedException("Interactive updating is not implemented yet");
+
                     }
                     else if (a.Length > 0)
                     {
@@ -41,6 +40,7 @@ namespace DGE.Console
 
         public static string Execute(string[] args, out bool interactive, Action<string, EnderEngine.Logger.LogLevel> logCallback = null)
         {
+            // If only i knew how to write clean code (Command provider - Named arguments - Easier help command)
             interactive = false;
             if (args is null || args.Length == 0)
             {
@@ -58,7 +58,6 @@ namespace DGE.Console
                 else if (action == "w" || action == "write")
                 {
                     return Updater.UpdateManager.WriteToUpdater(string.Join(' ', args, 1, args.Length - 1));
-                    
                 }
                 else if (action == "q" || action == "quit" || action == "exit")
                 {
@@ -69,6 +68,18 @@ namespace DGE.Console
                 {
                     interactive = true;
                     return "Install interactive procedure";
+                }
+                else if (action == "f" || action == "fetch")
+                {
+                    string fetchArgs = args.Length >= 2 ? string.Join(' ', args, 2, args.Length - 1) : "all";
+                    Updater.UpdateManager.Fetch(fetchArgs);
+                    return null;
+                }
+                else if (action == "d" || action == "download")
+                {
+                    string downloadArgs = args.Length >= 2 ? string.Join(' ', args, 2, args.Length - 1) : "all";
+                    Updater.UpdateManager.Download(downloadArgs);
+                    return null;
                 }
             }
             return "A problem occured parsing arguments";
