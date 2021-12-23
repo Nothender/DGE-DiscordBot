@@ -18,6 +18,25 @@ namespace DGE.Console
                 {
                     if (a is null || a.Length == 0)
                     {
+                        Commands.logger.Log("Running auto update procedure - Fetching versions", EnderEngine.Logger.LogLevel.INFO);
+                        
+                        Updater.UpdateManager.Fetch("all");
+                        if (Updater.UpdateManager.isUpdateAvailable)
+                        {
+                            Commands.logger.Log("Fetched (new version(s) avaliable) - Downloading updates", EnderEngine.Logger.LogLevel.INFO);
+                            Updater.UpdateManager.Download("all");
+                            if (Updater.UpdateManager.isUpdateDownloaded)
+                            {
+                                Commands.logger.Log("A new update was downloaded : Do you want to restart and update the application ? (y/n)", EnderEngine.Logger.LogLevel.INFO);
+                                if (System.Console.ReadKey().Key == ConsoleKey.Y)
+                                {
+                                    System.Console.Write('\n');
+                                    Updater.UpdateManager.StartUpdateScript();
+                                    return null;
+                                }
+                            }
+                        }
+                        return "Canceled - No update available";
 
                     }
                     else if (a.Length > 0)
@@ -27,7 +46,10 @@ namespace DGE.Console
                         {
                             Commands.logger.Log("Running interactive install procedure : Do you want to restart the application ? (y/n)", EnderEngine.Logger.LogLevel.WARN);
                             if (System.Console.ReadKey().Key == ConsoleKey.Y)
+                            {
+                                System.Console.Write('\n');
                                 Updater.UpdateManager.StartUpdateScript();
+                            }
                             else
                                 return "Canceled interactive procedure";
                         }
