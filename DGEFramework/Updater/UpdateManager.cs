@@ -22,6 +22,9 @@ namespace DGE.Updater
         public static bool fetched = false;
         public static bool downloaded = false;
 
+        public static int RequestTimeoutMilliseconds = 2000;
+        private static int RequestPollrateMilliseconds = 10;
+
         private static Action<string, Logger.LogLevel> LogCallback;
 
         private static ApplicationProcess process;
@@ -107,8 +110,14 @@ namespace DGE.Updater
         {
             downloaded = false;
             WriteToUpdater($"download {args}");
-            while (downloaded!)
-                Thread.Sleep(10);
+            int msTotal = 0;
+            while (!downloaded)
+            {
+                Thread.Sleep(RequestPollrateMilliseconds);
+                msTotal += RequestPollrateMilliseconds;
+                if(msTotal >= RequestTimeoutMilliseconds)
+                    throw new TimeoutException($"Request timeout of {RequestTimeoutMilliseconds}ms exceeded when downloading using AutoUpdater");
+            }
         }
 
         /// <summary>
@@ -118,8 +127,14 @@ namespace DGE.Updater
         {
             fetched = false;
             WriteToUpdater($"fetch {args}");
+            int msTotal = 0;
             while (!fetched)
-                Thread.Sleep(10);
+            {
+                Thread.Sleep(RequestPollrateMilliseconds);
+                msTotal += RequestPollrateMilliseconds;
+                if (msTotal >= RequestTimeoutMilliseconds)
+                    throw new TimeoutException($"Request timeout of {RequestTimeoutMilliseconds}ms exceeded when fetching using AutoUpdater");
+            }
         }
 
         /// <summary>
