@@ -110,14 +110,7 @@ namespace DGE.Updater
         {
             downloaded = false;
             WriteToUpdater($"download {args}");
-            int msTotal = 0;
-            while (!downloaded)
-            {
-                Thread.Sleep(RequestPollrateMilliseconds);
-                msTotal += RequestPollrateMilliseconds;
-                if(msTotal >= RequestTimeoutMilliseconds)
-                    throw new TimeoutException($"Request timeout of {RequestTimeoutMilliseconds}ms exceeded when downloading using AutoUpdater");
-            }
+            WaitTillTimeout(ref downloaded, "downloading");
         }
 
         /// <summary>
@@ -127,13 +120,18 @@ namespace DGE.Updater
         {
             fetched = false;
             WriteToUpdater($"fetch {args}");
+            WaitTillTimeout(ref fetched, "fetching");
+        }
+
+        private static void WaitTillTimeout(ref bool boolean, string action = "unknown")
+        {
             int msTotal = 0;
-            while (!fetched)
+            while (!boolean)
             {
                 Thread.Sleep(RequestPollrateMilliseconds);
                 msTotal += RequestPollrateMilliseconds;
                 if (msTotal >= RequestTimeoutMilliseconds)
-                    throw new TimeoutException($"Request timeout of {RequestTimeoutMilliseconds}ms exceeded when fetching using AutoUpdater");
+                    throw new TimeoutException($"AutoUpdater ({action}) - Request timeout of {RequestTimeoutMilliseconds}ms exceeded");
             }
         }
 
