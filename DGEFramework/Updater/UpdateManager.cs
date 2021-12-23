@@ -17,7 +17,7 @@ namespace DGE.Updater
     {
         private static Logger logger = new Logger("DGE-Updater");
 
-        public static bool isUpdateAndRestartRequired = false;
+        public static bool isUpdateDownloaded = false;
         public static bool isUpdateAvailable = false;
         public static bool fetched = false;
         public static bool downloaded = false;
@@ -28,7 +28,7 @@ namespace DGE.Updater
 
         private static void ResetBools()
         {
-            isUpdateAndRestartRequired = false;
+            isUpdateDownloaded = false;
             isUpdateAvailable = false;
             fetched = false;
             downloaded = false;
@@ -105,6 +105,7 @@ namespace DGE.Updater
 
         public static void Download(string args)
         {
+            downloaded = false;
             WriteToUpdater($"download {args}");
             while (downloaded!)
                 Thread.Sleep(10);
@@ -115,6 +116,7 @@ namespace DGE.Updater
         /// </summary>
         public static void Fetch(string args)
         {
+            fetched = false;
             WriteToUpdater($"fetch {args}");
             while (!fetched)
                 Thread.Sleep(10);
@@ -146,7 +148,7 @@ namespace DGE.Updater
 
         private static void ProcessData(string res)
         {
-            if (res.Contains(UpdaterTags.UpdateDownloadedTag)) isUpdateAndRestartRequired = true;
+            if (res.Contains(UpdaterTags.UpdateDownloadedTag)) isUpdateDownloaded = true;
             if (res.Contains(UpdaterTags.UpdateAvailableTag)) isUpdateAvailable = true;
             if (res.Contains(UpdaterTags.Stopped)) UpdaterProgramStopped();
             if (res.Contains(UpdaterTags.FetchedTag)) fetched = true;
