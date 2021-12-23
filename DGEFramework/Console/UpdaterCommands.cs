@@ -18,8 +18,12 @@ namespace DGE.Console
                 {
                     if (a is null || a.Length == 0)
                     {
-                        Commands.logger.Log("Running auto update procedure - Fetching versions", EnderEngine.Logger.LogLevel.INFO);
-                        
+                        Commands.logger.Log("Running auto update procedure", EnderEngine.Logger.LogLevel.INFO);
+
+                        Updater.UpdateManager.StartUpdater();
+
+                        Commands.logger.Log("Fetching latest project versions", EnderEngine.Logger.LogLevel.INFO);
+
                         Updater.UpdateManager.Fetch("all");
                         if (Updater.UpdateManager.isUpdateAvailable)
                         {
