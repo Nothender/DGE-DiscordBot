@@ -21,6 +21,7 @@ namespace DGE.Updater
         public static bool isUpdateAvailable = false;
         public static bool fetched = false;
         public static bool downloaded = false;
+        public static bool loaded = false;
 
         public static int RequestTimeoutMilliseconds = 2000;
         private static int RequestPollrateMilliseconds = 10;
@@ -35,6 +36,7 @@ namespace DGE.Updater
             isUpdateAvailable = false;
             fetched = false;
             downloaded = false;
+            loaded = false;
         }
 
         static UpdateManager()
@@ -103,7 +105,9 @@ namespace DGE.Updater
 
             process.Start();
 
-            logger.Log($"Started updater as ApplicationProcess (id: {process.Id})", Logger.LogLevel.INFO);
+            logger.Log($"Starting updater as ApplicationProcess (id: {process.Id})", Logger.LogLevel.INFO);
+
+            WaitForRequest(ref loaded, "starting updater", 4242);
         }
 
         public static void Download(string args)
@@ -134,14 +138,15 @@ namespace DGE.Updater
         /// </summary>
         /// <param name="boolean">The boolean we are waiting for (from false to true)</param>
         /// <param name="action">Action name for error reporting</param>
-        private static void WaitForRequest(ref bool boolean, string action = "unknown")
+        private static void WaitForRequest(ref bool boolean, string action = "unknown", int customMillisecondTimeout = -1)
         {
             int msTotal = 0;
+            int msTimeout = customMillisecondTimeout > 0 ? customMillisecondTimeout : RequestTimeoutMilliseconds;
             while (!boolean)
             {
                 Thread.Sleep(RequestPollrateMilliseconds);
                 msTotal += RequestPollrateMilliseconds;
-                if (msTotal > RequestTimeoutMilliseconds)
+                if (msTotal > msTimeout)
                     throw new TimeoutException($"AutoUpdater ({action}) - Request timeout of {RequestTimeoutMilliseconds}ms exceeded");
             }
         }
@@ -177,6 +182,7 @@ namespace DGE.Updater
             if (res.Contains(UpdaterTags.Stopped)) UpdaterProgramStopped();
             if (res.Contains(UpdaterTags.FetchedTag)) fetched = true;
             if (res.Contains(UpdaterTags.AttemptedDownloadTag)) downloaded = true;
+            if (res.Contains(UpdaterTags.LoadedTag)) loaded = true;
         }
 
         private static void UpdaterProgramStopped()

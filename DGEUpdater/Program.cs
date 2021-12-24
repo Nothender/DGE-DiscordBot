@@ -50,6 +50,7 @@ namespace DGE
 
                 UpdaterLogging.WriteToMain($"Discovered {ProjectInfos.projectInfos.Length} project(s) :\n - {string.Join<ProjectInfo>("\n - ", ProjectInfos.projectInfos)}", Logger.LogLevel.INFO);
 
+                System.Console.WriteLine($"{UpdaterTags.PassthroughInfo}{UpdaterTags.LoadedTag}");
                 return;
             }
             catch (Exception e)

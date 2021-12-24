@@ -36,14 +36,13 @@ namespace DGE.Updater
 
         //These Tags are added after the `PassthroughInfo` one
         //No need for summary its quite self explanatory (at least i hope for future me)
+        //Tags just need to all have different strings
         public static readonly string UpdateAvailableTag = "UA";
         public static readonly string UpdateDownloadedTag = "UD";
         public static readonly string Stopped = "SU";
         public static readonly string FetchedTag = "UF";
         public static readonly string AttemptedDownloadTag = "UAD";
-
-
-
+        public static readonly string LoadedTag = "AULD";
 
     }
 }
