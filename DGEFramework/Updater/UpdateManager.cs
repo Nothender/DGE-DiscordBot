@@ -81,7 +81,7 @@ namespace DGE.Updater
                 ap.process.StandardInput.WriteLine("exit");
                 ap.process.WaitForExit(100); // Arbitrary timeout for application process clean up
             }
-               
+            ResetBools();
         }
 
         /// <summary>
@@ -108,6 +108,8 @@ namespace DGE.Updater
 
         public static void Download(string args)
         {
+            if (process.status <= ApplicationStatus.STOPPING)
+                throw new Exception("Updater is not started");
             downloaded = false;
             isUpdateDownloaded = false;
             WriteToUpdater($"download {args}");
@@ -119,6 +121,8 @@ namespace DGE.Updater
         /// </summary>
         public static void Fetch(string args)
         {
+            if (process.status <= ApplicationStatus.STOPPING)
+                throw new Exception("Updater is not started");
             fetched = false;
             isUpdateAvailable = false;
             WriteToUpdater($"fetch {args}");
@@ -137,7 +141,7 @@ namespace DGE.Updater
             {
                 Thread.Sleep(RequestPollrateMilliseconds);
                 msTotal += RequestPollrateMilliseconds;
-                if (msTotal >= RequestTimeoutMilliseconds)
+                if (msTotal > RequestTimeoutMilliseconds)
                     throw new TimeoutException($"AutoUpdater ({action}) - Request timeout of {RequestTimeoutMilliseconds}ms exceeded");
             }
         }
