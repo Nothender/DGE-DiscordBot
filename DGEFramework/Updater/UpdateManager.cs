@@ -110,7 +110,7 @@ namespace DGE.Updater
         {
             downloaded = false;
             WriteToUpdater($"download {args}");
-            WaitTillTimeout(ref downloaded, "downloading");
+            WaitForRequest(ref downloaded, "downloading");
         }
 
         /// <summary>
@@ -120,10 +120,15 @@ namespace DGE.Updater
         {
             fetched = false;
             WriteToUpdater($"fetch {args}");
-            WaitTillTimeout(ref fetched, "fetching");
+            WaitForRequest(ref fetched, "fetching");
         }
 
-        private static void WaitTillTimeout(ref bool boolean, string action = "unknown")
+        /// <summary>
+        /// Blocks till the request was answered. If the timeout is exceeded it throws a TimeoutException
+        /// </summary>
+        /// <param name="boolean">The boolean we are waiting for (from false to true)</param>
+        /// <param name="action">Action name for error reporting</param>
+        private static void WaitForRequest(ref bool boolean, string action = "unknown")
         {
             int msTotal = 0;
             while (!boolean)
