@@ -109,6 +109,7 @@ namespace DGE.Updater
         public static void Download(string args)
         {
             downloaded = false;
+            isUpdateDownloaded = false;
             WriteToUpdater($"download {args}");
             WaitForRequest(ref downloaded, "downloading");
         }
@@ -119,6 +120,7 @@ namespace DGE.Updater
         public static void Fetch(string args)
         {
             fetched = false;
+            isUpdateAvailable = false;
             WriteToUpdater($"fetch {args}");
             WaitForRequest(ref fetched, "fetching");
         }
