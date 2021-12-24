@@ -131,9 +131,9 @@ namespace DGE.Discord.Commands
         [Summary("Runs the update procedure")]
         public async Task CommandUpdate(params string[] args)
         {
+            logCallbackChannel = Context.Channel;
             if (args.Length > 0)
             {
-                logCallbackChannel = Context.Channel;
                 UpdaterCommands.Execute(args, out bool interactive, LogCallback);
                 if (interactive)
                 {
@@ -159,7 +159,34 @@ namespace DGE.Discord.Commands
             }
             else // Run interactive procedure
             {
-                await ReplyAsync("Interactive update procedure was not implemented yet");
+                IUserMessage message = await ReplyAsync("Running interactive udpate procedure");
+                UpdateManager.StartUpdater(LogCallback);
+                await message.ModifyAsync(m => m.Content = $"{message.Content}\nFetching latest versions");
+                UpdateManager.Fetch("all");
+                if (UpdateManager.isUpdateAvailable)
+                {
+                    await message.ModifyAsync(m => m.Content = $"{message.Content}\nNew version(s) available - Downloading update");
+                    UpdateManager.Download("all");
+                    if (UpdateManager.isUpdateDownloaded)
+                    {
+                        await message.ModifyAsync(m => m.Content = $"{message.Content}\nA new update was downloaded : Do you want to restart and update the application ? (y/n)");
+
+                        IMessage answer = await NextMessageAsync();
+                        if (!(answer is null))
+                        {
+                            string content = answer.Content.ToLower().Trim();
+                            if (content == "y" || content == "yes")
+                            {
+                                await message.ModifyAsync(m => m.Content = $"{message.Content}\nRestarting and updating");
+                                UpdateManager.StartUpdateScript();
+                            }
+                        }
+                        await message.ModifyAsync(m => m.Content = $"{message.Content}\nCanceled operation - Not applying update and restarting");
+                        return;
+                    }
+                }
+                await message.ModifyAsync(m => m.Content = $"{message.Content}\nCanceled - No new version available");
+
             }
         }
 
