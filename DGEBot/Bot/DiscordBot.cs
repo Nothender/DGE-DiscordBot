@@ -105,7 +105,7 @@ namespace DGE.Bot
             client.StartAsync().GetAwaiter().GetResult();
         }
 
-        public async Task StartedBotReady()
+        private async Task StartedBotReady()
         {
             client.Ready -= StartedBotReady;
 

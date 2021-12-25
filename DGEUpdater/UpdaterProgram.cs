@@ -52,13 +52,13 @@ namespace DGE
         public static void DownloadVersions(int index)
         {
             //WIP
-            //Paths.ClearPath("Downloads");
+            Paths.ClearPath("Downloads");
             try
             {
                 foreach (ProjectInfo info in GetProjectsByIndex(index))
                 {
                     FetcherCollection.InitFetcher(info.FetcherOptions);
-                    //FetcherCollection.DownloadLatestVersion(info.FetcherOptions);
+                    FetcherCollection.DownloadLatestVersion(info.FetcherOptions);
                     
                     DirectoryInfo di = new DirectoryInfo(Paths.Get("Downloads"));
                     FileInfo file = di.GetFiles().OrderBy(p => p.CreationTime).ToArray().Last();
@@ -75,7 +75,7 @@ namespace DGE
             }
             finally
             {
-                //Paths.ClearPath("Downloads");
+                Paths.ClearPath("Downloads");
                 System.Console.WriteLine($"{Updater.UpdaterTags.PassthroughInfo}{Updater.UpdaterTags.AttemptedDownloadTag}");
             }
 
