@@ -15,6 +15,8 @@ namespace DGE
 
         private GitHubClient client;
 
+        private Release latestRelease;
+
         public GithubFetcher(params string[] args)
         {
             ChangeOptions(args);
@@ -24,22 +26,24 @@ namespace DGE
         {
             if(client is null) client = new GitHubClient(new ProductHeaderValue("DGE-AutoUpdater"));
 
-            //Changing credentials
-            if (args.Length == 1) //Connection token
+            // Changing credentials
+            if (args.Length == 1) // Connection token
                 client.Credentials = new Credentials(args[0]);
-            else if (args.Length == 2) //Username, and password
+            else if (args.Length == 2) // Username, and password
                 client.Credentials = new Credentials(args[0], args[1]);
+
+            latestRelease = null; // Resetting the release
 
             return Task.CompletedTask;
         }
 
         public async Task<string> FetchLatestVersion(params string[] args)
         {
-            if (args.Length < 2) throw new Exception("FetchLatestVersion needs at least 2 arguments (Owner, Repository)");
+            if (args.Length != 2) throw new Exception("FetchLatestVersion needs 2 arguments (Owner, Repository)");
             
-            Release release = await client.Repository.Release.GetLatest(args[0], args[1]);
-            
-            return $"{release.TagName}";
+            latestRelease = (await client.Repository.Release.GetAll(args[0], args[1])).ToArray()[0];
+
+            return $"{latestRelease.TagName}";
         }
 
         public async Task DownloadLatestRelease(params string[] args)
@@ -58,8 +62,8 @@ namespace DGE
 
             try
             {
-                // Gets the latest release
-                Release latestRelease = await client.Repository.Release.GetLatest(owner, repository);
+                if (latestRelease is null)
+                    await FetchLatestVersion();
                   
                 if (assetIndex < 0)
                 {
