@@ -61,6 +61,12 @@ namespace DGE
                 // Gets the latest release
                 Release latestRelease = await client.Repository.Release.GetLatest(owner, repository);
                   
+                if (assetIndex < 0)
+                {
+                    assetIndex = latestRelease.Assets.Count - assetIndex; //Taking the n - assetIndex element
+                    if (assetIndex < 0) assetIndex = 0; //If the value is out of bounds we clamp it to 0
+                }
+
                 int assetId = latestRelease.Assets[assetIndex].Id;
                 string downloadUrl = $"https://api.github.com/repos/{owner}/{repository}/releases/assets/{assetId}";
 
