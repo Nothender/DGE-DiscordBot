@@ -15,8 +15,6 @@ namespace DGE
 
         private GitHubClient client;
 
-        private Release latestRelease;
-
         public GithubFetcher(params string[] args)
         {
             ChangeOptions(args);
@@ -32,18 +30,19 @@ namespace DGE
             else if (args.Length == 2) // Username, and password
                 client.Credentials = new Credentials(args[0], args[1]);
 
-            latestRelease = null; // Resetting the release
-
             return Task.CompletedTask;
+        }
+
+        private async Task<Release> GetLatestRelease(string owner, string repository)
+        {
+            return (await client.Repository.Release.GetAll(owner, repository)).ToArray()[0];
         }
 
         public async Task<string> FetchLatestVersion(params string[] args)
         {
             if (args.Length != 2) throw new Exception("FetchLatestVersion needs 2 arguments (Owner, Repository)");
-            
-            latestRelease = (await client.Repository.Release.GetAll(args[0], args[1])).ToArray()[0];
 
-            return $"{latestRelease.TagName}";
+            return $"{(await GetLatestRelease(args[0], args[1])).TagName}";
         }
 
         public async Task DownloadLatestRelease(params string[] args)
@@ -62,8 +61,7 @@ namespace DGE
 
             try
             {
-                if (latestRelease is null)
-                    await FetchLatestVersion();
+                Release latestRelease = await GetLatestRelease(args[0], args[1]);
                   
                 if (assetIndex < 0)
                 {

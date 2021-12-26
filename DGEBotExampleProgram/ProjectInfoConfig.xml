@@ -4,9 +4,9 @@
     <separator>></separator> <!-- The separator character used for the v-latest, dl-latest, and options splitting -->
     <repos>
         <name>DGE-Bot</name>
-        <v-latest>github>Nothender>DGE-Bot</v-latest> <!-- The repository from which the latest project version is fetched; note the separation is done with '>' -->
+        <v-latest>github>Nothender>DGE-DiscordBot</v-latest> <!-- The repository from which the latest project version is fetched; note the separation is done with '>' -->
         <!-- Type/website > Owner > Repository > release asset index to download (here 0 is app.zip) -->
-        <dl-latest>github>Nothender>DGE-Bot>0</dl-latest> <!-- The repository from which the latest project version is downloaded -->
+        <dl-latest>github>Nothender>DGE-DiscordBot>0</dl-latest> <!-- The repository from which the latest project version is downloaded -->
         <options>github</options> <!-- Options to create the fetcher, ex : the type/website, login token, etc... -->
         <module>DGE-Framework</module> <!-- Name of the modules used to calculate the current project version -->
         <module>DGE-Bot</module>

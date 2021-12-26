@@ -58,7 +58,7 @@ namespace DGE
                 foreach (ProjectInfo info in GetProjectsByIndex(index))
                 {
                     FetcherCollection.InitFetcher(info.FetcherOptions);
-                    FetcherCollection.DownloadLatestVersion(info.FetcherOptions);
+                    FetcherCollection.DownloadLatestVersion(info.DownloadLatestGet);
                     
                     DirectoryInfo di = new DirectoryInfo(Paths.Get("Downloads"));
                     FileInfo file = di.GetFiles().OrderBy(p => p.CreationTime).ToArray().Last();
