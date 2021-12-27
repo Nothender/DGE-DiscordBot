@@ -68,17 +68,16 @@ namespace DGE
                     assetIndex = latestRelease.Assets.Count - assetIndex; //Taking the n - assetIndex element
                     if (assetIndex < 0) assetIndex = 0; //If the value is out of bounds we clamp it to 0
                 }
-
-                int assetId = latestRelease.Assets[assetIndex].Id;
-                string downloadUrl = $"https://api.github.com/repos/{owner}/{repository}/releases/assets/{assetId}";
+                ReleaseAsset asset = latestRelease.Assets[assetIndex];
+                string downloadURL = asset.BrowserDownloadUrl;
 
                 // Download with WebClient
                 using var webClient = new WebClient();
-                webClient.Headers.Add(HttpRequestHeader.Authorization, $"token {client.Credentials.GetToken()}");
+                //webClient.Headers.Add(HttpRequestHeader.Authorization, $"token {client.Credentials.GetToken()}");
                 webClient.Headers.Add(HttpRequestHeader.Accept, "application/octet-stream");
 
                 // Download the file
-                webClient.DownloadFileAsync(new Uri(downloadUrl), Paths.Get("Downloads"));
+                webClient.DownloadFile(downloadURL, $"{Paths.Get("Downloads")}{asset.Name}");
             }
             catch
             {
