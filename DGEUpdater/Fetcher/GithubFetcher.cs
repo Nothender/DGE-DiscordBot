@@ -73,7 +73,11 @@ namespace DGE
 
                 // Download with WebClient
                 using var webClient = new WebClient();
-                //webClient.Headers.Add(HttpRequestHeader.Authorization, $"token {client.Credentials.GetToken()}");
+
+                string token = client.Credentials.GetToken();
+                if (!string.IsNullOrEmpty(token))
+                    webClient.Headers.Add(HttpRequestHeader.Authorization, $"token {token}"); // If the client has a token we use it to download the asset
+
                 webClient.Headers.Add(HttpRequestHeader.Accept, "application/octet-stream");
 
                 // Download the file

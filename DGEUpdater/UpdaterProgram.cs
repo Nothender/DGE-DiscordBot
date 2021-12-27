@@ -58,8 +58,8 @@ namespace DGE
                 foreach (ProjectInfo info in GetProjectsByIndex(index))
                 {
                     FetcherCollection.InitFetcher(info.FetcherOptions);
-                    FetcherCollection.DownloadLatestVersion(info.DownloadLatestGet);
-                    
+                    FetcherCollection.DownloadLatestVersion(info.DownloadLatestGet); // MAKE SURE THE ASSET ENDS WITH .zip SO IT CAN BE EXTRACTED AND INSTALLED CORRECTLY
+
                     DirectoryInfo di = new DirectoryInfo(Paths.Get("Downloads"));
                     FileInfo file = di.GetFiles().OrderBy(p => p.CreationTime).ToArray().Last();
 
