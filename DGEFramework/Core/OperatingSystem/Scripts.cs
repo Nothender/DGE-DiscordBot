@@ -15,11 +15,11 @@ namespace DGE.Core.OperatingSystem
         /// Moves the contents of "Contents" folder, then restarts the app passed in arguments, NEEDS DGE to shutdown
         /// </summary>
         public static readonly Script UpdateRestartApp = new Script("UpdateRestartApp")
-            .DefineImplementation(OSPlatform.WINDOWS, "set app=%1\nmove .\\Updater\\Contents\\*.* ..\\\nstart %app%") as Script;
+            .DefineImplementation(OSPlatform.WINDOWS, "set app=%1\nmove .\\Updater\\Contents\\*.* .\\\nstart %app%") as Script;
         /// <summary>
         /// Moves the contents of "Contents" folder, NEEDS DGE to shutdown
         /// </summary>
-        public static readonly Script UpdateeApp = new Script("UpdateApp")
-            .DefineImplementation(OSPlatform.WINDOWS, "move .\\Updater\\Contents\\*.* ..\\") as Script;
+        public static readonly Script UpdateApp = new Script("UpdateApp")
+            .DefineImplementation(OSPlatform.WINDOWS, "move .\\Updater\\Contents\\*.* .\\") as Script;
     }
 }
