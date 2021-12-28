@@ -15,6 +15,7 @@ using Discord.Addons;
 using System.Linq;
 using DGE.Core.OperatingSystem;
 using DGE.Updater;
+using DGE.Console;
 
 namespace DGE.Discord.Commands
 {
@@ -124,34 +125,69 @@ namespace DGE.Discord.Commands
             Main.Stop();
         }
 
-        [Command("Updater")]
+        [Command("Updater", RunMode = RunMode.Async)]
         [Alias("Update")]
         [RequireOwner]
         [Summary("Runs the update procedure")]
         public async Task CommandUpdate(params string[] args)
         {
-            
-
+            logCallbackChannel = Context.Channel;
             if (args.Length > 0)
             {
-                string arg0 = args[0].ToLower().Trim();
-
-                if(arg0 == "s" || arg0 == "start")
+                UpdaterCommands.Execute(args, out bool interactive, LogCallback);
+                if (interactive)
                 {
-                    logCallbackChannel = Context.Channel;
-                    UpdateManager.StartUpdater(LogCallback);
-                }
-                else if (arg0 == "wau")
-                {
-                    UpdateManager.WriteToUpdater(string.Join(' ', args, 1, args.Length - 1));
+                    string action = args[0].ToLower().Trim();
+                    if (action == "i" || action == "install")
+                    {
+                        await ReplyAsync("This will restart the application, are you sure you want to continue ? (y/n)");
+                        IMessage answer = await NextMessageAsync();
+                        if(!(answer is null))
+                        {
+                            string content = answer.Content.ToLower().Trim();
+                            if (content == "y" || content == "yes")
+                            {
+                                await ReplyAsync("Installing new update - Rebooting");
+                                AssemblyBot.logger.Log("User is running Interactive install procedure - Rebooting", EnderEngine.Logger.LogLevel.INFO);
+                                UpdateManager.StartUpdateScript();
+                            }
+                            else
+                                await ReplyAsync("Canceled interactive install procedure");
+                        }
+                    }
                 }
             }
             else // Run interactive procedure
             {
-                
+                IUserMessage message = await ReplyAsync("Running interactive udpate procedure");
+                UpdateManager.StartUpdater(LogCallback);
+                await message.ModifyAsync(m => m.Content = $"{message.Content}\nFetching latest versions");
+                UpdateManager.Fetch("all");
+                if (UpdateManager.isUpdateAvailable)
+                {
+                    await message.ModifyAsync(m => m.Content = $"{message.Content}\nNew version(s) available - Downloading update");
+                    UpdateManager.Download("all");
+                    if (UpdateManager.isUpdateDownloaded)
+                    {
+                        await message.ModifyAsync(m => m.Content = $"{message.Content}\nA new update was downloaded : Do you want to restart and update the application ? (y/n)");
+
+                        IMessage answer = await NextMessageAsync();
+                        if (!(answer is null))
+                        {
+                            string content = answer.Content.ToLower().Trim();
+                            if (content == "y" || content == "yes")
+                            {
+                                await message.ModifyAsync(m => m.Content = $"{message.Content}\nRestarting and updating");
+                                UpdateManager.StartUpdateScript();
+                            }
+                        }
+                        await message.ModifyAsync(m => m.Content = $"{message.Content}\nCanceled operation - Not applying update and restarting");
+                        return;
+                    }
+                }
+                await message.ModifyAsync(m => m.Content = $"{message.Content}\nCanceled - No new version available");
+
             }
-
-
         }
 
         private IMessageChannel logCallbackChannel;
