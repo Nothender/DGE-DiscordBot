@@ -43,7 +43,7 @@ namespace DGE.Updater
         {
             ProcessStartInfo startInfo = new ProcessStartInfo
             {
-                FileName = "DGEUpdater.exe",
+                FileName = $"DGEUpdater{OS.GetDotnetExtension()}",
                 UseShellExecute = false,
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,

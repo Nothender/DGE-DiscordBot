@@ -38,5 +38,23 @@ namespace DGE.Core.OperatingSystem
             return OSPlatform.UNKNOWN;
         }
 
+        #region Utils
+        private static string[] dotnetExtensions = new string[4]
+        {
+            ".exe",
+            ".dll",
+            ".dll",
+            ".dll"
+        };
+
+        /// <summary>
+        /// Gets the extension to run a .NET app depending on the current OS
+        /// </summary>
+        /// <returns> Returns a string from 2 to 3 characters containing either ".exe" or ".dll" </returns>
+        public static string GetDotnetExtension() => dotnetExtensions[(int)OS.CurrentOS];
+
+        #endregion Utils
+
     }
+
 }
