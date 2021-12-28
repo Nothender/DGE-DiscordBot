@@ -38,8 +38,24 @@ namespace DGE.Core.OperatingSystem
 
         public string GetImplementation(OSPlatform platform)
         {
-            if (platform == OSPlatform.UNKNOWN) platform = OSPlatform.UNIX; // Default to unix, bc most of the time if it is unknown it is unix based
-            return implementations[(int)platform] ?? throw new NotImplementedException($"There are no implementation for the specified OS {platform}");
+            if (platform == OSPlatform.UNKNOWN)
+                platform = OSPlatform.UNIX; // Default to unix, bc most of the time if it is unknown it is unix based
+            //Select implementation that exists
+            if(implementations[(int)platform] is null)
+            {
+                for(int i = 1; i <= implementations.Length; i++)
+                {
+                    int index = i % implementations.Length; // We start at windows and stop at unix, and end at windows
+                    if (implementations[index] is null) continue;
+
+                    AssemblyFramework.logger.Log($"Script defaulted to {(OSPlatform)index} platform implementation, because {platform} doesn't have any implementation", EnderEngine.Logger.LogLevel.WARN);
+                    return implementations[index];
+                }
+            }
+            else
+                return implementations[(int)platform];
+            // If no implementations was found we throw an exception
+            throw new NotImplementedException($"There are no implementation for the specified OS {platform}");
         }
 
         /// <summary>
