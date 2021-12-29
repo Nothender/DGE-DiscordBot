@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
 using DGE;
+using DGE.Core;
+using DGE.Core.OperatingSystem;
 
 namespace DGE.Core
 {
@@ -11,8 +13,11 @@ namespace DGE.Core
     /// </summary>
     public static class CloseEvent
     {
-        [DllImport("Kernel32")]
-        public static extern bool SetConsoleCtrlHandler(CtrlEventHandler handler, bool add);
+        public static bool SetCloseHandler(CtrlEventHandler handler, bool add)
+        {
+            if (OS.CurrentOS == OperatingSystem.OSPlatform.WINDOWS)
+                WindowsCloseHandler.SetConsoleCtrlHandler(handler, add);
+        }
 
         public delegate bool CtrlEventHandler(CtrlType ctrlType);
 

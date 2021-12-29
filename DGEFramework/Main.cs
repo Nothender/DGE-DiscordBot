@@ -8,6 +8,7 @@ using DGE.Console;
 using DGE.Application;
 using System.Runtime.InteropServices;
 using static DGE.Core.CloseEvent;
+using DGE.Core.OperatingSystem;
 
 namespace DGE
 {
@@ -56,7 +57,8 @@ namespace DGE
 
             DGEModules.RegisterModule(AssemblyFramework.module);
 
-            CloseEvent.SetConsoleCtrlHandler(handler, true);
+            if(OS.CurrentOS == Core.OperatingSystem.OSPlatform.WINDOWS)
+                CloseEvent.SetConsoleCtrlHandler(handler, true); // Uses kernel32 stuff so it runs only on windows
 
             if (createCommands)
             {
