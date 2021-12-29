@@ -58,7 +58,7 @@ namespace DGE
             DGEModules.RegisterModule(AssemblyFramework.module);
 
             if(OS.CurrentOS == Core.OperatingSystem.OSPlatform.WINDOWS)
-                CloseEvent.SetConsoleCtrlHandler(handler, true); // Uses kernel32 stuff so it runs only on windows
+                CloseEvent.SetCloseHandler(handler, true); // Uses kernel32 stuff so it runs only on windows
 
             if (createCommands)
             {

@@ -17,6 +17,7 @@ namespace DGE.Core
         {
             if (OS.CurrentOS == OperatingSystem.OSPlatform.WINDOWS)
                 WindowsCloseHandler.SetConsoleCtrlHandler(handler, add);
+            return false;
         }
 
         public delegate bool CtrlEventHandler(CtrlType ctrlType);
