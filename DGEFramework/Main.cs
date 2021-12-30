@@ -136,7 +136,7 @@ namespace DGE
                     if (lineRead is null)
                         break;
                     expression = lineRead.ToLower().Split(' ');
-                    if (expression.Length < 1)
+                    if (expression.Length <= 0)
                         continue;
                     command = expression[0].Trim(' ', '\t', '\n');
                     if (command.Length == 0)
