@@ -16,7 +16,11 @@ namespace DGE.Core
         public static bool SetCloseHandler(CtrlEventHandler handler, bool add)
         {
             if (OS.CurrentOS == OperatingSystem.OSPlatform.WINDOWS)
-                WindowsCloseHandler.SetConsoleCtrlHandler(handler, add);
+                return WindowsCloseHandler.SetConsoleCtrlHandler(handler, add);
+            else if (OS.CurrentOS == OperatingSystem.OSPlatform.UNIX)
+            {
+                AppDomain.CurrentDomain.ProcessExit += (s, e) => handler.Invoke(CtrlType.CTRL_CLOSE_EVENT); //I have no idea if that will work
+            }
             return false;
         }
 
