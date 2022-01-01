@@ -13,14 +13,25 @@ namespace DGE.Core
     /// </summary>
     public static class CloseEvent
     {
+
+        public static EventHandler naiveHandler;
+
+        public static void Init(MainRunMode runMode)
+        {
+            if (OS.CurrentOS == OperatingSystem.OSPlatform.UNIX)
+            {
+                if (runMode == MainRunMode.CONSOLE)
+                    System.Console.CancelKeyPress += (s, e) => naiveHandler?.Invoke(s, e);
+                AppDomain.CurrentDomain.ProcessExit += naiveHandler;
+            }
+        }
+
         public static bool SetCloseHandler(CtrlEventHandler handler, bool add)
         {
             if (OS.CurrentOS == OperatingSystem.OSPlatform.WINDOWS)
                 return WindowsCloseHandler.SetConsoleCtrlHandler(handler, add);
             else if (OS.CurrentOS == OperatingSystem.OSPlatform.UNIX)
-            {
-                AppDomain.CurrentDomain.ProcessExit += (s, e) => handler.Invoke(CtrlType.CTRL_CLOSE_EVENT); //I have no idea if that will work
-            }
+                naiveHandler += (s, e) => handler.Invoke(CtrlType.CTRL_CLOSE_EVENT); //Default CtrlType event
             return false;
         }
 
