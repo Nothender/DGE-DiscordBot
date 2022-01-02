@@ -16,7 +16,11 @@ namespace DGE.Core
 
         public static EventHandler naiveHandler;
 
-        public static void Init(MainRunMode runMode)
+        /// <summary>
+        /// Initialization doesn't need to be at Init but can be at run
+        /// </summary>
+        /// <param name="runMode"></param>
+        internal static void Init(MainRunMode runMode)
         {
             if (OS.CurrentOS == OperatingSystem.OSPlatform.UNIX)
             {
