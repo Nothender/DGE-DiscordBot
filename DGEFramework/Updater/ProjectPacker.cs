@@ -26,14 +26,25 @@ namespace DGE.Updater
         };
 
         /// <summary>
+        /// List of files that will be included in the packing (If full setting applied when packign) (*.extension writing is allowed), Including folders may not work
+        /// </summary>
+        public static List<string> fullIncludes = new List<string>()
+        {
+            "config.txt",
+            "config-exp.txt"
+        };
+
+        /// <summary>
         /// Creates a .zip file containing all the important files for release (application.exe)
         /// </summary>
+        /// <param name="fileName"> The name with which the file will be packed </param>
+        /// <param name="full"> If true, configs and settings are packed </param>
         /// <returns> The FilePath to the .zip </returns>
-        public static string Pack(string fileName)
+        public static string Pack(string fileName, bool full)
         {
-            // Remark : does not yet pack a config example file - see configuration handling
+            // Remark : does not yet pack a config example file - see configuration handling (if not 'full')
 
-            string[] filesToInclude = SelectFiles();
+            string[] filesToInclude = SelectFiles(full);
 
             string temp_dir = Paths.Get("Application") + "Temp/" + $"TPD-{fileName}/";
             string output_path = Paths.Get("Application") + $"{fileName}.zip";
@@ -61,15 +72,19 @@ namespace DGE.Updater
         /// Selects the include files in the application path
         /// </summary>
         /// <returns> The FullName of selected files </returns>
-        private static string[] SelectFiles()
+        private static string[] SelectFiles(bool fullPack)
         {
             List<string> filesPath = new List<string>();
 
+            string[] includingFiles = new string[fullPack ? includes.Count + fullIncludes.Count : includes.Count];
+            includes.CopyTo(includingFiles, 0); // Adding include files
+            if (fullPack) fullIncludes.CopyTo(includingFiles, includes.Count); // If full packing, adding configs and settings
+
             foreach(string file in Directory.EnumerateFiles(Paths.Get("Application")))
             {
-                foreach(string include in includes)
+                foreach(string include in includingFiles)
                 {
-                    if ((include == file) || (include.StartsWith('*') && file.EndsWith(include.TrimStart('*')))) // Implement cleaner algorithm later (Actually its ok if i leave it like that)
+                    if ((file.EndsWith(include)) || (include.StartsWith('*') && file.EndsWith(include.TrimStart('*')))) // Implement cleaner algorithm later (Actually its ok if i leave it like that)
                     {
                         filesPath.Add(file);
                         break;
