@@ -73,12 +73,16 @@ namespace DGE.Console
             });
             Commands.CreateCommand("pack", (a) =>
             {
-                bool fullPack = a.Length > 0 ? a[0] == "f" || a[0] == "full" : false;
+                bool fullPack = a.Length > 0 ? a[0] == "-f" || a[0] == "-full" : false;
 
                 string fileName = fullPack ? "DGE-FullPack" : "DGE-Latest";
 
-                if (a.Length > 1) // If the user wants to define his own file name
-                    fileName = string.Join('-', a, 1, a.Length - 1); // Second argument moving on
+                if (a.Length > 0)
+                {
+                    if (!fullPack) fileName = string.Join('-', a);
+                    else if (a.Length > 1) // If the user wants to define his own file name
+                        fileName = string.Join('-', a, 1, a.Length - 1); // Second argument moving on
+                }
 
                 string filePath = Updater.ProjectPacker.Pack(fileName, fullPack);
 
