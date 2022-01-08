@@ -12,7 +12,7 @@ namespace DGE.Updater
 
 
         /// <summary>
-        /// List of files that will be included in the packing (*.extension writing is allowed), Including folders may not work
+        /// List of files that will be included in the packing (*.extension writing is allowed), Include folders by adding a '/' at the end or surrounding them with it
         /// </summary>
         public static List<string> includes = new List<string>()
         {
@@ -22,7 +22,8 @@ namespace DGE.Updater
             "*.runtimeconfig.json",     // Configs for runtime (specifies dependencies)
             "ProjectInfoConfig.xml",    // Updating info XML file for updater
             "*.dll",                    // Dependencies
-            "*.pdb"                     // Debug files
+            "*.pdb",                    // Debug files
+            "runtimes/"                 // runtime dependencies for different OS
         };
 
         /// <summary>
@@ -54,10 +55,18 @@ namespace DGE.Updater
 
             Directory.CreateDirectory(temp_dir);
 
-            foreach(string file in filesToInclude)
+            foreach (string file in filesToInclude)
             {
-                string temp_file = Path.Combine(temp_dir, Path.GetFileName(file));
-                File.Copy(file, temp_file);
+                if (file.EndsWith('/')) // File is folder
+                {
+                    string temp_folder = Path.Combine(temp_dir, Path.GetFileName(Path.GetDirectoryName(file)));
+                    Paths.CopyDirectory(file.TrimEnd('/'), temp_folder.TrimEnd('/'), true);
+                }
+                else
+                {
+                    string temp_file = Path.Combine(temp_dir, Path.GetFileName(file));
+                    File.Copy(file, temp_file);
+                }
             }
 
             if (File.Exists(output_path)) File.Delete(output_path); // Overriding if exists
@@ -79,8 +88,8 @@ namespace DGE.Updater
             string[] includingFiles = new string[fullPack ? includes.Count + fullIncludes.Count : includes.Count];
             includes.CopyTo(includingFiles, 0); // Adding include files
             if (fullPack) fullIncludes.CopyTo(includingFiles, includes.Count); // If full packing, adding configs and settings
-
-            foreach(string file in Directory.EnumerateFiles(Paths.Get("Application")))
+            // Code could be cleaner but who cares
+            foreach(string file in Directory.EnumerateFiles(Paths.Get("Application"))) // Files
             {
                 foreach(string include in includingFiles)
                 {
@@ -91,7 +100,19 @@ namespace DGE.Updater
                     }
                 }
             }
-
+            foreach (string folder in Directory.GetDirectories(Paths.Get("Application"))) // Folders
+            {
+                foreach (string include in includingFiles)
+                {
+                    if (!include.EndsWith('/')) continue;
+                    string includeFolder = include.Trim('/');
+                    if (folder.EndsWith(includeFolder) || (includeFolder.StartsWith('*') && folder.EndsWith(include.TrimStart('*')))) // Implement cleaner algorithm later (Actually its ok if i leave it like that)
+                    {
+                        filesPath.Add(folder + '/');
+                        break;
+                    }
+                }
+            }
             return filesPath.ToArray();
         }
 
