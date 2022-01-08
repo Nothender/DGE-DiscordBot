@@ -22,20 +22,35 @@ namespace DGE.Core
         /// <param name="runMode"></param>
         internal static void Init(MainRunMode runMode)
         {
-            if (OS.CurrentOS == OperatingSystem.OSPlatform.UNIX)
+            try
             {
-                if (runMode == MainRunMode.CONSOLE)
-                    System.Console.CancelKeyPress += (s, e) => naiveHandler?.Invoke(s, e);
-                AppDomain.CurrentDomain.ProcessExit += naiveHandler;
+                if (OS.CurrentOS == OperatingSystem.OSPlatform.UNIX)
+                {
+                    if (runMode == MainRunMode.CONSOLE)
+                        System.Console.CancelKeyPress += (s, e) => naiveHandler?.Invoke(s, e);
+                    AppDomain.CurrentDomain.ProcessExit += naiveHandler;
+                }
+            }
+            catch(Exception ex)
+            {
+                AssemblyFramework.logger.Log($"Error at Closing event initialization : {ex.Message}", EnderEngine.Logger.LogLevel.FATAL); // Fatal as it may prevent the bot from working correctly
             }
         }
 
         public static bool SetCloseHandler(CtrlEventHandler handler, bool add)
         {
-            if (OS.CurrentOS == OperatingSystem.OSPlatform.WINDOWS)
-                return WindowsCloseHandler.SetConsoleCtrlHandler(handler, add);
-            else if (OS.CurrentOS == OperatingSystem.OSPlatform.UNIX)
-                naiveHandler += (s, e) => handler.Invoke(CtrlType.CTRL_CLOSE_EVENT); //Default CtrlType event
+            try
+            {
+                if (OS.CurrentOS == OperatingSystem.OSPlatform.WINDOWS)
+                    return WindowsCloseHandler.SetConsoleCtrlHandler(handler, add);
+                else if (OS.CurrentOS == OperatingSystem.OSPlatform.UNIX)
+                    naiveHandler += (s, e) => handler.Invoke(CtrlType.CTRL_CLOSE_EVENT); //Default CtrlType event
+                return false;
+            }
+            catch(Exception ex)
+            {
+                AssemblyFramework.logger.Log($"Error at setting CloseHandler event : {ex.Message}", EnderEngine.Logger.LogLevel.FATAL);
+            }
             return false;
         }
 
