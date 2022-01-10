@@ -135,7 +135,7 @@ namespace DGE.Discord.Commands
             if (args.Length > 0)
             {
                 UpdaterCommands.Execute(args, out bool interactive, LogCallback);
-                if (interactive)
+                if (interactive) // If not interactive, the command was already executed
                 {
                     string action = args[0].ToLower().Trim();
                     if (action == "i" || action == "install")
