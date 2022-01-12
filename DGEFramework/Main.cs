@@ -137,7 +137,7 @@ namespace DGE
                     if (lineRead is null)
                         break;
 
-                    AssemblyFramework.logger.Log($"[User] : \"{lineRead}\"", EnderEngine.Logger.LogLevel.DEBUG, EnderEngine.Logger.LogMethod.TO_FILE);
+                    AssemblyFramework.logger.Log($"[User]: \"{lineRead}\"", EnderEngine.Logger.LogLevel.INFO, EnderEngine.Logger.LogMethod.TO_FILE);
 
                     expression = lineRead.ToLower().Split(' ');
                     if (expression.Length <= 0)
