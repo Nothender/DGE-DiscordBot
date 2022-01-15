@@ -58,9 +58,10 @@ namespace DGE.Processes
             {
                 process.Start();
             }
-            catch
+            catch (Exception ex)
             {
                 OnStopped?.Invoke(this, EventArgs.Empty);
+                logger.Log($"Process threw error on start : {ex.Message}", EnderEngine.Logger.LogLevel.ERROR);
                 return;
             }
             OnStarted?.Invoke(this, EventArgs.Empty);
