@@ -147,7 +147,7 @@ namespace DGE.Updater
                 Thread.Sleep(RequestPollrateMilliseconds);
                 msTotal += RequestPollrateMilliseconds;
                 if (msTotal > msTimeout)
-                    throw new TimeoutException($"AutoUpdater ({action}) - Request timeout of {RequestTimeoutMilliseconds}ms exceeded");
+                    throw new TimeoutException($"AutoUpdater ({action}) - Request timeout of {customMillisecondTimeout}ms exceeded");
             }
         }
 
