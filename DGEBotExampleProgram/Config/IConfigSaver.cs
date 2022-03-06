@@ -4,8 +4,9 @@ using System.Text;
 
 namespace DGE.Config
 {
-    public interface IConfigLoader
+    public interface IConfigSaver
     {
-        public IConfig LoadConfig();
+        public void SaveConfig(IConfig config);
+
     }
 }
