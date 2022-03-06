@@ -17,6 +17,7 @@ using System.Drawing;
 
 using System.Diagnostics;
 using static DGE.Core.CloseEvent;
+using DGE.Config;
 
 namespace DGE
 {
@@ -31,17 +32,19 @@ namespace DGE
         {
             //TODO: This will be fixed to be cleaner
 #if DEBUG
-            string[] infos = File.ReadAllLines("config-exp.txt"); //Running experimental config
+            string configFile = "config-exp.txt"; //Running experimental config
 #else
-            string[] infos = File.ReadAllLines("config.txt"); //Running normal DGE config
+            string configFile = "config.txt" //Running normal DGE config
 #endif
             //See config-exemple.txt for more information
+            ConfigTextFileLoader cfgLoader = new ConfigTextFileLoader(configFile);
+            IConfig config = cfgLoader.LoadConfig();
 
             DGE.Main.Init();
             DGEModules.RegisterModule(AssemblyBot.module);
             DGEModules.RegisterModule(AssemblyEngine.module);
 
-            DiscordBot bot1 = new DiscordBot(infos[0], infos[2], ulong.Parse(infos[1]));
+            DiscordBot bot1 = new DiscordBot(config.Token, config.Prefix, config.FeedbackChannelId);
             ApplicationManager.Add(bot1);
 
             bot1.OnStarted += (s, e) => ProgramModule.RestoreSavedPrograms(bot1);
