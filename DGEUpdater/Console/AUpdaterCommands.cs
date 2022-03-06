@@ -20,7 +20,7 @@ namespace DGE.Console
                 return i;
             else
             {
-                int index = Array.FindIndex(Program.ProjectInfos.projectInfos, p => p.Version.name.ToLower() == arg);
+                int index = Array.FindIndex(UpdaterProgramEntry.ProjectInfos.projectInfos, p => p.Version.name.ToLower() == arg);
                 if (index == -1)
                     throw new ArgumentException($"The argument `{arg}` does not fit any use");
                 return index;

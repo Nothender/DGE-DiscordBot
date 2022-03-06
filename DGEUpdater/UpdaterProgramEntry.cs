@@ -12,7 +12,7 @@ using DGE.Updater;
 
 namespace DGE
 {
-    public static class Program
+    public static class UpdaterProgramEntry
     {
 
         static void Main(string[] args)

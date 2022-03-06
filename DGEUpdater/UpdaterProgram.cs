@@ -16,14 +16,14 @@ namespace DGE
         private static ProjectInfo[] GetProjectsByIndex(int index)
         {
             if (index < 0) // If there are no specific indexes, we fetch all versions of all projects
-                return Program.ProjectInfos.projectInfos;
-            else if (index >= Program.ProjectInfos.projectInfos.Length)
+                return UpdaterProgramEntry.ProjectInfos.projectInfos;
+            else if (index >= UpdaterProgramEntry.ProjectInfos.projectInfos.Length)
             {
                 UpdaterLogging.WriteToMain("No project of that index/name exists or was loaded. Couldn't fetch version", Logger.LogLevel.ERROR);
                 return new ProjectInfo[0]; 
             }
             else
-                return new ProjectInfo[1] { Program.ProjectInfos.projectInfos[index] };
+                return new ProjectInfo[1] { UpdaterProgramEntry.ProjectInfos.projectInfos[index] };
         }
 
         public static void FetchVersions(int index)
