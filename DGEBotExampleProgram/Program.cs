@@ -14,15 +14,18 @@ using DGE.Discord.Handlers;
 using DGE.ProgramModules;
 using DGE.Rendering;
 using System.Drawing;
-
 using System.Diagnostics;
 using static DGE.Core.CloseEvent;
 using DGE.Config;
+using EnderEngine;
 
 namespace DGE
 {
-    public class Program
+    public static class Program
     {
+
+        internal static Logger logger = new Logger("MainProgram");
+
         private static void Main(string[] args)
         {
             DiscordBotMain();
@@ -36,9 +39,25 @@ namespace DGE
 #else
             string configFile = "config.txt" //Running normal DGE config
 #endif
+
+            IConfigLoader cfgLoader;
+            IConfig config;
             //See config-exemple.txt for more information
-            ConfigTextFileLoader cfgLoader = new ConfigTextFileLoader(configFile);
-            IConfig config = cfgLoader.LoadConfig();
+            if (File.Exists(configFile))
+            {
+                cfgLoader = new ConfigTextFileParser(configFile);
+                config = cfgLoader.LoadConfig();
+            }
+            else
+            {
+                logger.Log("The program wasn't able to identify a valid config file\nAutomatically running console config file creation process", Logger.LogLevel.WARN);
+                cfgLoader = new ConsoleConfigLoader();
+                config = cfgLoader.LoadConfig();
+
+                IConfigSaver cfgSaver = new ConfigTextFileParser(configFile);
+                cfgSaver.SaveConfig(config);
+                logger.Log("Saved newly created config", Logger.LogLevel.INFO);
+            }
 
             DGE.Main.Init();
             DGEModules.RegisterModule(AssemblyBot.module);
