@@ -37,7 +37,7 @@ namespace DGE
 #if DEBUG
             string configFile = "config-exp.txt"; //Running experimental config
 #else
-            string configFile = "config.txt" //Running normal DGE config
+            string configFile = "config.txt"; //Running normal DGE config
 #endif
 
             IConfigLoader cfgLoader;
