@@ -20,7 +20,7 @@ using DGE.Console;
 namespace DGE.Discord.Commands
 {
     [Summary("Developpers commands")]
-    public class DevCommands : DGEInteractiveBase
+    public class DevCommands : DGEModuleBase
     {
         [Command("TimeCommand")]
         [Summary("Executes a command, and measures the total time taken")]
@@ -74,17 +74,20 @@ namespace DGE.Discord.Commands
         public async Task CommandStop(bool bot = false)
         {
 #if RELEASE
+            await ReplyAsync("Interactive commands are not supported anymore because of a problem with one of the dependencies. Can only shut the bot from Console");
+            return;
+
             Random r = new Random();
             string code = r.Next(10, 99).ToString();
             for (int i = 0; i < 6; i++)
             {
                 code += '-' + r.Next(10, 99).ToString();
             }
-            await ReplyAsync($"Are you sure ? Write code {code.Replace("-", "")} by placing a '-' every 2 numbers");
-            IMessage message = await NextMessageAsync();
+            //await ReplyAsync($"Are you sure ? Write code {code.Replace("-", "")} by placing a '-' every 2 numbers");
+            //IMessage message = await NextMessageAsync();
             if(message is null)
             {
-                await ReplyAsync(new DiscordInteractiveTimeoutException(DiscordBot.interactiveTimeoutSeconds).Message.Replace(CommandHandler.AvoidBugReportErrorTag, ""));
+                //await ReplyAsync(new DiscordInteractiveTimeoutException(DiscordBot.interactiveTimeoutSeconds).Message.Replace(CommandHandler.AvoidBugReportErrorTag, ""));
                 return;
             }
             if(message.Content.Trim() != code)

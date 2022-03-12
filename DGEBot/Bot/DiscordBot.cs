@@ -32,7 +32,7 @@ namespace DGE.Bot
         public DiscordSocketClient client { get; protected set; }
         public IServiceProvider services { get; protected set; }
         public CommandService commandsService { get; protected set; }
-        public InteractiveService interactiveServices { get; protected set; }
+        //public InteractiveService interactiveServices { get; protected set; }
 
         public const int interactiveTimeoutSeconds = 21;
 
@@ -72,12 +72,12 @@ namespace DGE.Bot
 
             commandsService = new CommandService();
 
-            interactiveServices = new InteractiveService(client, new InteractiveServiceConfig{ DefaultTimeout = new TimeSpan(0, 0, interactiveTimeoutSeconds) });
+            //interactiveServices = new InteractiveService(client, new InteractiveServiceConfig{ DefaultTimeout = new TimeSpan(0, 0, interactiveTimeoutSeconds) });
 
             services = new ServiceCollection()
                 .AddSingleton(client)
                 .AddSingleton(commandsService)
-                .AddSingleton(interactiveServices)
+                //.AddSingleton(interactiveServices)
                 .BuildServiceProvider();
 
             logger = new Logger($"DGE-Bot:{appCount}");
