@@ -13,8 +13,8 @@
 
   <ItemGroup>
     <PackageReference Include="Discord.Addons.Interactive" Version="2.0.0" />
-    <PackageReference Include="Discord.Net" Version="2.4.0" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="6.0.0-rc.2.21480.5" />
+    <PackageReference Include="Discord.Net" Version="3.4.1" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="6.0.0" />
     <PackageReference Include="NothenderEnderEngine" Version="1.0.0" />
   </ItemGroup>
 

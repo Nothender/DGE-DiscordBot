@@ -18,10 +18,10 @@ namespace DGE.Discord
             Context.commandGotFeedback = true;
         }
 
-        protected override async Task<IUserMessage> ReplyAsync(string message = null, bool isTTS = false, Embed embed = null, RequestOptions options = null, AllowedMentions allowedMentions = null, MessageReference messageReference = null)
+        protected override async Task<IUserMessage> ReplyAsync(string message = null, bool isTTS = false, Embed embed = null, RequestOptions options = null, AllowedMentions allowedMentions = null, MessageReference messageReference = null, MessageComponent components = null, ISticker[] stickers = null, Embed[] embeds = null)
         {
             Context.commandGotFeedback = true;
-            return await base.ReplyAsync(message, isTTS, embed, options, allowedMentions, messageReference);
+            return await base.ReplyAsync(message, isTTS, embed, options, allowedMentions, messageReference, components, stickers, embeds);
         }
 
     }
