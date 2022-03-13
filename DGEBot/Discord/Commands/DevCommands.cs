@@ -128,6 +128,7 @@ namespace DGE.Discord.Commands
             Main.Stop();
         }
 
+        /*
         [Command("Updater", RunMode = RunMode.Async)]
         [Alias("Update")]
         [RequireOwner]
@@ -191,7 +192,7 @@ namespace DGE.Discord.Commands
                 await message.ModifyAsync(m => m.Content = $"{message.Content}\nCanceled - No new version available");
 
             }
-        }
+        }*/
 
         private IMessageChannel logCallbackChannel;
 
