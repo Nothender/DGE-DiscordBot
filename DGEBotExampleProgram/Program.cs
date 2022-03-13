@@ -40,24 +40,7 @@ namespace DGE
             string configFile = "config.txt"; //Running normal DGE config
 #endif
 
-            IConfigLoader cfgLoader;
-            IConfig config;
-            //See config-exemple.txt for more information
-            if (File.Exists(configFile))
-            {
-                cfgLoader = new ConfigTextFileParser(configFile);
-                config = cfgLoader.LoadConfig();
-            }
-            else
-            {
-                logger.Log("The program wasn't able to identify a valid config file\nAutomatically running console config file creation process", Logger.LogLevel.WARN);
-                cfgLoader = new ConsoleConfigLoader();
-                config = cfgLoader.LoadConfig();
-
-                IConfigSaver cfgSaver = new ConfigTextFileParser(configFile);
-                cfgSaver.SaveConfig(config);
-                logger.Log("Saved newly created config", Logger.LogLevel.INFO);
-            }
+            IConfig config = LoadBotConfig(configFile);
 
             DGE.Main.Init();
             DGEModules.RegisterModule(AssemblyBot.module);
@@ -87,5 +70,30 @@ namespace DGE
             //DiscordGameEngineBot.RegisterCommandModule(typeof(CommandsExemple));
             //DiscordGameEngineBot.RegisterCommandModule(typeof(ApplicationServersCommands));
         }
+
+        private static IConfig LoadBotConfig(string configFile)
+        {
+            logger.Log($"Loading config from `./{configFile}`", Logger.LogLevel.INFO);
+            IConfigLoader cfgLoader;
+            IConfig config;
+            //See config-exemple.txt for more information
+            if (File.Exists(configFile))
+            {
+                cfgLoader = new ConfigTextFileParser(configFile);
+                config = cfgLoader.LoadConfig();
+            }
+            else
+            {
+                logger.Log("The program wasn't able to identify a valid config file\nAutomatically running console config file creation process", Logger.LogLevel.WARN);
+                cfgLoader = new ConsoleConfigLoader();
+                config = cfgLoader.LoadConfig();
+
+                IConfigSaver cfgSaver = new ConfigTextFileParser(configFile);
+                cfgSaver.SaveConfig(config);
+                logger.Log("Saved newly created config", Logger.LogLevel.INFO);
+            }
+            return config;
+        }
+
     }
 }
