@@ -70,7 +70,7 @@ namespace DGE
                 => AssemblyFramework.logger.Log(
                     ea is null || ea.Exception is null ?
                     "An UnobservedTaskException occured, but the exception cannot be identified" : 
-                    $"UnobservedTaskException caught >\n{ea.Exception.Message}\nStacktrace >{(ea.Exception.StackTrace is null ? "No stack trace" : ea.Exception.StackTrace)}\nSource > {ea.Exception.Source ?? "No source"}\nTargetSite > {ea.Exception.TargetSite?.Name ?? "No target site"}"
+                    $"UnobservedTaskException caught >\n{ea.Exception.Message}\nStacktrace > {(ea.Exception.StackTrace is null ? "No stack trace" : ea.Exception.StackTrace)}\nSource > {ea.Exception.Source ?? "No source"}\nTargetSite > {ea.Exception.TargetSite?.Name ?? "No target site"}"
                     , EnderEngine.Logger.LogLevel.ERROR);
 
         }
