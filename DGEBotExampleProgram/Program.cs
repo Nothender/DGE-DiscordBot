@@ -16,7 +16,7 @@ using DGE.Rendering;
 using System.Drawing;
 using System.Diagnostics;
 using static DGE.Core.CloseEvent;
-using DGE.Config;
+using DGE.Discord.Config;
 using EnderEngine;
 
 namespace DGE
@@ -46,7 +46,7 @@ namespace DGE
             DGEModules.RegisterModule(AssemblyBot.module);
             DGEModules.RegisterModule(AssemblyEngine.module);
 
-            DiscordBot bot1 = new DiscordBot(config.Token, config.Prefix, config.FeedbackChannelId);
+            DiscordBot bot1 = new DiscordBot(config);
             ApplicationManager.Add(bot1);
 
             bot1.OnStarted += (s, e) => ProgramModule.RestoreSavedPrograms(bot1);
