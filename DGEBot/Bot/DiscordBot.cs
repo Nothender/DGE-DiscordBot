@@ -59,19 +59,16 @@ namespace DGE.Bot
 
         private ulong feedbackChannelId;
 
-        public DiscordBot(IConfig config) : this(config.Token, config.Prefix, config.FeedbackChannelId) { }
+        public DiscordBot(IConfig config, DiscordSocketConfig socketConfig) : this(config.Token, config.Prefix, config.FeedbackChannelId, socketConfig) { }
 
-        public DiscordBot(string token, string commandPrefix, ulong feedbackChannelId) : base()
+        public DiscordBot(string token, string commandPrefix, ulong feedbackChannelId, DiscordSocketConfig socketConfig) : base()
         {
             appCount++;
 
             this.commandPrefix = commandPrefix;
             this.feedbackChannelId = feedbackChannelId;
 
-            client = new DiscordSocketClient(new DiscordSocketConfig()
-            {
-                AlwaysDownloadUsers = true
-            });
+            client = new DiscordSocketClient(socketConfig) ;
 
             commandsService = new CommandService();
 

@@ -18,6 +18,7 @@ using System.Diagnostics;
 using static DGE.Core.CloseEvent;
 using DGE.Discord.Config;
 using EnderEngine;
+using Discord;
 
 namespace DGE
 {
@@ -42,11 +43,17 @@ namespace DGE
 
             IConfig config = LoadBotConfig(configFile);
 
+            DiscordSocketConfig socketConfig = new DiscordSocketConfig()
+            {
+                AlwaysDownloadUsers = true,
+                GatewayIntents = GatewayIntents.All ^ GatewayIntents.GuildPresences ^ GatewayIntents.GuildInvites ^ GatewayIntents.GuildScheduledEvents
+            };
+
             DGE.Main.Init();
             DGEModules.RegisterModule(AssemblyBot.module);
             DGEModules.RegisterModule(AssemblyEngine.module);
 
-            DiscordBot bot1 = new DiscordBot(config);
+            DiscordBot bot1 = new DiscordBot(config, socketConfig);
             ApplicationManager.Add(bot1);
 
             bot1.OnStarted += (s, e) => ProgramModule.RestoreSavedPrograms(bot1);
