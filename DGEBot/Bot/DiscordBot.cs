@@ -13,6 +13,8 @@ using DGE.Exceptions;
 using Discord.Webhook;
 using Discord.Addons.Interactive;
 using Discord.Commands;
+using DGE.Config;
+using DGE.Discord.Config;
 
 namespace DGE.Bot
 {
@@ -57,6 +59,8 @@ namespace DGE.Bot
         public IMessageChannel feedbackChannel { get; set; }
 
         private ulong feedbackChannelId;
+
+        public DiscordBot(IConfig config) : this(config.Token, config.Prefix, config.FeedbackChannelId) { }
 
         public DiscordBot(string token, string commandPrefix, ulong feedbackChannelId) : base()
         {
