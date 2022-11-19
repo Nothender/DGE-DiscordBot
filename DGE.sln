@@ -24,8 +24,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DGEMinecraft", "DGEMinecraf
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DGERemoraBot", "DGERemoraBot\DGERemoraBot.csproj", "{0F94E492-CE6F-4B09-96B1-D96F7EEC8F00}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestingProject", "TestingProject\TestingProject.csproj", "{73CA5299-2AAE-435C-964B-CB9737CA3474}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -64,10 +62,6 @@ Global
 		{0F94E492-CE6F-4B09-96B1-D96F7EEC8F00}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0F94E492-CE6F-4B09-96B1-D96F7EEC8F00}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0F94E492-CE6F-4B09-96B1-D96F7EEC8F00}.Release|Any CPU.Build.0 = Release|Any CPU
-		{73CA5299-2AAE-435C-964B-CB9737CA3474}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{73CA5299-2AAE-435C-964B-CB9737CA3474}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{73CA5299-2AAE-435C-964B-CB9737CA3474}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{73CA5299-2AAE-435C-964B-CB9737CA3474}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
