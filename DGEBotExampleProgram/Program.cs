@@ -85,7 +85,7 @@ namespace DGE
             else
             {
                 logger.Log("The program wasn't able to identify a valid config file\nAutomatically running console config file creation process", Logger.LogLevel.WARN);
-                cfgLoader = new ConsoleConfigLoader();
+                cfgLoader = new ConsoleConfigLoader(logger);
                 config = cfgLoader.LoadConfig();
 
                 IConfigSaver cfgSaver = new ConfigTextFileParser(configFile);

@@ -13,7 +13,6 @@ using DGE.Exceptions;
 using Discord.Webhook;
 using Discord.Addons.Interactive;
 using Discord.Commands;
-using DGE.Config;
 using DGE.Discord.Config;
 
 namespace DGE.Bot
