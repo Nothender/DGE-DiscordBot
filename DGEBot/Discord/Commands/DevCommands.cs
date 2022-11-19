@@ -10,8 +10,6 @@ using DGE.Core;
 using DGE.UI.Feedback;
 using DGE.Bot;
 using Discord;
-using Discord.Addons.Interactive;
-using Discord.Addons;
 using System.Linq;
 using DGE.Core.OperatingSystem;
 using DGE.Updater;
@@ -71,28 +69,12 @@ namespace DGE.Discord.Commands
         [Alias("Shutdown", "Quit", "Exit", "STFU", "Shut")]
         [RequireOwner]
         [Summary("Stops the app bot if bot is true, else it shutdowns the entire framework")]
-        public async Task CommandStop(bool bot = false)
+        public async Task CommandStop(bool bot = false, params string[] s)
         {
 #if RELEASE
-            await ReplyAsync("Interactive commands are not supported anymore because of a problem with one of the dependencies. Can only shut the bot from Console");
-            return;
-
-            Random r = new Random();
-            string code = r.Next(10, 99).ToString();
-            for (int i = 0; i < 6; i++)
+            if (s is null || s.Length == 0 || s[0] != "RELEASE")
             {
-                code += '-' + r.Next(10, 99).ToString();
-            }
-            //await ReplyAsync($"Are you sure ? Write code {code.Replace("-", "")} by placing a '-' every 2 numbers");
-            //IMessage message = await NextMessageAsync();
-            if(message is null)
-            {
-                //await ReplyAsync(new DiscordInteractiveTimeoutException(DiscordBot.interactiveTimeoutSeconds).Message.Replace(CommandHandler.AvoidBugReportErrorTag, ""));
-                return;
-            }
-            if(message.Content.Trim() != code)
-            {
-                await ReplyAsync("Wrong code");
+                await ReplyAsync("The bot is running in release mod, to shut it down input the command and add \"Release\" at the end");
                 return;
             }
 #endif

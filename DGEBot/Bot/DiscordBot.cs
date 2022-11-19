@@ -11,7 +11,6 @@ using System.Threading.Tasks;
 using System.Linq;
 using DGE.Exceptions;
 using Discord.Webhook;
-using Discord.Addons.Interactive;
 using Discord.Commands;
 using DGE.Discord.Config;
 

@@ -65,6 +65,10 @@ namespace DGE.Console
             {
                 if (a.Length != 0) throw new InvalidArgumentCountException("restart", 0, a.Length);
 
+                AssemblyFramework.logger.Log($"Current executable path is : \"{Process.GetCurrentProcess().MainModule.FileName}\"", EnderEngine.Logger.LogLevel.INFO);
+
+                //string executableFileName; // TODO: 
+
                 Scripts.RunApp.CreateProcess(Process.GetCurrentProcess().MainModule.FileName);
                 Main.OnStopped += (s, e) => Scripts.RunApp.Run();
                 Main.Stop();
