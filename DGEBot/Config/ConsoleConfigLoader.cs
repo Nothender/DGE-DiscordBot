@@ -15,7 +15,7 @@ namespace DGE.Discord.Config
             this.programLogger = programLogger;
         }
 
-        public IConfig LoadConfig(Logger programLogger)
+        public IConfig LoadConfig()
         {
             programLogger.Log("Creating a config. Please enter the following items in order :\n - Discord Bot token\n - Command Prefix\n - feedbackChannelId (Discord Channel ID)", Logger.LogLevel.INFO);
             string token = System.Console.ReadLine();
