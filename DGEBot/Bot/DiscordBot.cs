@@ -118,8 +118,7 @@ namespace DGE.Bot
         public override void Stop()
         {
             OnShutdown?.Invoke(this, EventArgs.Empty);
-            if (status == ApplicationStatus.ON || status == ApplicationStatus.STARTING)
-                client.StopAsync().GetAwaiter().GetResult();
+            client.StopAsync().GetAwaiter().GetResult();
 
             OnStopped?.Invoke(this, EventArgs.Empty);
         }
