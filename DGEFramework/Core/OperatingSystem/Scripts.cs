@@ -11,18 +11,18 @@ namespace DGE.Core.OperatingSystem
         /// </summary>
         public static readonly Script RunApp = new Script("RunApp")
             .DefineImplementation(OSPlatform.WINDOWS, "set app=%1\nstart %app%")
-            .DefineImplementation(OSPlatform.UNIX, "#!/bin/sh\napp=$1\ndotnet $app") as Script;
+            .DefineImplementation(OSPlatform.LINUX, "#!/bin/sh\napp=$1\ndotnet $app") as Script;
         /// <summary>
         /// Moves the contents of "Contents" folder, then restarts the app (has to be .NET) passed in arguments, NEEDS DGE to shutdown
         /// </summary>
         public static readonly Script UpdateRestartApp = new Script("UpdateRestartApp")
             .DefineImplementation(OSPlatform.WINDOWS, "set app=%1\nmove .\\Updater\\Contents\\*.* .\\\nstart %app%")
-            .DefineImplementation(OSPlatform.UNIX, "#!/bin/sh\napp=$1\nmv ./Updater/Contents/* ./\ndotnet $app") as Script;
+            .DefineImplementation(OSPlatform.LINUX, "#!/bin/sh\napp=$1\nmv ./Updater/Contents/* ./\ndotnet $app") as Script;
         /// <summary>
         /// Moves the contents of "Contents" folder, NEEDS DGE to shutdown
         /// </summary>
         public static readonly Script UpdateApp = new Script("UpdateApp")
             .DefineImplementation(OSPlatform.WINDOWS, "move .\\Updater\\Contents\\*.* .\\")
-            .DefineImplementation(OSPlatform.UNIX, "#!/bin/sh\nmv ./Updater/Contents/* ./") as Script;
+            .DefineImplementation(OSPlatform.LINUX, "#!/bin/sh\nmv ./Updater/Contents/* ./") as Script;
     }
 }

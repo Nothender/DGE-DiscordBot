@@ -11,7 +11,7 @@ namespace DGE.Core.OperatingSystem
     public enum OSPlatform
     {
         WINDOWS = 0,
-        UNIX,
+        LINUX,
         MACOS,
         UNKNOWN
     }
@@ -32,7 +32,7 @@ namespace DGE.Core.OperatingSystem
             if (RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Windows))
                 return OSPlatform.WINDOWS;
             else if (RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Linux))
-                return OSPlatform.UNIX;
+                return OSPlatform.LINUX;
             else if (RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.OSX))
                 return OSPlatform.MACOS;
             return OSPlatform.UNKNOWN;
