@@ -11,8 +11,8 @@ using System.Threading.Tasks;
 using System.Linq;
 using DGE.Exceptions;
 using Discord.Webhook;
-using Discord.Addons.Interactive;
 using Discord.Commands;
+using DGE.Discord.Config;
 
 namespace DGE.Bot
 {
@@ -58,17 +58,16 @@ namespace DGE.Bot
 
         private ulong feedbackChannelId;
 
-        public DiscordBot(string token, string commandPrefix, ulong feedbackChannelId) : base()
+        public DiscordBot(IConfig config, DiscordSocketConfig socketConfig) : this(config.Token, config.Prefix, config.FeedbackChannelId, socketConfig) { }
+
+        public DiscordBot(string token, string commandPrefix, ulong feedbackChannelId, DiscordSocketConfig socketConfig) : base()
         {
             appCount++;
 
             this.commandPrefix = commandPrefix;
             this.feedbackChannelId = feedbackChannelId;
 
-            client = new DiscordSocketClient(new DiscordSocketConfig()
-            {
-                AlwaysDownloadUsers = true
-            });
+            client = new DiscordSocketClient(socketConfig) ;
 
             commandsService = new CommandService();
 
@@ -119,8 +118,7 @@ namespace DGE.Bot
         public override void Stop()
         {
             OnShutdown?.Invoke(this, EventArgs.Empty);
-            if (status == ApplicationStatus.ON || status == ApplicationStatus.STARTING)
-                client.StopAsync().GetAwaiter().GetResult();
+            client.StopAsync().GetAwaiter().GetResult();
 
             OnStopped?.Invoke(this, EventArgs.Empty);
         }

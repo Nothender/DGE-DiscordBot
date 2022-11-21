@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.Text;
 using System.IO;
 using System.Linq;
+using EnderEngine;
 
-namespace DGE.Config
+namespace DGE.Discord.Config
 {
     public class ConfigTextFileParser : IConfigLoader, IConfigSaver
     {
@@ -20,9 +21,9 @@ namespace DGE.Config
         {
             string[] lines = File.ReadAllLines(file);
             return new Config(
-                lines[0],
-                lines[2], 
-                ulong.Parse(lines[1])
+                lines[0],                   // Token
+                lines[2],                   // FeedbackChannelId
+                ulong.Parse(lines[1])       // Prefix
                 );
         }
 

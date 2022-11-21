@@ -47,7 +47,7 @@ namespace DGE.Console
             });
             Commands.CreateCommand("download", (a) => // Downloads the latest version of the project and extracts it
             {
-                if (a.Length != 1) throw new InvalidArgumentCountException("fetch", 1, a.Length);
+                if (a.Length != 1) throw new InvalidArgumentCountException("download", 1, a.Length);
 
                 UpdaterProgram.DownloadVersions(IndexFromArgument(a[0]));
 

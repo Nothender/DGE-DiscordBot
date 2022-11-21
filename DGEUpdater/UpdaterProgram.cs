@@ -15,6 +15,7 @@ namespace DGE
 
         private static ProjectInfo[] GetProjectsByIndex(int index)
         {
+
             if (index < 0) // If there are no specific indexes, we fetch all versions of all projects
                 return UpdaterProgramEntry.ProjectInfos.projectInfos;
             else if (index >= UpdaterProgramEntry.ProjectInfos.projectInfos.Length)
@@ -28,6 +29,7 @@ namespace DGE
 
         public static void FetchVersions(int index)
         {
+            UpdaterProgramEntry.PauseStandbyTimer(2);
             try
             {
                 foreach (ProjectInfo info in GetProjectsByIndex(index))
@@ -45,6 +47,7 @@ namespace DGE
             }
             finally
             {
+                UpdaterProgramEntry.UnPauseStandbyTimer(2);
                 System.Console.WriteLine($"{Updater.UpdaterTags.PassthroughInfo}{Updater.UpdaterTags.FetchedTag}");
             }
         }
@@ -52,6 +55,9 @@ namespace DGE
         public static void DownloadVersions(int index)
         {
             //WIP
+
+            UpdaterProgramEntry.PauseStandbyTimer(3);
+
             Paths.ClearPath("Downloads");
             try
             {
@@ -75,6 +81,7 @@ namespace DGE
             }
             finally
             {
+                UpdaterProgramEntry.UnPauseStandbyTimer(3);
                 Paths.ClearPath("Downloads");
                 System.Console.WriteLine($"{Updater.UpdaterTags.PassthroughInfo}{Updater.UpdaterTags.AttemptedDownloadTag}");
             }

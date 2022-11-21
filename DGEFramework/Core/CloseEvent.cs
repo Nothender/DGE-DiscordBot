@@ -24,7 +24,7 @@ namespace DGE.Core
         {
             try
             {
-                if (OS.CurrentOS == OperatingSystem.OSPlatform.UNIX)
+                if (OS.CurrentOS == OperatingSystem.OSPlatform.LINUX)
                 {
                     if (runMode == MainRunMode.CONSOLE)
                         System.Console.CancelKeyPress += (s, e) => naiveHandler?.Invoke(s, e);
@@ -43,7 +43,7 @@ namespace DGE.Core
             {
                 if (OS.CurrentOS == OperatingSystem.OSPlatform.WINDOWS)
                     return WindowsCloseHandler.SetConsoleCtrlHandler(handler, add);
-                else if (OS.CurrentOS == OperatingSystem.OSPlatform.UNIX)
+                else if (OS.CurrentOS == OperatingSystem.OSPlatform.LINUX)
                     naiveHandler += (s, e) => handler.Invoke(CtrlType.CTRL_CLOSE_EVENT); //Default CtrlType event
                 return false;
             }

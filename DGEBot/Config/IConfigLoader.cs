@@ -1,8 +1,9 @@
-﻿using System;
+﻿using EnderEngine;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace DGE.Config
+namespace DGE.Discord.Config
 {
     public interface IConfigLoader
     {
