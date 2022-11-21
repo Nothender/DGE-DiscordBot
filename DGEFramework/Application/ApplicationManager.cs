@@ -21,7 +21,17 @@ namespace DGE.Application
                 return -1;
             applications.Add(application);
             application.Id = applications.Count - 1;
-            Main.OnShutdown += (s, e) => application.Stop();
+            Main.OnShutdown += (s, e) => 
+            {
+                try
+                {
+                    application.Stop();
+                }
+                catch (Exception ex)
+                {
+                    AssemblyFramework.logger.Log($"An error happened while stopping the application {application.GetType()} (id: {application.Id}) :\n{ex.Message}", EnderEngine.Logger.LogLevel.ERROR);
+                }
+            };
             AssemblyFramework.logger.Log($"Application {application.GetType().Name} added (id: {application.Id})", EnderEngine.Logger.LogLevel.INFO);
             return application.Id;
         }
@@ -47,7 +57,15 @@ namespace DGE.Application
         {
             int c = applications.Count;
             foreach (IApplication app in applications)
-                app.Dispose();
+            {
+                try
+                {
+                    app.Dispose();
+                }catch (Exception ex)
+                {
+                    AssemblyFramework.logger.Log($"An error happened while disposing of the application {app.GetType()} (id: {app.Id}) :\n{ex.Message}", EnderEngine.Logger.LogLevel.ERROR);
+                }
+            }
             applications.Clear();
             AssemblyFramework.logger.Log($"Disposed of {c} applications", EnderEngine.Logger.LogLevel.INFO);
         }

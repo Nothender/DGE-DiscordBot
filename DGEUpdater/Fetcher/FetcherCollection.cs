@@ -42,9 +42,9 @@ namespace DGE
         {
             if (!fetchers.ContainsKey(arguments[0])) throw new Exception($"No fetcher of type {arguments[0]} was instantiated");
 
-            string[] deleteFetcherArgs = arguments.Skip(1).ToArray();
+            string[] downloadFetcherArgs = arguments.Skip(1).ToArray();
 
-            fetchers[arguments[0]].DownloadLatestRelease(deleteFetcherArgs).Wait();
+            fetchers[arguments[0]].DownloadLatestRelease(downloadFetcherArgs).Wait();
 
         }
 

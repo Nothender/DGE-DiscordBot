@@ -12,20 +12,33 @@ namespace DGE.Fractals
     public class Mandelbrot : IFractal
     {
 
-        private readonly float[,] mask;
+        private float[,] mask;
 
         public Mandelbrot(int size = 1000, int maxIterations = 256)
         {
+            try
+            {
+                Reset();
+            }
+            catch (Exception ex)
+            {
+                AssemblyEngine.logger.Log($"Couldn't initialize mandelbrot : {ex.Message}, {ex.StackTrace}", EnderEngine.Logger.LogLevel.ERROR);
+            }
+
+        }
+
+        public void Reset(int size = 1000, int maxIterations = 256)
+        {
             size = size > 0 ? size : 1;
 
-            int sizex = (int) (1.5f * size);
+            int sizex = (int)(1.5f * size);
             mask = new float[sizex, size];
 
-            float logMaxIterations = ((float)Math.Log2(maxIterations+1));
+            float logMaxIterations = ((float)Math.Log2(maxIterations + 1));
             float[] alphas = new float[maxIterations];
             for (int i = 0; i < maxIterations; i++)
             {
-                alphas[i] = ((float) Math.Log2(i + 1)) / logMaxIterations;
+                alphas[i] = ((float)Math.Log2(i + 1)) / logMaxIterations;
             }
 
             alphas[maxIterations - 1] = 0f;
@@ -33,7 +46,7 @@ namespace DGE.Fractals
             maxIterations -= 1;
 
             float xv = 3f / sizex;
-            float yv = 2f / size; 
+            float yv = 2f / size;
 
             float x = -2f;
             float y;
@@ -56,7 +69,6 @@ namespace DGE.Fractals
                     mask[xp, yp] = alphas[i];
                 }
             }
-
         }
 
         public void Render(IPixelBuffer surface, params Color[] colors)
@@ -67,7 +79,6 @@ namespace DGE.Fractals
             if (colors.Length == 0)
                 colors = new Color[2] { Color.FromArgb(255, 0, 0, 0), Color.FromArgb(255, 255, 255, 255) };
 
-            //TODO: move gradient generation somewhere else (maybe a utils file), and create a LogGradient as it works better for most fractals
             //TODO: Create a Fast Log method either here (math utils file) or in EE | Also could do a GPU accelerated Gradient generator
 
             int[] tsteps = new int[colors.Length-1];

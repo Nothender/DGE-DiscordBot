@@ -113,7 +113,7 @@ namespace DGE.ProgramModules
         [Command("ShowPrograms")]
         public async Task ShowExistingPrograms()
         {
-            await ReplyAsync("The different programs that can be instanced are :\n-" + string.Join("\n- ", programTypes.Keys.ToArray()));
+            await ReplyAsync("The different programs that can be instanced are :\n- " + string.Join("\n- ", programTypes.Keys.ToArray()));
         }
 
         [Command("CreateAllPrograms")]

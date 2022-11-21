@@ -11,7 +11,7 @@ namespace DGE.Core.OperatingSystem
     public enum OSPlatform
     {
         WINDOWS = 0,
-        UNIX,
+        LINUX,
         MACOS,
         UNKNOWN
     }
@@ -32,11 +32,29 @@ namespace DGE.Core.OperatingSystem
             if (RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Windows))
                 return OSPlatform.WINDOWS;
             else if (RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Linux))
-                return OSPlatform.UNIX;
+                return OSPlatform.LINUX;
             else if (RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.OSX))
                 return OSPlatform.MACOS;
             return OSPlatform.UNKNOWN;
         }
 
+        #region Utils
+        private static string[] dotnetExtensions = new string[4]
+        {
+            ".exe",
+            ".dll",
+            ".dll",
+            ".dll"
+        };
+
+        /// <summary>
+        /// Gets the extension to run a .NET app depending on the current OS
+        /// </summary>
+        /// <returns> Returns a string from 2 to 3 characters containing either ".exe" or ".dll" </returns>
+        public static string GetDotnetExtension() => dotnetExtensions[(int)OS.CurrentOS];
+
+        #endregion Utils
+
     }
+
 }

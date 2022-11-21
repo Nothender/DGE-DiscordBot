@@ -33,6 +33,8 @@ namespace DGE.Processes
                 this.safeStopMethod = safeStopMethod;
 
             ApplicationManager.Add(this);
+
+            logger = new EnderEngine.Logger($"Process:{Id}");
         }
 
         public override void Dispose()
@@ -42,8 +44,12 @@ namespace DGE.Processes
 
         public override void Start()
         {
+            if (!ProcessExitedCleanUp() || status >= ApplicationStatus.ON)
+                return;
+
             process = new Process { StartInfo = startInfo };
             process.EnableRaisingEvents = true;
+            process.Exited += (s, e) => ProcessExitedCleanUp();
             process.Exited += OnStopped;
 
             OnStarting?.Invoke(this, EventArgs.Empty);
@@ -52,9 +58,10 @@ namespace DGE.Processes
             {
                 process.Start();
             }
-            catch
+            catch (Exception ex)
             {
                 OnStopped?.Invoke(this, EventArgs.Empty);
+                logger.Log($"Process threw error on start : {ex.Message}", EnderEngine.Logger.LogLevel.ERROR);
                 return;
             }
             OnStarted?.Invoke(this, EventArgs.Empty);
@@ -62,17 +69,48 @@ namespace DGE.Processes
 
         public override void Stop()
         {
+
+            if (ProcessExitedCleanUp() || status <= ApplicationStatus.STOPPING) // If the process quit already // Force stop ? (the application may show "off" whilst it is endlessly shutting down)
+                return;
+
             OnShutdown?.Invoke(this, EventArgs.Empty);
 
-            if (safeStopMethod is null)
-                process?.Kill();
-            else
-                safeStopMethod(this);
+            try
+            {
+                if (safeStopMethod is null)
+                    process?.Kill();
+                else
+                {
+                    logger.Log($"Invoking process existing SafeStop method", EnderEngine.Logger.LogLevel.INFO);
+                    safeStopMethod(this);
+                }
+            }
+            catch (Exception e)
+            {
+                logger.Log($"Stop failed (Is the process exited already ?) : {e.Message}", EnderEngine.Logger.LogLevel.ERROR);
+            }
 
-            process?.Dispose();
-            process = null;
+            ProcessExitedCleanUp();
 
             OnStopped?.Invoke(this, EventArgs.Empty);
         }
+
+        /// <summary>
+        /// Cleans up pocess memory usage if it has exited
+        /// </summary>
+        /// <returns> Returns if it could clean up memory / or it is already cleaned up, false if it couldn't (could mean the process is still running) </returns>
+        private bool ProcessExitedCleanUp() //This function is used redondently to prevent bugs
+        {
+            if (process is null)
+                return true;
+            if (process.HasExited)
+            {
+                process?.Dispose();
+                process = null;
+                return true;
+            }
+            return false;
+        }
+
     }
 }

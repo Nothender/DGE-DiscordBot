@@ -20,7 +20,7 @@ namespace DGE.Console
                 return i;
             else
             {
-                int index = Array.FindIndex(Program.ProjectInfos.projectInfos, p => p.Version.name.ToLower() == arg);
+                int index = Array.FindIndex(UpdaterProgramEntry.ProjectInfos.projectInfos, p => p.Version.name.ToLower() == arg);
                 if (index == -1)
                     throw new ArgumentException($"The argument `{arg}` does not fit any use");
                 return index;
@@ -47,7 +47,7 @@ namespace DGE.Console
             });
             Commands.CreateCommand("download", (a) => // Downloads the latest version of the project and extracts it
             {
-                if (a.Length != 1) throw new InvalidArgumentCountException("fetch", 1, a.Length);
+                if (a.Length != 1) throw new InvalidArgumentCountException("download", 1, a.Length);
 
                 UpdaterProgram.DownloadVersions(IndexFromArgument(a[0]));
 

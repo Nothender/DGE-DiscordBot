@@ -10,16 +10,15 @@ using DGE.Core;
 using DGE.UI.Feedback;
 using DGE.Bot;
 using Discord;
-using Discord.Addons.Interactive;
-using Discord.Addons;
 using System.Linq;
 using DGE.Core.OperatingSystem;
 using DGE.Updater;
+using DGE.Console;
 
 namespace DGE.Discord.Commands
 {
     [Summary("Developpers commands")]
-    public class DevCommands : DGEInteractiveBase
+    public class DevCommands : DGEModuleBase
     {
         [Command("TimeCommand")]
         [Summary("Executes a command, and measures the total time taken")]
@@ -70,25 +69,12 @@ namespace DGE.Discord.Commands
         [Alias("Shutdown", "Quit", "Exit", "STFU", "Shut")]
         [RequireOwner]
         [Summary("Stops the app bot if bot is true, else it shutdowns the entire framework")]
-        public async Task CommandStop(bool bot = false)
+        public async Task CommandStop(bool bot = false, params string[] s)
         {
 #if RELEASE
-            Random r = new Random();
-            string code = r.Next(10, 99).ToString();
-            for (int i = 0; i < 6; i++)
+            if (s is null || s.Length == 0 || s[0] != "RELEASE")
             {
-                code += '-' + r.Next(10, 99).ToString();
-            }
-            await ReplyAsync($"Are you sure ? Write code {code.Replace("-", "")} by placing a '-' every 2 numbers");
-            IMessage message = await NextMessageAsync();
-            if(message is null)
-            {
-                await ReplyAsync(new DiscordInteractiveTimeoutException(DiscordBot.interactiveTimeoutSeconds).Message.Replace(CommandHandler.AvoidBugReportErrorTag, ""));
-                return;
-            }
-            if(message.Content.Trim() != code)
-            {
-                await ReplyAsync("Wrong code");
+                await ReplyAsync("The bot is running in release mod, to shut it down input the command and add \"Release\" at the end");
                 return;
             }
 #endif
@@ -124,35 +110,71 @@ namespace DGE.Discord.Commands
             Main.Stop();
         }
 
-        [Command("Updater")]
+        /*
+        [Command("Updater", RunMode = RunMode.Async)]
         [Alias("Update")]
         [RequireOwner]
         [Summary("Runs the update procedure")]
         public async Task CommandUpdate(params string[] args)
         {
-            
-
+            logCallbackChannel = Context.Channel;
             if (args.Length > 0)
             {
-                string arg0 = args[0].ToLower().Trim();
-
-                if(arg0 == "s" || arg0 == "start")
+                UpdaterCommands.Execute(args, out bool interactive, LogCallback);
+                if (interactive) // If not interactive, the command was already executed
                 {
-                    logCallbackChannel = Context.Channel;
-                    UpdateManager.StartUpdater(LogCallback);
-                }
-                else if (arg0 == "wau")
-                {
-                    UpdateManager.WriteToUpdater(string.Join(' ', args, 1, args.Length - 1));
+                    string action = args[0].ToLower().Trim();
+                    if (action == "i" || action == "install")
+                    {
+                        await ReplyAsync("This will restart the application, are you sure you want to continue ? (y/n)");
+                        IMessage answer = await NextMessageAsync();
+                        if(!(answer is null))
+                        {
+                            string content = answer.Content.ToLower().Trim();
+                            if (content == "y" || content == "yes")
+                            {
+                                await ReplyAsync("Installing new update - Rebooting");
+                                AssemblyBot.logger.Log("User is running Interactive install procedure - Rebooting", EnderEngine.Logger.LogLevel.INFO);
+                                UpdateManager.StartUpdateScript();
+                            }
+                            else
+                                await ReplyAsync("Canceled interactive install procedure");
+                        }
+                    }
                 }
             }
             else // Run interactive procedure
             {
-                
+                IUserMessage message = await ReplyAsync("Running interactive udpate procedure");
+                UpdateManager.StartUpdater(LogCallback);
+                await message.ModifyAsync(m => m.Content = $"{message.Content}\nFetching latest versions");
+                UpdateManager.Fetch("all");
+                if (UpdateManager.isUpdateAvailable)
+                {
+                    await message.ModifyAsync(m => m.Content = $"{message.Content}\nNew version(s) available - Downloading update");
+                    UpdateManager.Download("all");
+                    if (UpdateManager.isUpdateDownloaded)
+                    {
+                        await message.ModifyAsync(m => m.Content = $"{message.Content}\nA new update was downloaded : Do you want to restart and update the application ? (y/n)");
+
+                        IMessage answer = await NextMessageAsync();
+                        if (!(answer is null))
+                        {
+                            string content = answer.Content.ToLower().Trim();
+                            if (content == "y" || content == "yes")
+                            {
+                                await message.ModifyAsync(m => m.Content = $"{message.Content}\nRestarting and updating");
+                                UpdateManager.StartUpdateScript();
+                            }
+                        }
+                        await message.ModifyAsync(m => m.Content = $"{message.Content}\nCanceled operation - Not applying update and restarting");
+                        return;
+                    }
+                }
+                await message.ModifyAsync(m => m.Content = $"{message.Content}\nCanceled - No new version available");
+
             }
-
-
-        }
+        }*/
 
         private IMessageChannel logCallbackChannel;
 

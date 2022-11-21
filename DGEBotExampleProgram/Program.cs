@@ -14,15 +14,19 @@ using DGE.Discord.Handlers;
 using DGE.ProgramModules;
 using DGE.Rendering;
 using System.Drawing;
-
 using System.Diagnostics;
 using static DGE.Core.CloseEvent;
+using DGE.Discord.Config;
+using EnderEngine;
+using Discord;
 
 namespace DGE
 {
-
-    public class Program
+    public static class Program
     {
+
+        internal static Logger logger = new Logger("MainProgram");
+
         private static void Main(string[] args)
         {
             DiscordBotMain();
@@ -32,23 +36,30 @@ namespace DGE
         {
             //TODO: This will be fixed to be cleaner
 #if DEBUG
-            string[] infos = File.ReadAllLines("config-exp.txt"); //Running experimental config
+            string configFile = "config-exp.txt"; //Running experimental config
 #else
-            string[] infos = File.ReadAllLines("config.txt"); //Running normal DGE config
+            string configFile = "config.txt"; //Running normal DGE config
 #endif
-            //See config-exemple.txt for more information
+
+            IConfig config = LoadBotConfig(configFile);
+
+            DiscordSocketConfig socketConfig = new DiscordSocketConfig()
+            {
+                AlwaysDownloadUsers = true,
+                GatewayIntents = GatewayIntents.All ^ GatewayIntents.GuildPresences ^ GatewayIntents.GuildInvites ^ GatewayIntents.GuildScheduledEvents
+            };
 
             DGE.Main.Init();
             DGEModules.RegisterModule(AssemblyBot.module);
             DGEModules.RegisterModule(AssemblyEngine.module);
 
-            DiscordBot bot1 = new DiscordBot(infos[0], infos[2], ulong.Parse(infos[1]));
+            DiscordBot bot1 = new DiscordBot(config, socketConfig);
             ApplicationManager.Add(bot1);
 
             bot1.OnStarted += (s, e) => ProgramModule.RestoreSavedPrograms(bot1);
 
             DGE.Main.OnStarted += (s, e) => bot1.Start(); //The bot automatically starts when the app is on
-
+            
             bot1.RegisterCommandModule(typeof(DevCommands));
             bot1.RegisterCommandModule(typeof(DebugCommands));
             bot1.RegisterCommandModule(typeof(Commands));
@@ -58,7 +69,7 @@ namespace DGE
             bot1.RegisterCommandModule(typeof(FrameBufferCommands));
             bot1.RegisterCommandModule(typeof(ProgramsCommands));
             bot1.RegisterCommandModule(typeof(FractalCommands));
-
+            
             Task main = DGE.Main.Run();
             main.Wait();
 
@@ -66,5 +77,30 @@ namespace DGE
             //DiscordGameEngineBot.RegisterCommandModule(typeof(CommandsExemple));
             //DiscordGameEngineBot.RegisterCommandModule(typeof(ApplicationServersCommands));
         }
+
+        private static IConfig LoadBotConfig(string configFile)
+        {
+            logger.Log($"Loading config from `./{configFile}`", Logger.LogLevel.INFO);
+            IConfigLoader cfgLoader;
+            IConfig config;
+            //See config-exemple.txt for more information
+            if (File.Exists(configFile))
+            {
+                cfgLoader = new ConfigTextFileParser(configFile);
+                config = cfgLoader.LoadConfig();
+            }
+            else
+            {
+                logger.Log("The program wasn't able to identify a valid config file\nAutomatically running console config file creation process", Logger.LogLevel.WARN);
+                cfgLoader = new ConsoleConfigLoader(logger);
+                config = cfgLoader.LoadConfig();
+
+                IConfigSaver cfgSaver = new ConfigTextFileParser(configFile);
+                cfgSaver.SaveConfig(config);
+                logger.Log("Saved newly created config", Logger.LogLevel.INFO);
+            }
+            return config;
+        }
+
     }
 }

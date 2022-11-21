@@ -8,6 +8,7 @@ using DGE.Console;
 using DGE.Application;
 using System.Runtime.InteropServices;
 using static DGE.Core.CloseEvent;
+using DGE.Core.OperatingSystem;
 
 namespace DGE
 {
@@ -56,7 +57,8 @@ namespace DGE
 
             DGEModules.RegisterModule(AssemblyFramework.module);
 
-            CloseEvent.SetConsoleCtrlHandler(handler, true);
+            if(OS.CurrentOS == Core.OperatingSystem.OSPlatform.WINDOWS)
+                CloseEvent.SetCloseHandler(handler, true); // Uses kernel32 stuff so it runs only on windows
 
             if (createCommands)
             {
@@ -66,19 +68,20 @@ namespace DGE
 
                 TaskScheduler.UnobservedTaskException += (s, ea)
                 => AssemblyFramework.logger.Log(
-                    ea is null ?
+                    ea is null || ea.Exception is null ?
                     "An UnobservedTaskException occured, but the exception cannot be identified" : 
-                    $"UnobservedTaskException caught >\n{ea.Exception.Message}\nStacktrace >{(ea.Exception.StackTrace is null ? "No stack trace" : ea.Exception.StackTrace)}\nSource > {ea.Exception.Source ?? "No source"}\nTargetSite > {ea.Exception.TargetSite?.Name ?? "No target site"}"
+                    $"UnobservedTaskException caught >\n{ea.Exception.Message}\nStacktrace > {(ea.Exception.StackTrace is null ? "No stack trace" : ea.Exception.StackTrace)}\nSource > {ea.Exception.Source ?? "No source"}\nTargetSite > {ea.Exception.TargetSite?.Name ?? "No target site"}"
                     , EnderEngine.Logger.LogLevel.ERROR);
 
         }
 
         public static async Task Run(bool createUpdateInfoFile = true, MainRunMode mode = MainRunMode.CONSOLE)
         {
-            
             OnStarting?.Invoke(sender, EventArgs.Empty);
-            
-            if(createUpdateInfoFile) Updater.ProjectUpdateInfoWriter.CreateXMLFile(); //Saving information on the current running project for DGEUpdater to check for updates
+
+            CloseEvent.Init(mode);
+
+            if (createUpdateInfoFile) Updater.ProjectUpdateInfoWriter.CreateXMLFile(); //Saving information on the current running project for DGEUpdater to check for updates
 
             //Start code
             if (mode == MainRunMode.CONSOLE)
@@ -133,8 +136,11 @@ namespace DGE
                     lineRead = System.Console.ReadLine();
                     if (lineRead is null)
                         break;
+
+                    AssemblyFramework.logger.Log($"[User]: \"{lineRead}\"", EnderEngine.Logger.LogLevel.INFO, EnderEngine.Logger.LogMethod.TO_FILE);
+
                     expression = lineRead.ToLower().Split(' ');
-                    if (expression.Length < 1)
+                    if (expression.Length <= 0)
                         continue;
                     command = expression[0].Trim(' ', '\t', '\n');
                     if (command.Length == 0)

@@ -65,6 +65,10 @@ namespace DGE.Console
             {
                 if (a.Length != 0) throw new InvalidArgumentCountException("restart", 0, a.Length);
 
+                AssemblyFramework.logger.Log($"Current executable path is : \"{Process.GetCurrentProcess().MainModule.FileName}\"", EnderEngine.Logger.LogLevel.INFO);
+
+                //string executableFileName; // TODO: 
+
                 Scripts.RunApp.CreateProcess(Process.GetCurrentProcess().MainModule.FileName);
                 Main.OnStopped += (s, e) => Scripts.RunApp.Run();
                 Main.Stop();
@@ -73,14 +77,20 @@ namespace DGE.Console
             });
             Commands.CreateCommand("pack", (a) =>
             {
-                string fileName = "DGE-Framework-latest";
+                bool fullPack = a.Length > 0 ? a[0] == "-f" || a[0] == "-full" : false;
 
-                if (a.Length > 0) // If the user wants to define his own file name
-                    fileName = string.Join('-', a);
+                string fileName = fullPack ? "DGE-FullPack" : "DGE-Latest";
 
-                string filePath = Updater.ProjectPacker.Pack(fileName);
+                if (a.Length > 0)
+                {
+                    if (!fullPack) fileName = string.Join('-', a);
+                    else if (a.Length > 1) // If the user wants to define his own file name
+                        fileName = string.Join('-', a, 1, a.Length - 1); // Second argument moving on
+                }
 
-                return $"Packed application in `{filePath}`";
+                string filePath = Updater.ProjectPacker.Pack(fileName, fullPack);
+
+                return $"Packed application Full:{fullPack} (including settings and configs) in `{filePath}`";
             });
         }
     }
