@@ -28,13 +28,13 @@ namespace DGE.ProgramModules
             { "void", typeof(TestVoidProgram) }
         };
 
-        private static short maxUserProgramsCount = 4;
+        private static short maxUserProgramsCount = 4; // Need to remove the hardcode for this (DB update)
         private static Dictionary<ulong, char> userProgramsCount = new Dictionary<ulong, char>(); //char is used an 8bit unsigned integer
 
         [Command("PMVersion")]
         public async Task Version()
         {
-            await ReplyAsync("ProgramModules V1.?.? //Not documented");
+            await ReplyAsync("ProgramModules V1.2.0"); // TODO: Program modules 2.0 with new implementation in mind ?
         }
 
         [Command("CreateProgram")]
@@ -58,7 +58,7 @@ namespace DGE.ProgramModules
             if (ProgramNotExists(programId))
                 return;
             ProgramModule.GetProgramById(programId).AddChannel(Context.Channel.Id, Context.bot.client);
-            await ReplyAsync($"This channel is now listend by the program {programId}");
+            await ReplyAsync($"This channel is now listened by the program {programId}");
         }
 
         [Command("RemoveChannelFromProgram")]
