@@ -44,7 +44,8 @@ namespace DGE.Bot
             set
             {
                 activityStatus = value;
-                client.SetGameAsync(activity);
+                if (status == ApplicationStatus.ON)
+                   client.SetGameAsync(activity);
             }
         }
 
