@@ -2,20 +2,20 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace DGE.Discord.Config
+namespace DGE.Bot.Config
 {
-    public struct Config : IConfig
+    public struct BotConfig : IBotConfig
     {
         public string Token { get; }
 
-        public string Prefix { get; }
+        public ulong? DebugGuildId { get; }
 
         public ulong FeedbackChannelId { get; }
 
-        public Config(string token, string prefix, ulong feedbackChannelId)
+        public BotConfig(string token, ulong debugGuildId, ulong feedbackChannelId)
         {
             Token = token;
-            Prefix = prefix;
+            DebugGuildId = debugGuildId;
             FeedbackChannelId = feedbackChannelId;
         }
 

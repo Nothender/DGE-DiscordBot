@@ -5,35 +5,35 @@ using System.IO;
 using System.Linq;
 using EnderEngine;
 
-namespace DGE.Discord.Config
+namespace DGE.Bot.Config
 {
-    public class ConfigTextFileParser : IConfigLoader, IConfigSaver
+    public class BotConfigTextFileParser : IBotConfigLoader, IBotConfigSaver
     {
 
         private readonly string file;
 
-        public ConfigTextFileParser(string file)
+        public BotConfigTextFileParser(string file)
         {
             this.file = file;
         }
 
-        public IConfig LoadConfig()
+        public IBotConfig LoadConfig()
         {
             string[] lines = File.ReadAllLines(file);
-            return new Config(
+            return new BotConfig(
                 lines[0],                   // Token
-                lines[2],                   // FeedbackChannelId
-                ulong.Parse(lines[1])       // Prefix
+                ulong.Parse(lines[2]),       // DebugGuildId (Nullable)
+                ulong.Parse(lines[1])       // FeedbackChannelId
                 );
         }
 
-        public void SaveConfig(IConfig config)
+        public void SaveConfig(IBotConfig config)
         {
-            string[] lines = 
-                { 
-                    config.Token, 
-                    config.FeedbackChannelId.ToString(), 
-                    config.Prefix 
+            string[] lines =
+                {
+                    config.Token,
+                    config.DebugGuildId.ToString(),
+                    config.FeedbackChannelId.ToString()
                 };
             if (!File.Exists(file))
             {
