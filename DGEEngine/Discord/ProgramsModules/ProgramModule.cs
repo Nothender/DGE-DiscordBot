@@ -77,6 +77,7 @@ namespace DGE.ProgramModules
         {
             foreach (int i in programs.Keys)
                 DeleteProgram(i);
+            nextId = 0;
         }
 
         public static bool ProgramExists(int programId)
