@@ -17,6 +17,11 @@ namespace DGE.Core
             Add("Storage", Get("Application") + "/Storage/"); //Default
         }
 
+        public static bool Exists(string name)
+        {
+            return paths.ContainsKey(name);
+        }
+
         public static string Get(string name)
         {
             if (name is null || paths.ContainsKey(name))
