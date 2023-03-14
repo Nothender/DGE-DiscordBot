@@ -12,6 +12,8 @@ using System.Linq;
 using DGE.Exceptions;
 using Discord.Webhook;
 using Discord.Commands;
+using DGE.Bot.Config;
+using Discord.Interactions;
 using DGE.Discord.Config;
 
 namespace DGE.Bot
@@ -31,7 +33,7 @@ namespace DGE.Bot
 
         public DiscordSocketClient client { get; protected set; }
         public IServiceProvider services { get; protected set; }
-        public CommandService commandsService { get; protected set; }
+        public InteractionService interactionService { get; protected set; }
         //public InteractiveService interactiveServices { get; protected set; }
 
         public const int interactiveTimeoutSeconds = 21;
@@ -55,28 +57,29 @@ namespace DGE.Bot
 #endif
 
         public IMessageChannel feedbackChannel { get; set; }
-
+        
+        protected ulong? DebugGuildId;
         private ulong feedbackChannelId;
 
-        public DiscordBot(IConfig config, DiscordSocketConfig socketConfig) : this(config.Token, config.Prefix, config.FeedbackChannelId, socketConfig) { }
-
-        public DiscordBot(string token, string commandPrefix, ulong feedbackChannelId, DiscordSocketConfig socketConfig) : base()
+        public DiscordBot(string name) : base(name)
         {
             appCount++;
+        }
 
-            this.commandPrefix = commandPrefix;
-            this.feedbackChannelId = feedbackChannelId;
+        public void Load(IBotConfig config, DiscordSocketConfig socketConfig) => Load(config.Token, config.DebugGuildId, config.FeedbackChannelId, socketConfig);
 
-            client = new DiscordSocketClient(socketConfig) ;
+        public void Load(string token, ulong? debugGuildId, ulong feedbackChannelId, DiscordSocketConfig socketConfig)
+        {
+            DebugGuildId = debugGuildId;
+            client = new DiscordSocketClient(socketConfig);
 
-            commandsService = new CommandService();
-
+            interactionService = new InteractionService(client, new InteractionServiceConfig { AutoServiceScopes = true });
             //interactiveServices = new InteractiveService(client, new InteractiveServiceConfig{ DefaultTimeout = new TimeSpan(0, 0, interactiveTimeoutSeconds) });
 
             services = new ServiceCollection()
                 .AddSingleton(client)
-                .AddSingleton(commandsService)
-                //.AddSingleton(interactiveServices)
+                .AddSingleton(interactionService)
+                .AddSingleton(socketConfig)
                 .BuildServiceProvider();
 
             logger = new Logger($"DGE-Bot:{appCount}");
@@ -85,6 +88,32 @@ namespace DGE.Bot
             client.MessageReceived += (m) => MessageHandler.HandleMessageAsync(m, this);
 
             client.LoginAsync(TokenType.Bot, token);
+        }
+
+
+        /// <summary>
+        /// Automatically registers commands according to config preferences (debug: guild, release: global)
+        /// </summary>
+        public async Task RegisterCommands(bool deleteMissing = true)
+        {
+
+            bool global = true;
+#if DEBUG
+            global = DebugGuildId is null;
+#endif
+            string registerScope = global ? "globally" : "to debug guild";
+            try
+            {
+                if (global)
+                    await interactionService.RegisterCommandsGloballyAsync(deleteMissing);
+                else
+                    await interactionService.RegisterCommandsToGuildAsync((ulong) DebugGuildId, deleteMissing);
+                logger.Log($"Succesfully registered interaction commands {registerScope}", Logger.LogLevel.INFO);
+            }
+            catch(Exception e)
+            {
+                logger.Log($"Error registering interaction commands {registerScope}: {e.Message}", Logger.LogLevel.ERROR);
+            }
         }
 
         public override void Dispose()
@@ -111,7 +140,8 @@ namespace DGE.Bot
             if (feedbackChannel is null)
                 feedbackChannel = client.GetChannel(feedbackChannelId) as IMessageChannel;
             await client.SetGameAsync(activity);
-
+            //await RegisterCommands();
+            
             OnStarted?.Invoke(this, EventArgs.Empty);
         }
 
@@ -123,9 +153,17 @@ namespace DGE.Bot
             OnStopped?.Invoke(this, EventArgs.Empty);
         }
 
-        public void RegisterCommandModule(Type module)
+        public void LoadModuleConfig(ICommandConfig config)
         {
-            commandsService.AddModuleAsync(module, services);
+            foreach (IModuleConfig mcfg in config.modules)
+            {
+
+            }
+        }
+
+        public void LoadCommandModule(Type module)
+        {
+            interactionService.AddModuleAsync(module, services).GetAwaiter().GetResult();
             logger.Log($"Loaded command module [{module.Name}]", Logger.LogLevel.INFO);
         }
 
