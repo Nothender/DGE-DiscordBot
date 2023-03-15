@@ -14,54 +14,78 @@ namespace DGE.Console
     public static class FrameworkCommands
     {
 
-        public static void Create()
+        public static void CreateHelpCommand()
         {
-            //TODO: Commands may need to be improved (with structs or classes or attributes, with automatic TypeCasting and arguments passing)
-            Commands.CreateCommand("help", (a) =>
+            Commands.AddCommand(new FrameworkCommand("help", (a) =>
             {
                 if (a.Length != 0) throw new InvalidArgumentCountException("help", 0, a.Length);
 
-                string helpMessage = "Commands that exist :";
-                helpMessage += "\n- " + string.Join("\n- ", Commands.commands.Keys.ToArray());
-                return helpMessage;
-            });
-            Commands.CreateCommand("startapp", (a) =>
+                StringBuilder helpMessage = new StringBuilder("Commands that exist :");
+                string[,] commandHelps = new string[Commands.commands.Count(), 2];
+                int i = 0;
+                int max = 0;
+                foreach (ICommand command in Commands.commands.Values)
+                {
+                    commandHelps[i, 0] = command.Name;
+                    commandHelps[i, 1] = command.Description;
+                    if (command.Name.Length > max)
+                        max = command.Name.Length;
+                    i++;
+                }
+                for (i = 0; i < Commands.commands.Count(); i++)
+                {
+                    helpMessage.Append("\n - ");
+                    helpMessage.Append(commandHelps[i, 0]);
+                    helpMessage.Append(' ', max - commandHelps[i, 0].Length);
+                    helpMessage.Append(" : ");
+                    helpMessage.Append(commandHelps[i, 1]);
+                }
+
+                return helpMessage.ToString();
+            }, "Shows every command name and their description"));
+        }
+
+        public static void Create()
+        {
+            //TODO: Commands may need to be improved (with structs or classes or attributes, with automatic TypeCasting and arguments passing
+            CreateHelpCommand();
+            Commands.AddCommand(new FrameworkCommand("startapp", (a) =>
             {
                 if (a.Length != 1) throw new InvalidArgumentCountException("startapp", 1, a.Length);
                 if (!int.TryParse(a[0], out int id)) throw new InvalidArgumentTypeException(0, typeof(int));
 
                 ApplicationManager.Get(id).Start();
                 return $"Application of id {a[0]} was started";
-            });
-            Commands.CreateCommand("stopapp", (a) =>
+            }, "Starts the application of specified `index`"));
+            Commands.AddCommand(new FrameworkCommand("stopapp", (a) =>
             {
                 if (a.Length != 1) throw new InvalidArgumentCountException("stopapp", 1, a.Length);
                 if (!int.TryParse(a[0], out int id)) throw new InvalidArgumentTypeException(0, typeof(int));
 
                 ApplicationManager.Get(id).Stop();
                 return $"Application of id {a[0]} was stopped";
-            });
-            Commands.CreateCommand("showapps", (a) =>
+            }, "Stops app of specified `index`"));
+            Commands.AddCommand(new FrameworkCommand("showapps", (a) =>
             {
                 if (a.Length != 0) throw new InvalidArgumentCountException("showapps", 0, a.Length);
                 string res = "Instanced applications :";
                 foreach (IApplication app in ApplicationManager.GetAll()) res += $"\n - {app.GetType().Name} application of id {app.Id}, currently {app.status}";
                 return res;
-            });
-            Commands.CreateCommand("fgc", (a) =>
+            }, "Shows every instanced application"));
+            Commands.AddCommand(new FrameworkCommand("fgc", (a) =>
             {
                 if (a.Length != 0) throw new InvalidArgumentCountException("FGC", 0, a.Length);
 
                 GC.Collect();
                 return "Forced a garbage collection";
-            });
-            Commands.CreateCommand("showmodules", (a) =>
+            }, "Forces a garbage collection"));
+            Commands.AddCommand(new FrameworkCommand("showmodules", (a) =>
             {
                 if (a.Length != 0) throw new InvalidArgumentCountException("showmodules", 0, a.Length);
 
                 return $"Loaded assembly DGE Modules :\n - {string.Join("\n - ", DGEModules.modules)}";
-            });
-            Commands.CreateCommand("restart", (a) =>
+            }, "Shows every loaded module in the framework"));
+            Commands.AddCommand(new FrameworkCommand("restart", (a) =>
             {
                 if (a.Length != 0) throw new InvalidArgumentCountException("restart", 0, a.Length);
 
@@ -74,8 +98,8 @@ namespace DGE.Console
                 Main.Stop();
 
                 return "Restarting";
-            });
-            Commands.CreateCommand("pack", (a) =>
+            }, "Quite explicit, restarts the application"));
+            Commands.AddCommand(new FrameworkCommand("pack", (a) =>
             {
                 bool fullPack = a.Length > 0 ? a[0] == "-f" || a[0] == "-full" : false;
 
@@ -90,8 +114,8 @@ namespace DGE.Console
 
                 string filePath = Updater.ProjectPacker.Pack(fileName, fullPack);
 
-                return $"Packed application Full:{fullPack} (including settings and configs) in `{filePath}`";
-            });
+                return $"Packed application Full={fullPack} (including settings and configs) in `{filePath}`";
+            }, "Packs the application in a .zip, 2 optional args :\n\tFullPack (-f/-full) whether the pack should include configs, FileName (remaining input string)"));
         }
     }
 }

@@ -10,7 +10,7 @@ namespace DGE.Console
     {
         public static void Create()
         {
-            Commands.CreateCommand("au", (a) =>
+            Commands.AddCommand(new FrameworkCommand("au", (a) =>
             {
                 string result = Execute(a, out bool interactive);
 
@@ -61,7 +61,7 @@ namespace DGE.Console
                 }
 
                 return result;
-            });
+            }, "Starts the DGE Updater, runs interactive procedure if no args, otherwise :\n\ts/start, q/quit/exit, w/write - write command to updater, i/install - installs downloaded version,\n\tf/fetch - searches for latest update, d/download - downloads latest update"));
         }
 
         public static string Execute(string[] args, out bool interactive, Action<string, EnderEngine.Logger.LogLevel> logCallback = null)
