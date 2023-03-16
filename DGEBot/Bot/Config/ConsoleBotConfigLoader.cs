@@ -23,7 +23,7 @@ namespace DGE.Bot.Config
                     programLogger.Log("Cannot understand value, type must be ulong (int64)", Logger.LogLevel.WARN);
             }
 
-            programLogger.Log("Creating a config. Please enter the following items in order :\n - Discord Bot Token\n - Debug Guild Id - Feedback Channel Id (Discord Channel ID)", Logger.LogLevel.INFO);
+            programLogger.Log("Creating a config. Please enter the following items in order :\n - Discord Bot Token\n - Debug Guild Id\n - Feedback Channel Id (Discord Channel ID)", Logger.LogLevel.INFO);
             
             string token = System.Console.ReadLine().Trim();
             programLogger.Log($"Your discord bot token will be `{token}`", Logger.LogLevel.INFO);
@@ -35,7 +35,7 @@ namespace DGE.Bot.Config
             programLogger.Log($"The feedbackChannelId will be `{feedbackChannelId}`", Logger.LogLevel.INFO);
 
             BotConfig config = new BotConfig(token, debugGuildId, feedbackChannelId);
-            programLogger.Log($"Successfuly created new config", Logger.LogLevel.INFO);
+            programLogger.Log($"Successfuly created new config (filename : configFile)", Logger.LogLevel.INFO);
             return config;
         }
 
