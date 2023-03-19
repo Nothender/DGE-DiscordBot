@@ -1,5 +1,6 @@
 ﻿using Discord;
 using Discord.Commands;
+using Discord.Interactions;
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
@@ -8,20 +9,13 @@ using System.Threading.Tasks;
 
 namespace DGE.Discord
 {
-    public class DGEModuleBase : ModuleBase<IDGECommandContext>
+    public class DGEModuleBase : InteractionModuleBase<IDGEInteractionContext>
     {
-        
-        protected async Task ReactAsync(IEmote emote, RequestOptions options = null)
-        {
-            await Context.Message.AddReactionAsync(emote, options);
-            Context.commandGotFeedback = true;
-        }
 
-        protected override async Task<IUserMessage> ReplyAsync(string message = null, bool isTTS = false, Embed embed = null, RequestOptions options = null, AllowedMentions allowedMentions = null, MessageReference messageReference = null, MessageComponent components = null, ISticker[] stickers = null, Embed[] embeds = null)
+        protected override Task RespondAsync(string text = null, Embed[] embeds = null, bool isTTS = false, bool ephemeral = false, AllowedMentions allowedMentions = null, RequestOptions options = null, MessageComponent components = null, Embed embed = null)
         {
             Context.commandGotFeedback = true;
-            return await base.ReplyAsync(message, isTTS, embed, options, allowedMentions, messageReference, components, stickers, embeds);
+            return base.RespondAsync(text, embeds, isTTS, ephemeral, allowedMentions, options, components, embed);
         }
-
     }
 }

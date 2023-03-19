@@ -19,8 +19,8 @@ namespace DGE.Discord.Handlers
         {
             SocketUserMessage uMessage = message as SocketUserMessage;
             string msg = message.Content.ToLower();
-            int argPos = 0;
-            if (uMessage.HasStringPrefix(bot.commandPrefix, ref argPos))// && !uMessage.Author.IsBot)
+            // Removing message commands execution (for now at least, slash commands are being used to replace it)
+            /*if (uMessage.HasStringPrefix(bot.commandPrefix, ref argPos))// && !uMessage.Author.IsBot)
             {
                 DGECommandContext context = new DGECommandContext(uMessage, bot);
 
@@ -32,26 +32,22 @@ namespace DGE.Discord.Handlers
                         context.commandGotFeedback = true;
                     }
                 }
-            }
-            else
-            {
-                _ = Task.Run(() =>
-                  {
-                      try
-                      {
-                          if (!uMessage.HasStringPrefix(bot.commandPrefix, ref argPos) && uMessage.Author.Id != bot.client.CurrentUser.Id)
-                          {
-                              if (ChannelListener.IsChannelListened(uMessage.Channel.Id))
-                                  ChannelListener.MessageRecieved(uMessage.Channel.Id, uMessage);
-                          }
-                      }
-                      catch (Exception e)
-                      {
-                          message.Channel.SendMessageAsync(LogPrefixes.DGE_ERROR + "Failed reading/executing message : " + e.Message);
-                      }
-                  });
-
-            }
+            }*/
+            _ = Task.Run(() =>
+                {
+                    try
+                    {
+                        if (uMessage.Author.Id != bot.client.CurrentUser.Id)
+                        {
+                            if (ChannelListener.IsChannelListened(uMessage.Channel.Id))
+                                ChannelListener.MessageRecieved(uMessage.Channel.Id, uMessage);
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        message.Channel.SendMessageAsync(LogPrefixes.DGE_ERROR + "Failed reading/executing message : " + e.Message);
+                    }
+                });
         }
 
     }
