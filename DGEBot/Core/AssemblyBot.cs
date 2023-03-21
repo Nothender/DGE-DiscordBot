@@ -1,4 +1,5 @@
-﻿using EnderEngine;
+﻿using DGE.Console;
+using EnderEngine;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -26,9 +27,7 @@ namespace DGE.Core
         /// </summary>
         private static void Init()
         {
-
-            //Bot Init code
-
+            DiscordBotCommands.CreateCommands();
         }
     }
 }
