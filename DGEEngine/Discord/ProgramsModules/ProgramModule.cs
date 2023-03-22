@@ -1,16 +1,15 @@
-﻿using Discord.WebSocket;
-using System;
-using System.Collections.Generic;
-using System.Text;
-using EnderEngine.Core;
-using System.Linq;
-using Discord.Commands;
-using System.IO;
-using System.Text.Json;
-using DGE;
+﻿using DGE.Bot;
 using DGE.Core;
 using DGE.Discord;
-using DGE.Bot;
+using Discord.Commands;
+using Discord.WebSocket;
+using EnderEngine;
+using EnderEngine.Core;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text.Json;
 
 namespace DGE.ProgramModules
 {
@@ -25,13 +24,18 @@ namespace DGE.ProgramModules
         protected List<ISocketMessageChannel> interactionChannels = new List<ISocketMessageChannel>();
 
         #region ProgramModulesHelpAndDescriptions
+
         // Help and descriptions are terrible, very badly made, disgusting, to improve in ProgramModules V2
         private static Dictionary<string, string> programTypesDescriptions = new Dictionary<string, string>();
-        public static string GetDescription(Type programModuleType) { return programTypesDescriptions.Keys.Contains(programModuleType.Name) ? programTypesDescriptions[programModuleType.Name] : "This ProgramModule doesn't provide any description"; }
+
+        public static string GetDescription(Type programModuleType)
+        { return programTypesDescriptions.Keys.Contains(programModuleType.Name) ? programTypesDescriptions[programModuleType.Name] : "This ProgramModule doesn't provide any description"; }
+
         protected static void SetDescription(Type programModuleType, string description)
         {
             programTypesDescriptions[programModuleType.Name] = description;
         }
+
         #endregion ProgramModulesHelpAndDescriptions
 
         public int Id { get; private set; }
@@ -44,7 +48,7 @@ namespace DGE.ProgramModules
         public ProgramModule(ProgramData programData, IBot bot) //When loading from a save file (restoring program state)
         {
             programData.listenedChannelsId.ForEach((channelId) => { AddChannel(channelId, bot.client); });
-            programOwnersUserId = (ulong[]) programData.owners.Clone();
+            programOwnersUserId = (ulong[])programData.owners.Clone();
             LoadData(programData.data);
             AddProgram(this);
         }
@@ -56,9 +60,12 @@ namespace DGE.ProgramModules
         }
 
         #region ProgramCollection
-        public static ProgramModule GetProgramById(int id) { return programs[id]; }
 
-        public static List<ProgramModule> GetPrograms() { return programs.Values.ToList(); }
+        public static ProgramModule GetProgramById(int id)
+        { return programs[id]; }
+
+        public static List<ProgramModule> GetPrograms()
+        { return programs.Values.ToList(); }
 
         private static void AddProgram(ProgramModule program)
         {
@@ -84,17 +91,19 @@ namespace DGE.ProgramModules
         {
             return programs.ContainsKey(programId);
         }
-        #endregion ProgramCollection
 
+        #endregion ProgramCollection
 
         protected void AddInteraction(string trigger, Action<SocketUserMessage> callback, string help = null)
         {
             triggerWordsCallback.Add(trigger, callback);
         }
 
-        public List<string> GetTriggerWords() { return triggerWordsCallback.Keys.ToList(); }
+        public List<string> GetTriggerWords()
+        { return triggerWordsCallback.Keys.ToList(); }
 
         #region Permissions
+
         private ulong[] programOwnersUserId;
 
         public void AddOwner(ulong userId)
@@ -126,9 +135,11 @@ namespace DGE.ProgramModules
         {
             return programOwnersUserId[0];
         }
+
         #endregion Permissions
 
         #region Channels
+
         /// <summary>
         /// Adds a channel that can be used to interact with the program
         /// </summary>
@@ -153,7 +164,7 @@ namespace DGE.ProgramModules
             interactionChannels.RemoveAt(interactionChannels.FindIndex(s => s.Id == channelId));
             return true;
         }
-        
+
         public void ClearChannels()
         {
             foreach (ulong channelId in interactionChannels.Select(i => i.Id).ToArray())
@@ -169,12 +180,15 @@ namespace DGE.ProgramModules
         /// called just before removing a channel
         /// </summary>
         /// <param name="channelId"></param>
-        protected virtual void OnChannelRemoving(ulong channelId) { }
+        protected virtual void OnChannelRemoving(ulong channelId)
+        { }
 
         /// <summary>
         /// called when a channel was added
         /// </summary>
-        protected virtual void OnChannelAdded(ulong channelId) { }
+        protected virtual void OnChannelAdded(ulong channelId)
+        { }
+
         #endregion Channels
 
         protected abstract void CallbackNoTriggerMessageRecieved(SocketUserMessage umessage);
@@ -196,6 +210,7 @@ namespace DGE.ProgramModules
         }
 
         #region JSONSerialization
+
         //TODO: Loading data fails at json deserialization (deserialized to List<JsonElement> instead of List<object> being the elements saved)
 
         protected abstract List<object> GetData();
@@ -204,11 +219,19 @@ namespace DGE.ProgramModules
 
         public static void SaveProgramsData(object sender, EventArgs e)
         {
-            List<ProgramData> programsData = new List<ProgramData>(programs.Count);
-            foreach (ProgramModule program in programs.Values)
-                programsData.Add(new ProgramData(program));
+            try
+            {
+                List<ProgramData> programsData = new List<ProgramData>(programs.Count);
+                foreach (ProgramModule program in programs.Values)
+                    programsData.Add(new ProgramData(program));
 
-            File.WriteAllText(Paths.Get("SaveData") + SaveFileName, JsonSerializer.Serialize(programsData));
+                File.WriteAllText(Paths.Get("SaveData") + SaveFileName, JsonSerializer.Serialize(programsData));
+                AssemblyEngine.logger.Log("Saved discord ProgramModules data", Logger.LogLevel.INFO);
+            }
+            catch (Exception exception)
+            {
+                AssemblyEngine.logger.Log("Exception occured when trying to save discord ProgramModules data : " + exception.Message, Logger.LogLevel.ERROR);
+            }
         }
 
         public static void RestoreSavedPrograms(IBot bot)
@@ -251,7 +274,7 @@ namespace DGE.ProgramModules
             public ProgramData(ProgramModule program)
             {
                 typeName = program.GetType().AssemblyQualifiedName;
-                owners = (ulong[]) program.programOwnersUserId.Clone();
+                owners = (ulong[])program.programOwnersUserId.Clone();
                 listenedChannelsId = program.interactionChannels.Select(channel => channel.Id).ToList();
                 data = program.GetData();
             }
@@ -263,8 +286,7 @@ namespace DGE.ProgramModules
             {
             }
         }
+
         #endregion JSONSerialization
-
     }
-
 }
