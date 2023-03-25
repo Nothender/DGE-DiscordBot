@@ -12,11 +12,14 @@ namespace DGE.Bot.Config
 
         public ulong FeedbackChannelId { get; }
 
-        public BotConfig(string token, ulong debugGuildId, ulong feedbackChannelId)
+        public ICommandModuleConfig[] Modules { get; set; }
+
+        public BotConfig(string token, ulong debugGuildId, ulong feedbackChannelId, ICommandModuleConfig[] modules)
         {
             Token = token;
             DebugGuildId = debugGuildId;
             FeedbackChannelId = feedbackChannelId;
+            Modules = modules;
         }
 
     }
