@@ -21,6 +21,9 @@ namespace DGE.Bot.Config
         /// </summary>
         string ModuleName { get; }
 
+        /// <summary>
+        /// Whether the command module should be registered only when debugging, only in the set debug guild
+        /// </summary>
         bool DebugOnly { get; }
     }
 }
