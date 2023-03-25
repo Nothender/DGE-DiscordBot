@@ -12,10 +12,13 @@ namespace DGE.Bot.Config
 
         public string ModuleName { get; }
 
-        public CommandModuleConfig(string assemblyQualifiedName, string moduleName)
+        public bool DebugOnly { get; }
+
+        public CommandModuleConfig(string assemblyQualifiedName, string moduleName, bool debugOnly = false)
         {
             AssemblyQualifiedName = assemblyQualifiedName;
             ModuleName = moduleName;
+            DebugOnly = debugOnly;
         }
 
         /// <summary>
@@ -25,10 +28,11 @@ namespace DGE.Bot.Config
         /// <param name="namespacePath">The namespace the module class shows up in</param>
         /// <param name="className">The module's class name</param>
         /// <param name="assemblyName">The assembly (C# Project) the class is from</param>
-        public CommandModuleConfig(string moduleName, string namespacePath, string className, string assemblyName)
+        public CommandModuleConfig(string moduleName, string namespacePath, string className, string assemblyName, bool debugOnly = false)
         {
             ModuleName = moduleName;
             AssemblyQualifiedName = namespacePath + "." + className + "," + assemblyName;
+            DebugOnly = debugOnly;
         }
 
     }

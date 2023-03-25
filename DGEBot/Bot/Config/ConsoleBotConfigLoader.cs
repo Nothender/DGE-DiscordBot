@@ -77,17 +77,20 @@ namespace DGE.Bot.Config
             }
             programLogger.Log("Do you have the AssemblyQualifiedName for every module ? (y/n)", Logger.LogLevel.INFO);
             bool hasAsmQualName;
+            bool debugOnly;
             GetYesNo(out hasAsmQualName);
             string[] values = new string[4];
             for (int i = 0; i < qtt; i++)
             {
                 programLogger.Log($"CommandModule {i} - Please write the shortened module name :", Logger.LogLevel.INFO);
                 values[0] = System.Console.ReadLine();
+                programLogger.Log("Is this module to be registered only when debugging (in debug guild) ? (y/n)", Logger.LogLevel.INFO);
+                GetYesNo(out debugOnly);
                 if (hasAsmQualName)
                 {
                     programLogger.Log("Write AssemblyQualifiedName :", Logger.LogLevel.INFO);
                     values[1] = System.Console.ReadLine();
-                    modules[i] = new CommandModuleConfig(values[0], values[1]);
+                    modules[i] = new CommandModuleConfig(values[0], values[1], debugOnly);
                 }
                 else
                 {
@@ -97,7 +100,7 @@ namespace DGE.Bot.Config
                     values[2] = System.Console.ReadLine();
                     programLogger.Log("Write the assembly name (C# Project location) of the class :", Logger.LogLevel.INFO);
                     values[3] = System.Console.ReadLine();
-                    modules[i] = new CommandModuleConfig(values[0], values[2], values[1], values[3]);
+                    modules[i] = new CommandModuleConfig(values[0], values[2], values[1], values[3], debugOnly);
                 }
             }
             return modules;

@@ -20,5 +20,7 @@ namespace DGE.Bot.Config
         /// Simpler name for readability
         /// </summary>
         string ModuleName { get; }
+
+        bool DebugOnly { get; }
     }
 }
