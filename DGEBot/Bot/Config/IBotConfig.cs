@@ -18,5 +18,11 @@ namespace DGE.Bot.Config
         /// While in debug mode, commands will not be registered globally but only in the debugging guild
         /// </summary>
         public ulong? DebugGuildId { get; }
+
+        /// <summary>
+        /// Represents the modules the bot will load/register
+        /// </summary>
+        ICommandModuleConfig[] Modules { get; set; }
+
     }
 }
