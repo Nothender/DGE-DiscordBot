@@ -61,7 +61,15 @@ namespace DGE.Console
                 }
 
                 return result;
-            }, "Starts the DGE Updater, runs interactive procedure if no args, otherwise :\n\ts/start, q/quit/exit, w/write - write command to updater, i/install - installs downloaded version,\n\tf/fetch - searches for latest update, d/download - downloads latest update"));
+            }, "Starts the DGE Updater, runs interactive procedure if no args",
+            new string[] { 
+                "s/start",
+                "q/quit/exit",
+                "w/write > send written command to updater (Remaining characters)",
+                "i/install > installs downloaded version",
+                "f/fetch > searches for latest update",
+                "d/download > downloads latest update"
+            }));
         }
 
         public static string Execute(string[] args, out bool interactive, Action<string, EnderEngine.Logger.LogLevel> logCallback = null)

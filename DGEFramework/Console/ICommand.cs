@@ -11,5 +11,6 @@ namespace DGE.Console
         string Name { get; }
         string Description { get; }
         string Execute(string[] args);
+        public string[] ArgumentNameDescriptions { get; }
     }
 }

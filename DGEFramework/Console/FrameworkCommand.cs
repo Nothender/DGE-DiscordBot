@@ -16,11 +16,15 @@ namespace DGE.Console
 
         public string Execute(string[] args) => action(args);
 
-        public FrameworkCommand(string name, Func<string[], string> action, string description = "This command has no description")
+        public string[] ArgumentNameDescriptions { get; }
+
+        public FrameworkCommand(string name, Func<string[], string> action, string description = "This command has no description", string[] argumentNameDescriptions = null)
         {
             this.action = action;
             Name = name;
             Description = description;
+            ArgumentNameDescriptions = argumentNameDescriptions ?? new string[0];
         }
+
     }
 }
