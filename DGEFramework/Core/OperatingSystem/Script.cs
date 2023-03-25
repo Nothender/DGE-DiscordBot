@@ -9,6 +9,8 @@ namespace DGE.Core.OperatingSystem
     public class Script : IScript
     {
 
+        public static string LinuxScriptHeader = "#!/bin/bash\n\n";
+
         public static readonly string[] Extensions = new string[4] 
         {
             "bat",
@@ -32,7 +34,10 @@ namespace DGE.Core.OperatingSystem
         public IScript DefineImplementation(OSPlatform platform, string implementation)
         {
             if (platform == OSPlatform.UNKNOWN) platform = OSPlatform.LINUX; // Default to linux, bc most of the time if it is unknown it is linux based
-            implementations[(int)platform] = implementation;
+            if (platform == OSPlatform.LINUX)
+                implementations[(int)platform] = LinuxScriptHeader + implementation;
+            else
+                implementations[(int)platform] = implementation;
             return this;
         }
 
@@ -45,7 +50,7 @@ namespace DGE.Core.OperatingSystem
             {
                 for(int i = 1; i <= implementations.Length; i++)
                 {
-                    int index = i % implementations.Length; // We start at windows and stop at linux, and end at windows
+                    int index = i % implementations.Length; //
                     if (implementations[index] is null) continue;
 
                     AssemblyFramework.logger.Log($"Script defaulted to {(OSPlatform)index} platform implementation, because {platform} doesn't have any implementation", EnderEngine.Logger.LogLevel.WARN);
