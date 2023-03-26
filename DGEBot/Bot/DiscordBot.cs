@@ -14,7 +14,7 @@ using Discord.Webhook;
 using Discord.Commands;
 using DGE.Bot.Config;
 using Discord.Interactions;
-using DGE.Discord.Config;
+using System.Reflection;
 
 namespace DGE.Bot
 {
@@ -64,6 +64,7 @@ namespace DGE.Bot
         public DiscordBot(string name) : base(name)
         {
             appCount++;
+            logger = new Logger($"DGE-Bot:{name}");
         }
 
         public void Load(IBotConfig config, DiscordSocketConfig socketConfig) => Load(config.Token, config.DebugGuildId, config.FeedbackChannelId, socketConfig);
@@ -82,10 +83,16 @@ namespace DGE.Bot
                 .AddSingleton(socketConfig)
                 .BuildServiceProvider();
 
-            logger = new Logger($"DGE-Bot:{appCount}");
-
             client.Log += (m) => DiscordNETLogger.Log(m, logger);
             client.MessageReceived += (m) => MessageHandler.HandleMessageAsync(m, this);
+            
+            // Overriding by using DGEInteractionContext
+            client.InteractionCreated += async interaction =>
+            {
+                var ctx = new DGEInteractionContext(this, interaction);
+                logger.Log("Test", Logger.LogLevel.DEBUG);
+                await interactionService.ExecuteCommandAsync(ctx, services);
+            };
 
             client.LoginAsync(TokenType.Bot, token);
         }
@@ -121,6 +128,7 @@ namespace DGE.Bot
             Stop();
             client.LogoutAsync().Wait(); //When quitting the application the application may not have finished disposing, so we wait for it as to not cause memory leaks or anything
             client.Dispose();
+            appCount--;
         }
 
         public override void Start()
@@ -153,11 +161,18 @@ namespace DGE.Bot
             OnStopped?.Invoke(this, EventArgs.Empty);
         }
 
-        public void LoadModuleConfig(ICommandConfig config)
+        public void LoadModuleConfig(IBotConfig config)
         {
-            foreach (IModuleConfig mcfg in config.modules)
+            Type module;
+            foreach (ICommandModuleConfig mcfg in config.Modules)
             {
-
+                module = Type.GetType(mcfg.AssemblyQualifiedName);
+                if (module is null)
+                {
+                    logger.Log($"Couldn't find module {mcfg.ModuleName} (AssemblyQualifiedName: {mcfg.AssemblyQualifiedName}) in current program", Logger.LogLevel.ERROR);
+                    continue;
+                }
+                LoadCommandModule(module);
             }
         }
 
