@@ -1,32 +1,19 @@
-﻿using System;
-using System.Threading.Tasks;
-using DGE;
-using DGE.Core;
+﻿using DGE.Application;
 using DGE.Bot;
-using DGE.Application;
-using System.IO;
-using DGE.UI.Feedback;
-using Discord.WebSocket;
-using System.Security;
-using DGE.Discord;
-using DGE.Discord.Commands;
-using DGE.Discord.Handlers;
-using DGE.ProgramModules;
-using DGE.Rendering;
-using System.Drawing;
-using System.Diagnostics;
-using static DGE.Core.CloseEvent;
 using DGE.Bot.Config;
-using EnderEngine;
+using DGE.Core;
+using DGE.Discord;
 using Discord;
-using DGE.Console;
+using Discord.WebSocket;
+using EnderEngine;
+using System.IO;
+using System.Threading.Tasks;
 
 namespace DGE
 {
     public static class Program
     {
-
-        internal static Logger logger = new Logger("MainProgram");
+        public static Logger logger = new Logger("MainProgram");
 
         private static void Main(string[] args)
         {
@@ -35,7 +22,6 @@ namespace DGE
 
         private static void DiscordBotMain()
         {
-
             CreateBot();
 
             Task main = DGE.Main.Run();
@@ -48,7 +34,6 @@ namespace DGE
 
         private static void CreateBot()
         {
-
             //TODO: This will be fixed to be cleaner
 #if DEBUG
             string configFile = "config.txt"; //Running experimental config
@@ -74,13 +59,16 @@ namespace DGE
 
             bot1.client.InteractionCreated += async interaction =>
             {
-                var ctx = new DGEInteractionContext(bot1, interaction);
+                DGEInteractionContext ctx = new DGEInteractionContext(bot1, interaction);
+                System.Console.WriteLine("SUUU");
                 await bot1.interactionService.ExecuteCommandAsync(ctx, bot1.services);
             };
 
+            //bot1.LoadModuleConfig(new CommandConfig(new ModuleConfig[1] { new ModuleConfig("DGE.Discord.Commands.Commands,DGEBot", "BaseCommands") }));
+
             //bot1.RegisterCommandModule(typeof(DevCommands));
             //bot1.RegisterCommandModule(typeof(DebugCommands));
-            bot1.LoadCommandModule(typeof(DGE.Discord.Commands.Commands));
+            //bot1.LoadCommandModule(typeof(DGE.Discord.Commands.Commands));
             //bot1.RegisterCommandModule(typeof(FunCommands));
             //bot1.RegisterCommandModule(typeof(ModerationCommands));
             //bot1.RegisterCommandModule(typeof(BetaTestingCommands));
@@ -88,18 +76,9 @@ namespace DGE
             //bot1.RegisterCommandModule(typeof(ProgramsCommands));
             //bot1.RegisterCommandModule(typeof(FractalCommands));
 
-            DGE.Console.Commands.AddCommand(new FrameworkCommand("regc", (s) =>
-            {
-                bot1.RegisterCommands().Wait();
-                return "Test";
-            }, "Test command for registering bot command modules"
-            ));
-
-
             // bot1.OnStarted += (s, e) => ProgramModule.RestoreSavedPrograms(bot1);
 
             // DGE.Main.OnStarted += (s, e) => bot1.Start(); //The bot automatically starts when the app is on
-
         }
 
         private static IBotConfig LoadBotConfig(string configFile)
@@ -110,7 +89,7 @@ namespace DGE
             //See config-exemple.txt for more information
             if (File.Exists(configFile))
             {
-                cfgLoader = new BotConfigTextFileParser(configFile);
+                cfgLoader = new BotConfigXMLFileParser(configFile);
                 config = cfgLoader.LoadConfig();
             }
             else
@@ -119,12 +98,11 @@ namespace DGE
                 cfgLoader = new ConsoleBotConfigLoader(logger);
                 config = cfgLoader.LoadConfig();
 
-                IBotConfigSaver cfgSaver = new BotConfigTextFileParser(configFile);
+                IBotConfigSaver cfgSaver = new BotConfigXMLFileParser(configFile);
                 cfgSaver.SaveConfig(config);
-                logger.Log("Saved newly created config", Logger.LogLevel.INFO);
+                logger.Log($"Saved newly created config (as '{configFile}')", Logger.LogLevel.INFO);
             }
             return config;
         }
-
     }
 }
