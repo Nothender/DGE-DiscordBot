@@ -8,12 +8,9 @@ DGENothenderProgram/
 **/obj
 **/bin
 
-config-exp.txt
-config.txt
-
 pyUtils.py
 
 TestMinecraftServer/
 minecraftServerStart.bat
-nothenderBotConfigDebug.txt
-nothenderBotConfig.txt
+nothenderBotConfig.xml
+nothenderBotConfigDebug.xml
