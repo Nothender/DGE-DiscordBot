@@ -31,9 +31,9 @@ namespace DGE.Bot
 
         #endregion IApplication
 
-        public DiscordSocketClient client { get; protected set; }
-        public IServiceProvider services { get; protected set; }
-        public InteractionService interactionService { get; protected set; }
+        public DiscordSocketClient client { get; set; }
+        public IServiceProvider services { get; set; }
+        public InteractionService interactionService { get; set; }
         //public InteractiveService interactiveServices { get; protected set; }
 
         public const int interactiveTimeoutSeconds = 21;
@@ -67,9 +67,9 @@ namespace DGE.Bot
             logger = new Logger($"DGE-Bot:{name}");
         }
 
-        public void Load(IBotConfig config, DiscordSocketConfig socketConfig) => Load(config.Token, config.DebugGuildId, config.FeedbackChannelId, socketConfig);
+        public void Load(IBotConfig config, DiscordSocketConfig socketConfig) => Load(config.Token, config.DebugGuildId, config.FeedbackChannelId, config.Modules, socketConfig);
 
-        public void Load(string token, ulong? debugGuildId, ulong feedbackChannelId, DiscordSocketConfig socketConfig)
+        public void Load(string token, ulong? debugGuildId, ulong feedbackChannelId, ICommandModuleConfig[] commandModules, DiscordSocketConfig socketConfig)
         {
             DebugGuildId = debugGuildId;
             client = new DiscordSocketClient(socketConfig);
@@ -89,10 +89,18 @@ namespace DGE.Bot
             // Overriding by using DGEInteractionContext
             client.InteractionCreated += async interaction =>
             {
-                var ctx = new DGEInteractionContext(this, interaction);
-                logger.Log("Test", Logger.LogLevel.DEBUG);
-                await interactionService.ExecuteCommandAsync(ctx, services);
+                try
+                {
+                    DGEInteractionContext ctx = new DGEInteractionContext(this, interaction, interaction.Channel);
+                    var res = await interactionService.ExecuteCommandAsync(ctx, services);
+                }
+                catch (Exception ex)
+                {
+                    logger.Log(ex.Message, Logger.LogLevel.ERROR);
+                }
             };
+
+            LoadCommandModules(commandModules);
 
             client.LoginAsync(TokenType.Bot, token);
         }
@@ -106,7 +114,7 @@ namespace DGE.Bot
 
             bool global = true;
 #if DEBUG
-            global = DebugGuildId is null;
+            //global = DebugGuildId is null;
 #endif
             string registerScope = global ? "globally" : "to debug guild";
             try
@@ -161,11 +169,16 @@ namespace DGE.Bot
             OnStopped?.Invoke(this, EventArgs.Empty);
         }
 
-        public void LoadModuleConfig(IBotConfig config)
+        public void LoadCommandModules(ICommandModuleConfig[] modules)
         {
+            return;
             Type module;
-            foreach (ICommandModuleConfig mcfg in config.Modules)
+            foreach (ICommandModuleConfig mcfg in modules)
             {
+#if RELEASE
+                if (mcfg.DebugOnly)
+                    continue;
+#endif
                 module = Type.GetType(mcfg.AssemblyQualifiedName);
                 if (module is null)
                 {
@@ -179,6 +192,7 @@ namespace DGE.Bot
         public void LoadCommandModule(Type module)
         {
             interactionService.AddModuleAsync(module, services).GetAwaiter().GetResult();
+            
             logger.Log($"Loaded command module [{module.Name}]", Logger.LogLevel.INFO);
         }
 
