@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using EnderEngine;
 using System.Xml;
+using System.Xml.Linq;
 
 namespace DGE.Bot.Config
 {
@@ -70,7 +71,26 @@ namespace DGE.Bot.Config
 
         public void SaveConfig(IBotConfig config)
         {
+            XElement[] modules = new XElement[config.Modules.Length];
+            ICommandModuleConfig mcfg;
+            for (int i = 0; i < config.Modules.Length; i++)
+            {
+                mcfg = config.Modules[i];
+                modules[i] = new XElement("commandModule",
+                    new XElement("name", mcfg.ModuleName),
+                    new XElement("assemblyQualifiedName", mcfg.AssemblyQualifiedName),
+                    new XElement("debugOnly", mcfg.DebugOnly)
+                    );
+            }
 
+            XElement xconfig = new XElement(
+                "config",
+                new XAttribute("type", "XMLDiscordBotConfig"),
+                    new XElement("token", config.Token),
+                    new XElement("debugGuildID", config.DebugGuildId),
+                    new XElement("feedbackChannel", config.FeedbackChannelId),
+                    new XElement("commandModules", modules)
+                );
         }
     }
 }
