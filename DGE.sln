@@ -7,8 +7,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DGEFramework", "DGEFramewor
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DGEBot", "DGEBot\DGEBot.csproj", "{5FE49F5C-3268-4230-887E-7D5228CC7474}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DGEBotExampleProgram", "DGEBotExampleProgram\DGEBotExampleProgram.csproj", "{575A5019-B9D2-4E9B-B055-E4272A704524}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{C46906C4-42B3-4F74-A887-28AA5353366B}"
 	ProjectSection(SolutionItems) = preProject
 		README.md = README.md
@@ -24,6 +22,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DGEMinecraft", "DGEMinecraf
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DGERemoraBot", "DGERemoraBot\DGERemoraBot.csproj", "{0F94E492-CE6F-4B09-96B1-D96F7EEC8F00}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DGENothenderBot", "DGENothenderBot\DGENothenderBot.csproj", "{480151A2-BBD6-4C12-B13B-C07FB0A272C4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -38,10 +38,6 @@ Global
 		{5FE49F5C-3268-4230-887E-7D5228CC7474}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5FE49F5C-3268-4230-887E-7D5228CC7474}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5FE49F5C-3268-4230-887E-7D5228CC7474}.Release|Any CPU.Build.0 = Release|Any CPU
-		{575A5019-B9D2-4E9B-B055-E4272A704524}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{575A5019-B9D2-4E9B-B055-E4272A704524}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{575A5019-B9D2-4E9B-B055-E4272A704524}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{575A5019-B9D2-4E9B-B055-E4272A704524}.Release|Any CPU.Build.0 = Release|Any CPU
 		{646E9044-68B3-487A-A8D4-4D366F9E7CE5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{646E9044-68B3-487A-A8D4-4D366F9E7CE5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{646E9044-68B3-487A-A8D4-4D366F9E7CE5}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -62,6 +58,10 @@ Global
 		{0F94E492-CE6F-4B09-96B1-D96F7EEC8F00}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0F94E492-CE6F-4B09-96B1-D96F7EEC8F00}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0F94E492-CE6F-4B09-96B1-D96F7EEC8F00}.Release|Any CPU.Build.0 = Release|Any CPU
+		{480151A2-BBD6-4C12-B13B-C07FB0A272C4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{480151A2-BBD6-4C12-B13B-C07FB0A272C4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{480151A2-BBD6-4C12-B13B-C07FB0A272C4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{480151A2-BBD6-4C12-B13B-C07FB0A272C4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
