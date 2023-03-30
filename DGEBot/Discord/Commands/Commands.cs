@@ -1,4 +1,5 @@
-﻿using DGE.Discord.Handlers;
+﻿using DGE.Core;
+using DGE.Discord.Handlers;
 using DGE.Exceptions;
 using DGE.UI.Feedback;
 using Discord;
@@ -14,12 +15,15 @@ namespace DGE.Discord.Commands
 {
     public class Commands : DGEModuleBase
     {
-        [SlashCommand("ping", "Replies with \"Pong\"")]
-        public async Task Ping()
+        [SlashCommand("ping", "Replies with pong")]
+        public Task Ping()
         {
-            await RespondAsync("Pong");
+            AssemblyBot.logger.Log("Pinged", EnderEngine.Logger.LogLevel.DEBUG);
+            RespondAsync("Pong").Wait();
+            return Task.CompletedTask;
         }
 
+        /*
         [SlashCommand("pong", "Replies with \"Ping\"")]
         public async Task Pong()
         {
@@ -106,7 +110,7 @@ namespace DGE.Discord.Commands
             }
 
             await RespondAsync($"Use `{Context.bot.commandPrefix}HelpAll` to list all commands from every module", embed: embed.Build());
-            */
+            
         }
 
         [SlashCommand("helpall", "Replies with a description of every command")]
@@ -132,7 +136,8 @@ namespace DGE.Discord.Commands
                 }
 
                 await RespondAsync(embed: embed.Build());
-            }*/
-        }
+            }
+        }*/
+        
     }
 }
