@@ -37,6 +37,7 @@ namespace DGE.Discord.Handlers
                 {
                     try
                     {
+                        if (uMessage is null) return;
                         if (uMessage.Author.Id != bot.client.CurrentUser.Id)
                         {
                             if (ChannelListener.IsChannelListened(uMessage.Channel.Id))
