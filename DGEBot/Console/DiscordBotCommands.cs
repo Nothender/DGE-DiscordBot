@@ -18,13 +18,13 @@ namespace DGE.Console
                 if (a.Length != 1) throw new InvalidArgumentCountException("registerbotcommands", 1, a.Length, true);
                 int appId = int.Parse(a[0]);
                 bool deleteMissing = true;
-                if (appId > 1)
+                if (a.Length > 1)
                     deleteMissing = bool.Parse(a[1]);
                 DiscordBot app = ApplicationManager.Get(appId) as DiscordBot;
                 if (app is null)
                     throw new Exception("Application is not of type `DiscordBot`");
                 app.RegisterCommands(deleteMissing).Wait();
-                return "Attempted (success ?) to register command modules from discord bot application : " + a[0];
+                return null;
             }, "Registers loaded command modules (slash commands) to guild/globally depending on debug mode", 
             new string[] { "appId > Framework application id of the bot", "(optional) deleteMissing > Deletes modules that are not registered anymore" }));
         }
