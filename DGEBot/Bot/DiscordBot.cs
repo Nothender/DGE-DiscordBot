@@ -86,7 +86,7 @@ namespace DGE.Bot
             client.Log += (m) => DiscordNETLogger.Log(m, logger);
             client.MessageReceived += (m) => MessageHandler.HandleMessageAsync(m, this);
             
-            // Overriding by using DGEInteractionContext
+            // Overriding by using DGEInteractionContext, attempt at making it work
             client.InteractionCreated += async interaction =>
             {
                 try
@@ -114,7 +114,7 @@ namespace DGE.Bot
 
             bool global = true;
 #if DEBUG
-            //global = DebugGuildId is null;
+            global = DebugGuildId is null;
 #endif
             string registerScope = global ? "globally" : "to debug guild";
             try
@@ -171,7 +171,6 @@ namespace DGE.Bot
 
         public void LoadCommandModules(ICommandModuleConfig[] modules)
         {
-            return;
             Type module;
             foreach (ICommandModuleConfig mcfg in modules)
             {
