@@ -16,14 +16,12 @@ namespace DGE.Discord.Commands
     public class Commands : DGEModuleBase
     {
         [SlashCommand("ping", "Replies with pong")]
-        public Task Ping()
+        public async Task Ping()
         {
-            AssemblyBot.logger.Log("Pinged", EnderEngine.Logger.LogLevel.DEBUG);
-            RespondAsync("Pong").Wait();
-            return Task.CompletedTask;
+            await RespondAsync("Pong");
         }
 
-        /*
+        
         [SlashCommand("pong", "Replies with \"Ping\"")]
         public async Task Pong()
         {
@@ -55,6 +53,7 @@ namespace DGE.Discord.Commands
             await RespondAsync("Thanks for sending feedback");
         }
 
+        /*
         [SlashCommand("help", "Replies with the command's description")]
         public async Task CommandHelp(string valueName = null)
         {
