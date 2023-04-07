@@ -51,7 +51,7 @@ namespace DGE.Updater
                 CreateNoWindow = true
             };
 
-            process = new ApplicationProcess(startInfo, SafeProcessStop);
+            process = new ApplicationProcess("UpdateProcess", startInfo, SafeProcessStop);
 
             process.OnStarting += (s, e) =>
             {

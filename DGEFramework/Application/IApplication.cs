@@ -15,6 +15,8 @@ namespace DGE.Application
 
         public int Id { get; }
 
+        public string Name { get; }
+
         /// <summary>
         /// When the Start method is called
         /// </summary>
@@ -39,7 +41,7 @@ namespace DGE.Application
 
         public string ToString()
         {
-            return $"{GetType().Name} application of id {Id}, currently {status}";
+            return $"({GetType().Name}) Application \'{Name}\' of id {Id}, currently {status}";
         }
 
     }

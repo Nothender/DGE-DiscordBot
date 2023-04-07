@@ -9,6 +9,7 @@ using DGE.Application;
 using System.Runtime.InteropServices;
 using static DGE.Core.CloseEvent;
 using DGE.Core.OperatingSystem;
+using System.Threading;
 
 namespace DGE
 {
@@ -57,8 +58,7 @@ namespace DGE
 
             DGEModules.RegisterModule(AssemblyFramework.module);
 
-            if(OS.CurrentOS == Core.OperatingSystem.OSPlatform.WINDOWS)
-                CloseEvent.SetCloseHandler(handler, true); // Uses kernel32 stuff so it runs only on windows
+            CloseEvent.SetCloseHandler(handler, true); // Uses kernel32 stuff so it runs only on windows
 
             if (createCommands)
             {
@@ -66,12 +66,12 @@ namespace DGE
                 FrameworkCommands.Create();
             }
 
-                TaskScheduler.UnobservedTaskException += (s, ea)
-                => AssemblyFramework.logger.Log(
-                    ea is null || ea.Exception is null ?
-                    "An UnobservedTaskException occured, but the exception cannot be identified" : 
-                    $"UnobservedTaskException caught >\n{ea.Exception.Message}\nStacktrace > {(ea.Exception.StackTrace is null ? "No stack trace" : ea.Exception.StackTrace)}\nSource > {ea.Exception.Source ?? "No source"}\nTargetSite > {ea.Exception.TargetSite?.Name ?? "No target site"}"
-                    , EnderEngine.Logger.LogLevel.ERROR);
+            TaskScheduler.UnobservedTaskException += (s, ea)
+            => AssemblyFramework.logger.Log(
+                ea is null || ea.Exception is null ?
+                "An UnobservedTaskException occured, but the exception cannot be identified" : 
+                $"UnobservedTaskException caught >\n{ea.Exception.Message}\nStacktrace > {(ea.Exception.StackTrace is null ? "No stack trace" : ea.Exception.StackTrace)}\nSource > {ea.Exception.Source ?? "No source"}\nTargetSite > {ea.Exception.TargetSite?.Name ?? "No target site"}"
+                , EnderEngine.Logger.LogLevel.ERROR);
 
         }
 
@@ -89,10 +89,15 @@ namespace DGE
 
             OnStarted?.Invoke(sender, EventArgs.Empty);
 
-            while (!stopRequest)
-                await Task.Delay(50);
-
-            TrueStop();
+            try
+            {
+                while (!stopRequest)
+                    await Task.Delay(50);
+            }
+            finally
+            {
+                TrueStop();
+            }
         }
 
         /// <summary>
@@ -100,7 +105,8 @@ namespace DGE
         /// </summary>
         internal static void TrueStop()
         {
-
+            if (trueStopInEx)
+                return;
             trueStopInEx = true;
 
             OnShutdown?.Invoke(sender, EventArgs.Empty);
@@ -109,7 +115,6 @@ namespace DGE
 
             OnStopped?.Invoke(sender, EventArgs.Empty);
 
-            Environment.Exit(0);
         }
 
         /// <summary>
@@ -117,8 +122,6 @@ namespace DGE
         /// </summary>
         public static void Stop()
         {
-            if (stopRequest)
-                return;
             stopRequest = true;
         }
 
@@ -166,9 +169,15 @@ namespace DGE
                 case CtrlType.CTRL_SHUTDOWN_EVENT:
                 case CtrlType.CTRL_CLOSE_EVENT:
                     if (trueStopInEx) // If the Framework is already true stopping we skip
-                        return false;
-                    TrueStop();
-                    return false;
+                        return true;
+                    while (true)
+                    {
+                        try
+                        {
+                            Stop();
+                            return true;
+                        }catch { }
+                    }
                 default:
                     return false;
             }

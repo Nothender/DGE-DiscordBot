@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<config type="XMLDiscordBotConfig">
+	<token>Discord bot Token goes here</token>
+	<debugGuildID>Discord server id for which the bot registers commands in debug</debugGuildID>
+	<feedbackChannel>FeedbackChannel ID (ulong) goes here</feedbackChannel>
+	<commandModules>
+		<commandModule>
+			<name>BaseCommands</name>
+			<assemblyQualifiedName>DGE.Discord.Commands.Commands,DGEBot</assemblyQualifiedName>
+			<debugOnly>false</debugOnly>
+		</commandModule>
+		<commandModule>
+			<name>DevCommands</name>
+			<assemblyQualifiedName>DGE.Discord.Commands.DevCommands,DGEBot</assemblyQualifiedName>
+			<debugOnly>true</debugOnly>
+		</commandModule>
+	</commandModules>
+</config>
