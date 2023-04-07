@@ -3,10 +3,10 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace DGE.Discord.Config
+namespace DGE.Bot.Config
 {
-    public interface IConfigLoader
+    public interface IBotConfigLoader
     {
-        public IConfig LoadConfig();
+        public IBotConfig LoadConfig();
     }
 }

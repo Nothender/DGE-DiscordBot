@@ -1,10 +1,11 @@
 ﻿using DGE.Bot;
+using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
 
 namespace DGE.Discord
 {
-    public interface IDGECommandContext : ICommandContext
+    public interface IDGEInteractionContext : IInteractionContext
     {
         IBot bot { get; }
         /// <summary>

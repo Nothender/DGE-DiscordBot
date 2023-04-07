@@ -22,8 +22,10 @@ namespace DGE.Discord.Handlers
         /// 
         /// </summary>
         /// <returns></returns>
-        public static async Task<bool> ExecuteCommand(IDGECommandContext context, int argPos)
+        public static async Task<bool> ExecuteCommand(IDGEInteractionContext context, int argPos)
         {
+            // Removing command execution for now
+            /*
             IResult execution = await context.bot.commandsService.ExecuteAsync(context, argPos, context.bot.services);
             if (!execution.IsSuccess)
             {
@@ -65,6 +67,8 @@ namespace DGE.Discord.Handlers
                 return false; //The command execution had problems
             }
             return true; //Could execute the command
+            */
+            return false;
         }
 
     }

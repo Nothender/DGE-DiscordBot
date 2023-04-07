@@ -26,7 +26,7 @@ namespace DGE.Processes
 
         public Process process;
 
-        public ApplicationProcess(ProcessStartInfo startInfo, Action<ApplicationProcess> safeStopMethod = null) : base()
+        public ApplicationProcess(string name, ProcessStartInfo startInfo, Action<ApplicationProcess> safeStopMethod = null) : base(name)
         {
             this.startInfo = startInfo;
             if (!(safeStopMethod is null))

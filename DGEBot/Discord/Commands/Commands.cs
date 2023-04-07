@@ -1,8 +1,9 @@
-﻿using DGE.Discord.Handlers;
+﻿using DGE.Core;
+using DGE.Discord.Handlers;
 using DGE.Exceptions;
 using DGE.UI.Feedback;
 using Discord;
-using Discord.Commands;
+using Discord.Interactions;
 using Discord.WebSocket;
 using System;
 using System.Collections.Generic;
@@ -12,60 +13,56 @@ using Color = Discord.Color;
 
 namespace DGE.Discord.Commands
 {
-    [Summary("Base commands")]
     public class Commands : DGEModuleBase
     {
-        [Command("Ping")]
-        [Summary("Replies with \"Pong\"")]
+        [SlashCommand("ping", "Replies with pong")]
         public async Task Ping()
         {
-            await ReplyAsync("Pong");
+            await RespondAsync("Pong");
         }
 
-        [Command("Pong")]
-        [Summary("Replies with \"Ping\"")]
+        
+        [SlashCommand("pong", "Replies with \"Ping\"")]
         public async Task Pong()
         {
-            await ReplyAsync("Ping");
+            await RespondAsync("Ping");
         }
 
-        [Command("42")]
-        [Summary("Replies with \"42\"")]
+        [SlashCommand("fortytwo", "Replies with \"42\"")]
         public async Task Reply42()
         {
-            await ReplyAsync("42");
+            await RespondAsync("42");
         }
 
-        [Command("PingLatency")]
-        [Alias("PingL")]
-        [Summary("Shows the latency from the bot to the gateway server")]
+        [SlashCommand("pinglatency", "Shows the latency from the bot to the gateway server")]
         public async Task PingLatency()
         {
-            await ReplyAsync($"Pong : the latency is {(Context.Client as DiscordSocketClient).Latency}ms");
+            await RespondAsync($"Pong : the latency is {(Context.Client as DiscordSocketClient).Latency}ms");
         }
 
-        [Command("SendFeedback")]
-        [Alias("ReportBug")]
-        [Summary("Sends a feedback report, you can enter this command like that : {prefix}SendFeedback\n\"Summary\"\n\"Description\"\n\"additional info 1\" \"additional info 2\" etc...")]
-        public async Task SendFeedbackCommand(string summary, string description, params string[] additionnalInfo)
+        [SlashCommand("sendfeedback", "Sends a feedback report")]
+        public async Task SendFeedbackCommand(string summary, string description, string additionnalInfo)
         {
             FeedbackInfo feedbackInfo = new FeedbackInfo
                 ($"Sent by discord user @{Context.User.Username} (id : {Context.User.Id}), in the [{Context.Guild.Name}] discord server, from the #{Context.Channel.Name} channel",
                 summary,
                 description,
-                additionnalInfo);
+                new string[] { additionnalInfo });
 
-            UserFeedbackHandler.SendFeedback(feedbackInfo, Context.bot.feedbackChannel);
-            await ReplyAsync("Thanks for sending feedback");
+            //UserFeedbackHandler.SendFeedback(feedbackInfo, Context.bot.feedbackChannel);
+            await RespondAsync("Thanks for sending feedback");
         }
 
-        [Command("Help")]
-        [Summary("Replies with all existing command, or the description and parameters of the specified command or module")]
-        public async Task Help(string valueName = null)
+        /*
+        [SlashCommand("help", "Replies with the command's description")]
+        public async Task CommandHelp(string valueName = null)
         {
+            // TODO: Fix
+
             //TODO: Clean-up this command a bit (methods/delegates/actions, text and names) gl hf
             //Code dirty af
             //TODO: make the embed look cleaner too
+            /*
             EmbedBuilder embed = new EmbedBuilder();
             embed.WithColor(Color.Blue);
 
@@ -111,14 +108,15 @@ namespace DGE.Discord.Commands
                 }
             }
 
-            await ReplyAsync($"Use `{Context.bot.commandPrefix}HelpAll` to list all commands from every module", false, embed.Build());
+            await RespondAsync($"Use `{Context.bot.commandPrefix}HelpAll` to list all commands from every module", embed: embed.Build());
+            
         }
 
-        [Command("HelpAll")]
-        [Summary("Replies with all existing commands, their params, their remarks and descriptions")]
+        [SlashCommand("helpall", "Replies with a description of every command")]
         public async Task CommandHelpAll()
         {
-
+            //TODO: Fix
+            /*
             for (int i = 0; i < Context.bot.commandsService.Commands.Count(); i += 25) //Creates an embed for each 25 commands and sends it (cannot create more than 25 fields in one embed)
             {
 
@@ -129,23 +127,16 @@ namespace DGE.Discord.Commands
                     if (j >= Context.bot.commandsService.Commands.Count())
                         break;
 
-                    CommandInfo c = Context.bot.commandsService.Commands.ElementAt(j);
+                    CommandInfo<IParameterInfo> c = Context.bot.commandsService.Commands.ElementAt(j);
 
                     embed.AddField($"{c.Name} {(c.Aliases.Count == 1 ? "" : $"({string.Join(", ", c.Aliases.ToArray(), 1, c.Aliases.Count - 1)})")} [{c.Module.Name}]",
                         $"{(c.Summary is null ? "No summary" : c.Summary)}" +
                         (c.Parameters.Count == 0 ? "" : $"\nparams : {(string.Join(", ", c.Parameters.Select(p => $"{p.Type.Name} {p.Name}")))}"), false);
                 }
 
-                await ReplyAsync(null, false, embed.Build());
+                await RespondAsync(embed: embed.Build());
             }
-        }
-
-        [Command("ChangePrefix")]
-        [Summary("Changes the current bot instance's command prefix (means it resets after restart)")]
-        [RequireOwner()]
-        public async Task CommandChangePrefix(string prefix)
-        {
-            await Task.Run(() => Context.bot.commandPrefix = prefix);
-        }
+        }*/
+        
     }
 }
