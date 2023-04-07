@@ -99,11 +99,13 @@ namespace DGE.ProgramModules
         private static double Evaluate(string expression)
         {
             expression = expression.Replace("=", "");
-            //Todo: add powers, sqrts, etc....
+            //Todo: add powers, sqrts, etc...., Optimize using string builder
             string XMLPathExpression = "number(" + new Regex(@"([\+\-\*])")
                 .Replace(expression, " ${1} ")
                 .Replace("/", " div ")
                 .Replace("%", " mod ")
+                .Replace("e", "2.718285")
+                .Replace("pi", "3.141593")
                 + ')';
 
             return (double)new XPathDocument(new StringReader("<r/>")).CreateNavigator().Evaluate(XMLPathExpression);

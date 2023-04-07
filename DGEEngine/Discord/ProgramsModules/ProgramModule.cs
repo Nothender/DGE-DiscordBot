@@ -15,6 +15,8 @@ namespace DGE.ProgramModules
 {
     public abstract class ProgramModule
     {
+        // TODO: Add global program modules (no channel attached)
+
         private static readonly string SaveFileName = "ProgramsData" + ".json"; //TODO: Fix with extension naming (EE ?)
         private static bool loaded = false;
         private static Dictionary<int, ProgramModule> programs = new Dictionary<int, ProgramModule>();
