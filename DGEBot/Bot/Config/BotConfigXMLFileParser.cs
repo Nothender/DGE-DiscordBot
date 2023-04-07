@@ -91,6 +91,9 @@ namespace DGE.Bot.Config
                     new XElement("feedbackChannel", config.FeedbackChannelId),
                     new XElement("commandModules", modules)
                 );
+
+            using (var f = File.CreateText(file))
+                f.Write(xconfig.ToString());
         }
     }
 }
