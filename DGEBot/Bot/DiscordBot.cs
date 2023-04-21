@@ -15,6 +15,8 @@ using Discord.Commands;
 using DGE.Bot.Config;
 using Discord.Interactions;
 using System.Reflection;
+using System.Xml.Linq;
+using System.Xml;
 
 namespace DGE.Bot
 {
@@ -62,17 +64,17 @@ namespace DGE.Bot
         protected ulong? DebugGuildId;
         private ulong feedbackChannelId;
 
-        public DiscordBot(string name) : base(name)
+        public DiscordBot(string name = null) : base(name ?? $"UnnamedBot-{appCount}")
         {
+            logger = new Logger($"DGE-Bot:{Name}");
             appCount++;
-            logger = new Logger($"DGE-Bot:{name}");
         }
 
-        public void Load(IBotConfig config, DiscordSocketConfig socketConfig) => Load(config.Token, config.DebugGuildId, config.FeedbackChannelId, config.Modules, socketConfig);
-
-        public void Load(string token, ulong? debugGuildId, ulong feedbackChannelId, ICommandModuleConfig[] commandModules, DiscordSocketConfig socketConfig)
+        public void Load(IBotConfig config, DiscordSocketConfig socketConfig)
         {
-            DebugGuildId = debugGuildId;
+            Name = config.BotName;
+            logger.NamePrefix = Name;
+            DebugGuildId = config.DebugGuildId;
             client = new DiscordSocketClient(socketConfig);
 
             interactionService = new InteractionService(client, new InteractionServiceConfig { AutoServiceScopes = true });
@@ -101,9 +103,9 @@ namespace DGE.Bot
                 }
             };
 
-            LoadCommandModules(commandModules);
+            LoadCommandModules(config.Modules);
 
-            client.LoginAsync(TokenType.Bot, token);
+            client.LoginAsync(TokenType.Bot, config.Token);
         }
 
 

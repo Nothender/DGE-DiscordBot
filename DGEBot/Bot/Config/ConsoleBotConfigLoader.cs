@@ -17,8 +17,11 @@ namespace DGE.Bot.Config
 
         public IBotConfig LoadConfig()
         {
-            programLogger.Log("Creating a config. Please enter the following items in order :\n - Discord Bot Token\n - Debug Guild Id\n - Feedback Channel Id (Discord Channel ID)\n(Optional) Discord Command Modules to include", Logger.LogLevel.INFO);
-            
+            programLogger.Log("Creating a config. Please enter the following items in order :\n - Bot name\n - Discord Bot Token\n - Debug Guild Id\n - Feedback Channel Id (Discord Channel ID)\n(Optional) Discord Command Modules to include", Logger.LogLevel.INFO);
+
+            string botName = System.Console.ReadLine().Trim();
+            programLogger.Log($"The bot's name will be `{botName}`", Logger.LogLevel.INFO);
+
             string token = System.Console.ReadLine().Trim();
             programLogger.Log($"Your discord bot token will be `{token}`", Logger.LogLevel.INFO);
 
@@ -28,7 +31,7 @@ namespace DGE.Bot.Config
             GetUlong(out ulong feedbackChannelId);
             programLogger.Log($"The feedbackChannelId will be `{feedbackChannelId}`", Logger.LogLevel.INFO);
 
-            BotConfig config = new BotConfig(token, debugGuildId, feedbackChannelId, GetCommandModuleConfigs());
+            BotConfig config = new BotConfig(botName, token, debugGuildId, feedbackChannelId, GetCommandModuleConfigs());
             programLogger.Log($"Successfuly created new config", Logger.LogLevel.INFO);
 
             return config;

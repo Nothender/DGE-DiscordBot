@@ -19,6 +19,8 @@ namespace DGE.Bot.Config
         /// </summary>
         public ulong? DebugGuildId { get; }
 
+        public string BotName { get; }
+
         /// <summary>
         /// Represents the modules the bot will load/register
         /// </summary>

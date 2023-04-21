@@ -31,10 +31,11 @@ namespace DGE.Bot.Config
             if (configType != "XMLDiscordBotConfig")
                 throw new Exception("Config does not seem to be of type `XMLDiscordBotConfig`");
             
-            string token;
+            string botName, token;
             ulong debugGuildID, feedbackChannelID;
             try
             {
+                botName = config.SelectSingleNode("botName").InnerText;
                 token = config.SelectSingleNode("token").InnerText;
                 debugGuildID = ulong.Parse(config.SelectSingleNode("debugGuildID").InnerText);
                 feedbackChannelID = ulong.Parse(config.SelectSingleNode("feedbackChannel").InnerText);
@@ -66,7 +67,7 @@ namespace DGE.Bot.Config
                     }
                 }
             }
-            return new BotConfig(token, debugGuildID, feedbackChannelID, commandModules.ToArray());
+            return new BotConfig(botName, token, debugGuildID, feedbackChannelID, commandModules.ToArray());
         }
 
         public void SaveConfig(IBotConfig config)
@@ -86,6 +87,7 @@ namespace DGE.Bot.Config
             XElement xconfig = new XElement(
                 "config",
                 new XAttribute("type", "XMLDiscordBotConfig"),
+                    new XElement("botName", config.BotName),
                     new XElement("token", config.Token),
                     new XElement("debugGuildID", config.DebugGuildId),
                     new XElement("feedbackChannel", config.FeedbackChannelId),

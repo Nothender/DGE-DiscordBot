@@ -6,6 +6,9 @@ namespace DGE.Bot.Config
 {
     public struct BotConfig : IBotConfig
     {
+
+        public string BotName { get; }
+
         public string Token { get; }
 
         public ulong? DebugGuildId { get; }
@@ -14,8 +17,9 @@ namespace DGE.Bot.Config
 
         public ICommandModuleConfig[] Modules { get; set; }
 
-        public BotConfig(string token, ulong debugGuildId, ulong feedbackChannelId, ICommandModuleConfig[] modules)
+        public BotConfig(string botName, string token, ulong debugGuildId, ulong feedbackChannelId, ICommandModuleConfig[] modules)
         {
+            BotName = botName;
             Token = token;
             DebugGuildId = debugGuildId;
             FeedbackChannelId = feedbackChannelId;
