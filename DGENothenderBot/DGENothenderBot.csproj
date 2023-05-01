@@ -18,7 +18,6 @@
   </ItemGroup>
   
   <ItemGroup>
-    <None Include="../config-exemple.txt" CopyToOutputDirectory="Always" />
     <None Include="../DGEUpdater/DGEUpdater.runtimeconfig.json" CopyToOutputDirectory="Always" />
     <None Include="ProjectInfoConfig.xml" CopyToOutputDirectory="Always" />
   </ItemGroup>

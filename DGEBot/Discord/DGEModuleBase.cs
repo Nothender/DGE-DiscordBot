@@ -14,7 +14,7 @@ namespace DGE.Discord
 
         protected override Task RespondAsync(string text = null, Embed[] embeds = null, bool isTTS = false, bool ephemeral = false, AllowedMentions allowedMentions = null, RequestOptions options = null, MessageComponent components = null, Embed embed = null)
         {
-            Context.commandGotFeedback = true;
+            Context.CommandGotFeedback = true;
             return base.RespondAsync(text, embeds, isTTS, ephemeral, allowedMentions, options, components, embed);
         }
     }

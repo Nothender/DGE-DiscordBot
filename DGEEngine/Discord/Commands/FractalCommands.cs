@@ -31,7 +31,7 @@ namespace DGE.Discord.Commands
         {
             if (IsMandelbrotBeingRenderedAndDisplayed)
             {
-                await ReactAsync(new Emoji("╳"));
+                await RespondAsync("Mandelbrot is already being rendered, please wait", ephemeral: true);
                 return;
             }
             IsMandelbrotBeingRenderedAndDisplayed = true;
@@ -55,7 +55,7 @@ namespace DGE.Discord.Commands
             }
             catch
             {
-                await ReactAsync(new Emoji("🛑")); //The user has to slow down, (probably a GDI+ exception caused due to not being able to save on disk)
+                await RespondAsync("Mandelbrot had an unexpected exception, maybe try again", ephemeral: true); //The user has to slow down, (probably a GDI+ exception caused due to not being able to save on disk)
             }
             finally
             {

@@ -13,12 +13,12 @@ namespace DGE.Discord
     {
         public DGEInteractionContext(DiscordBot bot, IDiscordInteraction interaction, IMessageChannel channel = null) : base(bot.client, interaction, channel)
         {
-            commandGotFeedback = false;
-            this.bot = bot;
+            CommandGotFeedback = false;
+            this.Bot = bot;
         }
 
-        public IBot bot { get; set; }
+        public IBot Bot { get; set; }
 
-        public bool commandGotFeedback { get; set; }
+        public bool CommandGotFeedback { get; set; }
     }
 }

@@ -73,7 +73,7 @@ namespace DGE.Bot
         public void Load(IBotConfig config, DiscordSocketConfig socketConfig)
         {
             Name = config.BotName;
-            logger.NamePrefix = Name;
+            logger.NamePrefix = $"DGE-Bot:{Name}";
             DebugGuildId = config.DebugGuildId;
             client = new DiscordSocketClient(socketConfig);
 

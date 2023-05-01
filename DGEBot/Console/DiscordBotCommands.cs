@@ -26,7 +26,7 @@ namespace DGE.Console
                 app.RegisterCommands(deleteMissing).Wait();
                 return null;
             }, "Registers loaded command modules (slash commands) to guild/globally depending on debug mode", 
-            new string[] { "appId > Framework application id of the bot", "(optional) deleteMissing > Deletes modules that are not registered anymore" }));
+            new string[] { "appId > Framework application id of the bot", "(optional) deleteMissing > Deletes modules that are not registered anymore (default true)" }));
         }
     }
 }

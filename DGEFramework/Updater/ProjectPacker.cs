@@ -31,8 +31,8 @@ namespace DGE.Updater
         /// </summary>
         public static List<string> fullIncludes = new List<string>()
         {
-            "config.txt",
-            "config-exp.txt"
+            "*Config.xml",
+            "*ConfigDebug.xml"
         };
 
         /// <summary>
