@@ -1,5 +1,4 @@
-﻿using Discord.Commands;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
@@ -14,12 +13,15 @@ using System.Linq;
 using DGE.Core.OperatingSystem;
 using DGE.Updater;
 using DGE.Console;
+using Discord.Interactions;
 
 namespace DGE.Discord.Commands
 {
-    [Summary("Developpers commands")]
     public class DevCommands : DGEModuleBase
     {
+        // Standard command execution disabled, because of the bot's current state
+        // TODO: Make command follow with the execution of slash commands
+        /*
         [Command("TimeCommand")]
         [Summary("Executes a command, and measures the total time taken")]
         public async Task CommandTimeCommand(string command, params string[] args)
@@ -29,82 +31,77 @@ namespace DGE.Discord.Commands
 
             Stopwatch stopwatch = new Stopwatch(); //Debug
             stopwatch.Start();
-
+            
             bool commandExecutionSuccess = await CommandHandler.ExecuteCommand(Context, Context.bot.commandPrefix.Length + "TimeCommand".Length + 1);
+            
             //Have to pay attention cause we do not get information on the previous argpos, so previous commands are not ignored and this can easily fall into an endless recursion cycle
 
             stopwatch.Stop();
             if (commandExecutionSuccess)
-                await ReplyAsync($"{LogPrefixes.DGE_DEBUG}Execution of the `{command}` command took {stopwatch.Elapsed.TotalMilliseconds}ms");
+                await RespondAsync($"{LogPrefixes.DGE_DEBUG}Execution of the `{command}` command took {stopwatch.Elapsed.TotalMilliseconds}ms");
             else
-                await ReplyAsync($"{LogPrefixes.DGE_DEBUG}Failed execution the `{command}` command, failing took {stopwatch.Elapsed.TotalMilliseconds}ms");
-        }
+                await RespondAsync($"{LogPrefixes.DGE_DEBUG}Failed execution the `{command}` command, failing took {stopwatch.Elapsed.TotalMilliseconds}ms");
+        }*/
 
-        [Command("ClearReports")]
-        [Summary("Removes feedback report messages and files")]
+        [SlashCommand("ClearReports", "Removes feedback report messages and files")]
         [RequireOwner]
         public async Task CommandClearReports()
         {
-            UserFeedbackHandler.ClearReports(Context.bot.feedbackChannel);
-            await ReplyAsync(LogPrefixes.DGE_LOG + "Cleared every reports");
+            UserFeedbackHandler.ClearReports(Context.Bot.feedbackChannel);
+            await RespondAsync(LogPrefixes.DGE_LOG + "Cleared every reports");
         }
 
-        [Command("DeleteReport")]
-        [Summary("Deletes the report with the associated Id from the file and removes its message")]
+        [SlashCommand("DeleteReport", "Deletes the report with the associated Id from the file and removes its message")]
         [RequireOwner]
         public async Task CommandRemoveReport(string reportId)
         {
             try
             {
-                UserFeedbackHandler.DeleteReport(reportId, Context.bot.feedbackChannel);
+                UserFeedbackHandler.DeleteReport(reportId, Context.Bot.feedbackChannel);
             }
             catch (KeyNotFoundException e)
             {
                 throw new CommandExecutionException(e.Message, e);
             }
-            await ReplyAsync($"{LogPrefixes.DGE_LOG} Deleted report {reportId}");
+            await RespondAsync($"{LogPrefixes.DGE_LOG} Deleted report {reportId}");
         }
 
-        [Command("Stop", RunMode = RunMode.Async)]
-        [Alias("Shutdown", "Quit", "Exit", "STFU", "Shut")]
+        [SlashCommand("Stop", "Stops the app bot if bot is true, else it shutdowns the entire framework", runMode: RunMode.Async)]
         [RequireOwner]
-        [Summary("Stops the app bot if bot is true, else it shutdowns the entire framework")]
         public async Task CommandStop(bool bot = false, params string[] s)
         {
 #if RELEASE
             if (s is null || s.Length == 0 || s[0] != "RELEASE")
             {
-                await ReplyAsync("The bot is running in release mod, to shut it down input the command and add \"Release\" at the end");
+                await RespondAsync("The bot is running in release mod, to shut it down input the command and add \"Release\" at the end");
                 return;
             }
 #endif
             if (bot)
             {
-                await ReplyAsync("Shutting down bot");
-                Context.bot.Stop();
+                await RespondAsync("Shutting down bot");
+                Context.Bot.Stop();
                 return;
             }
-            await ReplyAsync("Shutting down everything");
+            await RespondAsync("Shutting down everything");
             Main.Stop();
         }
 
-        [Command("Reboot")]
-        [Alias("Restart")]
+        [SlashCommand("Reboot", "Reboots the bot if true, and the entire framework if false")]
         [RequireOwner]
-        [Summary("Reboots the bot if true, and the entire framework if false")]
         public async Task CommandReboot(bool bot = true)
         {
             if (bot)
             {
-                await ReplyAsync("Rebooting bot");
+                await RespondAsync("Rebooting bot");
                 _ = Task.Run(() => //Dont want to await call otherwise it creates a bug
                 {
-                    Context.bot.Stop();
-                    Context.bot.Start();
+                    Context.Bot.Stop();
+                    Context.Bot.Start();
                 });
                 return;
             }
-            await ReplyAsync("Rebooting Entire framework");
+            await RespondAsync("Rebooting Entire framework");
             Scripts.RunApp.CreateProcess(Process.GetCurrentProcess().MainModule.FileName);
             Main.OnStopped += (s, e) => Scripts.RunApp.Run();
             Main.Stop();

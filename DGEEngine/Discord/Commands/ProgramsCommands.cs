@@ -1,4 +1,4 @@
-﻿using Discord.Commands;
+﻿using Discord.Interactions;
 using DGE.ProgramModules;
 using System;
 using System.Collections.Generic;
@@ -14,7 +14,6 @@ using DGE.Discord;
 namespace DGE.ProgramModules
 {
 
-    [Summary("Commands to manage ProgramModules")]
     public class ProgramsCommands : DGEModuleBase
     {
 
@@ -31,13 +30,13 @@ namespace DGE.ProgramModules
         private static short maxUserProgramsCount = 4; // Need to remove the hardcode for this (DB update)
         private static Dictionary<ulong, char> userProgramsCount = new Dictionary<ulong, char>(); //char is used an 8bit unsigned integer
 
-        [Command("PMVersion")]
+        [SlashCommand("PMVersion", "Returns the program command module version")]
         public async Task Version()
         {
             await ReplyAsync("ProgramModules V1.2.0"); // TODO: Program modules 2.0 with new implementation in mind ?
         }
 
-        [Command("CreateProgram")]
+        [SlashCommand("CreateProgram", "Creates a program")]
         public async Task CreateProgram(string programKey)
         {
             if (!userProgramsCount.ContainsKey(Context.User.Id)) //Adding a limit of programs that the user can instanciate
@@ -47,30 +46,30 @@ namespace DGE.ProgramModules
                 throw new CommandExecutionException($"You cannot instance more than {maxUserProgramsCount} programs at once");
 
             if (!programTypes.ContainsKey(programKey.ToLower()))
-                throw new CommandExecutionException($"This program type was not found, try `{Context.bot.commandPrefix}ShowPrograms`"); //TODO with prefix thingy later
+                throw new CommandExecutionException($"This program type was not found, try `/ShowPrograms`"); //TODO with prefix thingy later
             ProgramModule program = (ProgramModule)Activator.CreateInstance(programTypes[programKey.ToLower()], Context);
-            await ReplyAsync($"{program.Id}");
+            await RespondAsync($"{program.Id}");
         }
 
-        [Command("AddChannelToProgram")]
+        [SlashCommand("AddChannelToProgram", "Adds the context channel to the program of specified id")]
         public async Task AddListenedChannelToProgram(int programId)
         {
             if (ProgramNotExists(programId))
                 return;
-            ProgramModule.GetProgramById(programId).AddChannel(Context.Channel.Id, Context.bot.client);
+            ProgramModule.GetProgramById(programId).AddChannel(Context.Channel.Id, Context.Bot.client);
             await ReplyAsync($"This channel is now listened by the program {programId}");
         }
 
-        [Command("RemoveChannelFromProgram")]
+        [SlashCommand("RemoveChannelFromProgram", "Removes the current channel (where executed) from the program of specified id")]
         public async Task RemoveListenedChannelFromProgram(int programId)
         {
             if (ProgramNotExists(programId))
                 return;
             ProgramModule.GetProgramById(programId).RemoveChannel(Context.Channel.Id);
-            await ReplyAsync($"This channel will not be listened by the program {programId} anymore");
+            await RespondAsync($"This channel will not be listened by the program {programId} anymore");
         }
 
-        [Command("DeleteProgram")]
+        [SlashCommand("DeleteProgram", "Deletes a program instance")]
         public async Task DeleteProgram(int programId)
         {
             if (ProgramNotExists(programId))
@@ -85,48 +84,48 @@ namespace DGE.ProgramModules
             else
                 throw new CommandExecutionException("You must be owner of the program to delete it");
             
-            await ReplyAsync($"Successfully deleted the program of id {programId}");
+            await RespondAsync($"Successfully deleted the program of id {programId}");
         }
 
-        [Command("ClearPrograms")]
+        [SlashCommand("ClearPrograms", "Deletes every program instances")]
         [RequireOwner]
         public async Task ClearPrograms()
         {
             ProgramModule.ClearPrograms();
-            await ReplyAsync("Successfully deleted every programs");
+            await RespondAsync("Successfully deleted every programs");
         }
 
-        [Command("ShowInstancedPrograms")]
+        [SlashCommand("ShowInstancedPrograms", "Shows every instanced program by showing their IDs and types")]
         public async Task ShowInstancedPrograms()
         {
             if (ProgramModule.GetPrograms().Count < 1)
-                await ReplyAsync("No program modules are currently instanced");
-            await ReplyAsync("Listing every existing programs :");
+                await RespondAsync("No program modules are currently instanced");
+            await RespondAsync("Listing every existing programs :");
             string programsListing = "";
             foreach (ProgramModule program in ProgramModule.GetPrograms())
             {
                 programsListing += $"- Program **{program.GetType().Name}** of id {program.Id}\n";
             }
-            await ReplyAsync(programsListing);
+            await RespondAsync(programsListing);
         }
 
-        [Command("ShowPrograms")]
+        [SlashCommand("ShowPrograms", "Shows every program type instanciable")]
         public async Task ShowExistingPrograms()
         {
-            await ReplyAsync("The different programs that can be instanced are :\n- " + string.Join("\n- ", programTypes.Keys.ToArray()));
+            await RespondAsync("The different programs that can be instanced are :\n- " + string.Join("\n- ", programTypes.Keys.ToArray()));
         }
 
-        [Command("CreateAllPrograms")]
+        [SlashCommand("CreateAllPrograms", "Creates one program of each type")]
         [RequireOwner()]
         public async Task InstantiateAllPrograms()
         {
             string reply = "Instanced programs ids :";
             foreach (string programKey in programTypes.Keys)
                 reply += $"\n- {((ProgramModule)Activator.CreateInstance(programTypes[programKey.ToLower()], Context)).Id}";
-            await ReplyAsync(reply);
+            await RespondAsync(reply);
         }
 
-        [Command("ProgramsHelp")]
+        [SlashCommand("ProgramsHelp", "Gives help and descriptions about programs")]
         public async Task CommandGetProgramModuleHelp()
         {
 
@@ -139,10 +138,10 @@ namespace DGE.ProgramModules
                 $"{p.Value.Name} ({p.Key})",
                 ProgramModule.GetDescription(p.Value)));
 
-            await ReplyAsync(embed: embed.Build());
+            await RespondAsync(embed: embed.Build());
         }
 
-        [Command("AddProgramOwner")]
+        [SlashCommand("AddProgramOwner", "Adds a user to a program as owner")]
         public async Task AddProgramOwner(int programId, IUser user )
         {
             if(ProgramNotExists(programId))
@@ -155,14 +154,14 @@ namespace DGE.ProgramModules
             else
                 throw new CommandExecutionException("You must be owner of the program give owner");
 
-            await ReplyAsync($"Made {user.Username} an owner of the program {program.Id}");
+            await RespondAsync($"Made {user.Username} an owner of the program {program.Id}");
         }
 
         private bool ProgramNotExists(int programId)
         {
             if (!ProgramModule.ProgramExists(programId))
             {
-                ReplyAsync($"No ProgramModule of id {programId} was found (try `>ShowInstancedPrograms`)").GetAwaiter().GetResult(); //TODO: fix with custom prefix thingy
+                RespondAsync($"No ProgramModule of id {programId} was found (try `>ShowInstancedPrograms`)").GetAwaiter().GetResult(); //TODO: fix with custom prefix thingy
                 return true;
             }
             return false;

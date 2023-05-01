@@ -1,5 +1,4 @@
 ﻿using Discord;
-using Discord.Commands;
 using Discord.WebSocket;
 using EnderEngine;
 using System;
@@ -9,19 +8,18 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Linq;
 using DGE.Core;
+using Discord.Interactions;
 
 namespace DGE.Discord.Commands
 {
-
-    [Summary("Commands to test misc bot features")]
     public class DebugCommands : DGEModuleBase
     {
 
-        [Command("LogTest")]
+        [SlashCommand("LogTest",
+            "tests the DGE logging prefixes, the log level has to be ERROR, LOG, WARN, or DEBUG, the rest of the message is counted as single string to be used after the prefix")]
         [RequireUserPermission(ChannelPermission.MentionEveryone, Group = "debug.log")]
         [RequireOwner(Group = "debug.log")]
-        [Summary("tests the DGE logging prefixes, the log level has to be ERROR, LOG, WARN, or DEBUG, the rest of the message is counted as single string to be used after the prefix")]
-        public async Task LogTest(string logLevel, [Remainder] string message)
+        public async Task LogTest(string logLevel, string message)
         {
             string prefix;
             switch (logLevel.ToUpper())
@@ -42,51 +40,46 @@ namespace DGE.Discord.Commands
                     prefix = "nope : ";
                     break;
             }
-            await ReplyAsync(prefix + message);
+            await RespondAsync(prefix + message);
         }
 
-        [Command("TriggerException")]
-        [Summary("Generates a new exception that will cause a BugReport to be created using the given string as exception")]
+        [SlashCommand("TriggerException", "Generates a new exception that will cause a BugReport to be created using the given string as exception")]
         [RequireOwner]
 #pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
-        public async Task CommandTriggerException([Remainder] string exceptionMessage)
+        public async Task CommandTriggerException(string exceptionMessage)
 #pragma warning restore CS1998 // Async method lacks 'await' operators and will run synchronously
         {
             throw new Exception(exceptionMessage);
         }
 
-        [Command("ShowPaths")]
-        [Summary("Shows the bots file paths")]
+        [SlashCommand("ShowPaths", "Shows the bots file paths")]
         [RequireOwner]
         public async Task CommandShowPaths()
         {
-            await ReplyAsync(
+            await RespondAsync(
                 "not operational"
                 );
         }
 
-        [Command("ShowModules")]
-        [Summary("Shows the currently loaded assembly DGEModules")]
+        [SlashCommand("ShowModules", "Shows the currently loaded assembly DGEModules")]
         public async Task CommandShowDGEModules()
         {
-            await ReplyAsync("Currently loaded DGE modules in assembly :\n" + string.Join("\n", DGEModules.modules));
+            await RespondAsync("Currently loaded DGE modules in assembly :\n" + string.Join("\n", DGEModules.modules));
         }
 
-        [Command("ShowGuilds")]
-        [Summary("Shows the guilds in which the bot is")]
+        [SlashCommand("ShowGuilds", "Shows the guilds in which the bot is")]
         public async Task CommandShowGuilds()
         {
-            await ReplyAsync("Joined guilds :\n - " + string.Join("\n - ", Context.bot.client.Guilds));
+            await RespondAsync("Joined guilds :\n - " + string.Join("\n - ", Context.Bot.client.Guilds));
         }
 
-        [Command("ShowApps")]
+        [SlashCommand("ShowApps", "Shows the applications in DGE-Framework")]
         [RequireOwner]
-        [Summary("Shows the applications in DGE-Framework")]
         public async Task CommandShowApps()
         {
             string res = "Instanced applications :";
             foreach (Application.IApplication app in Application.ApplicationManager.GetAll()) res += $"\n - {app.GetType().Name} application of id {app.Id}, currently {app.status}";
-            await ReplyAsync(res);
+            await RespondAsync(res);
         }
     }
 }

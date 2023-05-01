@@ -8,21 +8,19 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Linq;
 using Discord;
-using Discord.Commands;
+using Discord.Interactions;
 using Discord.WebSocket;
 
 namespace DGE.Discord.Commands
 {
-    [Summary("Commands adding literaly nothing useful")]
-    public class FunCommands : DGEModuleBase
+    public class FunCommands : InteractionModuleBase
     {
 
         private static Random random = new Random();
 
-        [Command("Send42s", RunMode = RunMode.Async)]
+        [SlashCommand("Send42s", "Sends 42 continually in the channel", runMode:RunMode.Async)]
         [RequireUserPermission(ChannelPermission.ManageChannels, Group = "fun.spam42")] //Bc it can be very chiant
         [RequireOwner(Group = "fun.spam42")]
-        [Summary("Sends 42 continually in the channel")]
         public async Task SendMsgsFast()
         {
             string str = "42\n";
@@ -33,15 +31,14 @@ namespace DGE.Discord.Commands
 
             for (int i = 0; i < 100; i++)
             {
-                await ReplyAsync(str);
+                await RespondAsync(str);
                 System.Threading.Thread.Sleep(200);
             }
         }
 
-        [Command("Count", RunMode = RunMode.Async)]
+        [SlashCommand("Count", "Counts from 0 to MaxCount (default 42) a step can be specified (default 1)", runMode: RunMode.Async)]
         [RequireUserPermission(ChannelPermission.ManageChannels, Group = "fun.count")] //Bc it can be very chiant
         [RequireOwner(Group = "fun.count")]
-        [Summary("Counts from 0 to MaxCount (default 42) a step can be specified (default 1)")]
         public async Task Count(int maxCount = 42, int step = 1)
         {
             int number = 0;
@@ -61,7 +58,7 @@ namespace DGE.Discord.Commands
                     message += number.ToString() + "\n";
                     number += step;
                 }
-                await ReplyAsync(message);
+                await RespondAsync(message);
                 watch.Stop();
 
                 System.Threading.Thread.Sleep(Math.Max(210 - (int)watch.ElapsedMilliseconds, 0));
@@ -69,13 +66,12 @@ namespace DGE.Discord.Commands
             }
         }
 
-        [Command("PingRandom")]
-        [Summary("Pings a random person")]
+        [SlashCommand("PingRandom", "Pings a random person")]
         [RequireUserPermission(ChannelPermission.MentionEveryone, Group = "fun.pingr")]
         [RequireOwner(Group = "fun.pingr")]
         public async Task PingRandomPerson()
         {
-            await ReplyAsync("Haha ping " + (Context.Guild as SocketGuild).Users.ElementAt(random.Next(0, (Context.Guild as SocketGuild).Users.Count)).Mention);
+            await RespondAsync("Haha ping " + (Context.Guild as SocketGuild).Users.ElementAt(random.Next(0, (Context.Guild as SocketGuild).Users.Count)).Mention);
         }
 
     }
