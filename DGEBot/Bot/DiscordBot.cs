@@ -1,7 +1,6 @@
 ﻿using DGE.Application;
 using DGE.Core;
 using DGE.Discord;
-using DGE.Discord.Handlers;
 using Discord;
 using Discord.WebSocket;
 using EnderEngine;
@@ -87,7 +86,6 @@ namespace DGE.Bot
                 .BuildServiceProvider();
 
             client.Log += (m) => DiscordNETLogger.Log(m, logger);
-            client.MessageReceived += (m) => MessageHandler.HandleMessageAsync(m, this);
             
             // Overriding by using DGEInteractionContext, attempt at making it work
             client.InteractionCreated += async interaction =>
