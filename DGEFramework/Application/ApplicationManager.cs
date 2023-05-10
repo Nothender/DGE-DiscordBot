@@ -56,18 +56,21 @@ namespace DGE.Application
         internal static void Dispose()
         {
             int c = applications.Count;
+            int ad = 0;
             foreach (IApplication app in applications)
             {
                 try
                 {
                     app.Dispose();
-                }catch (Exception ex)
+                    ad++;
+                }
+                catch (Exception ex)
                 {
                     AssemblyFramework.logger.Log($"An error happened while disposing of the application {app.GetType()} (id: {app.Id}) :\n{ex.Message}", EnderEngine.Logger.LogLevel.ERROR);
                 }
             }
             applications.Clear();
-            AssemblyFramework.logger.Log($"Disposed of {c} applications", EnderEngine.Logger.LogLevel.INFO);
+            AssemblyFramework.logger.Log($"Disposed of {ad}/{c} applications", EnderEngine.Logger.LogLevel.INFO);
         }
     }
 }

@@ -107,7 +107,17 @@ namespace DGE.Updater
 
             logger.Log($"Starting updater as ApplicationProcess (id: {process.Id})", Logger.LogLevel.INFO);
 
-            WaitForRequest(ref loaded, "starting updater", 4242);
+            try
+            {
+                WaitForRequest(ref loaded, "starting updater", 4242);
+            }
+            catch (Exception e)
+            {
+                process.Stop();
+#pragma warning disable CA2200 // Rethrow to preserve stack details
+                throw e;
+#pragma warning restore CA2200 // Rethrow to preserve stack details
+            }
         }
 
         public static void Download(string args)

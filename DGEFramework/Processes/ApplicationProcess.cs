@@ -62,6 +62,8 @@ namespace DGE.Processes
             {
                 OnStopped?.Invoke(this, EventArgs.Empty);
                 logger.Log($"Process threw error on start : {ex.Message}", EnderEngine.Logger.LogLevel.ERROR);
+                process.Dispose();
+                process = null;
                 return;
             }
             OnStarted?.Invoke(this, EventArgs.Empty);
@@ -105,7 +107,7 @@ namespace DGE.Processes
                 return true;
             if (process.HasExited)
             {
-                process?.Dispose();
+                process.Dispose();
                 process = null;
                 return true;
             }
