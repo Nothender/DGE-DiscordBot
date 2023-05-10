@@ -8,7 +8,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
 using System.Threading.Tasks;
-using DGE.Misc;
 using DGE.Bot;
 
 namespace DGE.Discord.Handlers

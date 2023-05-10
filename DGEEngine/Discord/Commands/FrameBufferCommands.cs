@@ -50,7 +50,7 @@ namespace DGE.Discord.Commands
         public async Task DisplayFrameBuffer()
         {
             if (frameBuffer is null)
-                throw new CommandExecutionException("Cannot display the frame buffer if it was not initialized", new NullReferenceException());
+                throw new Exception("Cannot display the frame buffer if it was not initialized", new NullReferenceException());
             await Task.Run(() =>
             {
                 frameBuffer.Render();
@@ -107,7 +107,7 @@ namespace DGE.Discord.Commands
                     frameBuffer.pixelDrawMode = PixelDrawMode.ALPHA_BLENDING;
                     break;
                 default:
-                    throw new CommandExecutionException($"Cannot change pixel draw mode to {mode}");
+                    throw new Exception($"Cannot change pixel draw mode to {mode}");
             }
             await RespondAsync($"{LogPrefixes.DGE_LOG}Succesfuly set the Frame Buffer PixelRenderMode to {frameBuffer.pixelDrawMode}");
         }

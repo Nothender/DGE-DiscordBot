@@ -61,7 +61,7 @@ namespace DGE.Discord.Commands
             }
             catch (KeyNotFoundException e)
             {
-                throw new CommandExecutionException(e.Message, e);
+                throw new KeyNotFoundException(e.Message, e);
             }
             await RespondAsync($"{LogPrefixes.DGE_LOG} Deleted report {reportId}");
         }

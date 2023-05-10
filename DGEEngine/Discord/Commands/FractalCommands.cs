@@ -38,7 +38,7 @@ namespace DGE.Discord.Commands
             if (RGBs.Length == 0)
                 RGBs = new int[3] { 255, 255, 255 };
             if (RGBs.Length % 3 != 0)
-                throw new CommandExecutionException(new ArgumentException("Colors need to be defined using 3 values"));
+                throw new ArgumentException("Colors need to be defined using 3 values");
 
             System.Drawing.Color[] colors = new System.Drawing.Color[RGBs.Length / 3];
             for (int i = 0; i < RGBs.Length; i += 3)

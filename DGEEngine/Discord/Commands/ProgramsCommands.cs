@@ -43,10 +43,10 @@ namespace DGE.ProgramModules
                 userProgramsCount.Add(Context.User.Id, (char) 0);
             userProgramsCount[Context.User.Id]++;
             if (userProgramsCount[Context.User.Id] > maxUserProgramsCount)
-                throw new CommandExecutionException($"You cannot instance more than {maxUserProgramsCount} programs at once");
+                throw new Exception($"You cannot instance more than {maxUserProgramsCount} programs at once");
 
             if (!programTypes.ContainsKey(programKey.ToLower()))
-                throw new CommandExecutionException($"This program type was not found, try `/ShowPrograms`"); //TODO with prefix thingy later
+                throw new Exception($"This program type was not found, try `/ShowPrograms`"); //TODO with prefix thingy later
             ProgramModule program = (ProgramModule)Activator.CreateInstance(programTypes[programKey.ToLower()], Context);
             await RespondAsync($"{program.Id}");
         }
@@ -82,7 +82,7 @@ namespace DGE.ProgramModules
                 ProgramModule.DeleteProgram(programId);
             }
             else
-                throw new CommandExecutionException("You must be owner of the program to delete it");
+                throw new Exception("You must be owner of the program to delete it");
             
             await RespondAsync($"Successfully deleted the program of id {programId}");
         }
@@ -152,7 +152,7 @@ namespace DGE.ProgramModules
             if (program.IsOwner(Context.User.Id))
                 program.AddOwner(user.Id);
             else
-                throw new CommandExecutionException("You must be owner of the program give owner");
+                throw new Exception("You must be owner of the program give owner");
 
             await RespondAsync($"Made {user.Username} an owner of the program {program.Id}");
         }
